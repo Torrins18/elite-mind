@@ -23,6 +23,18 @@ create table if not exists public.profiles (
   name text not null default '',
   role text not null check (role in ('athlete', 'coach', 'psychologist')),
   team_id uuid references public.teams (id) on delete set null,
+  date_of_birth date,
+  is_adult boolean,
+  guardian_full_name text,
+  guardian_relationship text,
+  guardian_email text,
+  guardian_phone text,
+  guardian_signature text,
+  guardian_consent_text_version text,
+  guardian_consent_user_agent text,
+  guardian_consent_ip_address text,
+  guardian_consent_signed_at timestamptz,
+  initial_assessment_completed_at timestamptz,
   created_at timestamptz not null default now()
 );
 
@@ -47,6 +59,11 @@ create table if not exists public.check_ins (
   energy smallint not null check (energy between 1 and 10),
   focus smallint not null check (focus between 1 and 10),
   personal_notes text,
+  performance_rating smallint check (performance_rating between 0 and 10),
+  involvement_rating smallint check (involvement_rating between 0 and 10),
+  general_mood_words text,
+  mood_change_event text,
+  next_goal text,
   created_at timestamptz not null default now(),
   unique (athlete_id, check_in_date)
 );
@@ -55,6 +72,23 @@ create index if not exists check_ins_athlete_date_idx
   on public.check_ins (athlete_id, check_in_date desc);
 
 create index if not exists profiles_team_idx on public.profiles (team_id);
+
+-- ---------------------------------------------------------------------------
+-- Initial athlete assessment (private to psychologists)
+-- ---------------------------------------------------------------------------
+create table if not exists public.athlete_initial_assessments (
+  athlete_id uuid primary key references public.profiles (id) on delete cascade,
+  personal_info jsonb not null default '{}'::jsonb,
+  sleep_habits jsonb not null default '{}'::jsonb,
+  nutrition_habits jsonb not null default '{}'::jsonb,
+  sports_background jsonb not null default '{}'::jsonb,
+  family_social_support jsonb not null default '{}'::jsonb,
+  submitted_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create index if not exists athlete_initial_assessments_submitted_idx
+  on public.athlete_initial_assessments (submitted_at desc);
 
 -- ---------------------------------------------------------------------------
 -- Coach-safe view (no personal_notes)
@@ -106,11 +140,18 @@ begin
 
   select email into user_email from auth.users where id = auth.uid();
 
-  insert into public.profiles (id, name, role)
+  insert into public.profiles (id, name, role, approved)
   values (
     auth.uid(),
     coalesce(split_part(user_email, '@', 1), 'Athlete'),
-    'athlete'
+    coalesce(
+      (select raw_user_meta_data->>'role' from auth.users where id = auth.uid()),
+      'athlete'
+    ),
+    coalesce(
+      (select raw_user_meta_data->>'role' from auth.users where id = auth.uid()),
+      'athlete'
+    ) <> 'coach'
   )
   returning * into result;
 
@@ -127,6 +168,7 @@ grant execute on function public.auth_user_role() to authenticated;
 alter table public.profiles enable row level security;
 alter table public.teams enable row level security;
 alter table public.check_ins enable row level security;
+alter table public.athlete_initial_assessments enable row level security;
 
 drop policy if exists "Users read own profile" on public.profiles;
 drop policy if exists "Psychologists read all profiles" on public.profiles;
@@ -192,6 +234,17 @@ create policy "Athletes manage own check-ins"
   using (athlete_id = auth.uid())
   with check (athlete_id = auth.uid());
 
+drop policy if exists "Athletes insert own initial assessment" on public.athlete_initial_assessments;
+drop policy if exists "Psychologists read initial assessments" on public.athlete_initial_assessments;
+
+create policy "Athletes insert own initial assessment"
+  on public.athlete_initial_assessments for insert
+  with check (athlete_id = auth.uid());
+
+create policy "Psychologists read initial assessments"
+  on public.athlete_initial_assessments for select
+  using (public.auth_user_role() = 'psychologist');
+
 create policy "Psychologists read all check-ins"
   on public.check_ins for select
   using (public.auth_user_role() = 'psychologist');
@@ -240,6 +293,3 @@ create trigger on_auth_user_created
 -- Seed example team (optional — run after creating coach + athletes in Auth)
 -- ---------------------------------------------------------------------------
 -- insert into public.teams (name, coach_id) values ('Elite Squad', '<coach-uuid>');
-npm run seed:example-team
-cd "c:\Users\acer\OneDrive\Escritorio\MentalPerformanceApp"
-npm run dev

@@ -4,10 +4,15 @@ import { useTranslation } from "../i18n/LanguageContext"
 import { Card } from "./ui/Card"
 import { Button } from "./ui/Button"
 
-export function PsychologistCoachAdmin({ psychologistId }) {
+export function PsychologistCoachAdmin({ psychologistId, onPreviewCoachTeam }) {
   const { t } = useTranslation()
   const [pendingCoaches, setPendingCoaches] = useState([])
+  const [approvedCoaches, setApprovedCoaches] = useState([])
   const [invites, setInvites] = useState([])
+  const [teams, setTeams] = useState([])
+  const [coachTeams, setCoachTeams] = useState({})
+  const [previewTeamId, setPreviewTeamId] = useState("")
+  const [newTeamName, setNewTeamName] = useState("")
   const [newLink, setNewLink] = useState("")
   const [loading, setLoading] = useState(true)
   const [message, setMessage] = useState("")
@@ -15,13 +20,43 @@ export function PsychologistCoachAdmin({ psychologistId }) {
   const load = useCallback(async () => {
     setLoading(true)
 
-    const { data: pending } = await supabase
+    let pendingQuery = await supabase
       .from("profiles")
-      .select("id, name, created_at")
+      .select("id, name, team_id, created_at, approved, is_rejected")
       .eq("role", "coach")
       .eq("approved", false)
-      .eq("is_rejected", false)
       .order("created_at", { ascending: false })
+
+    if (pendingQuery.error?.message?.includes("is_rejected")) {
+      pendingQuery = await supabase
+        .from("profiles")
+        .select("id, name, team_id, created_at, approved")
+        .eq("role", "coach")
+        .eq("approved", false)
+        .order("created_at", { ascending: false })
+    }
+
+    const pending = (pendingQuery.data || []).filter((c) => c.is_rejected !== true)
+
+    let approvedQuery = await supabase
+      .from("profiles")
+      .select("id, name, team_id, created_at, approved, is_rejected")
+      .eq("role", "coach")
+      .eq("approved", true)
+      .order("name")
+
+    if (approvedQuery.error?.message?.includes("is_rejected")) {
+      approvedQuery = await supabase
+        .from("profiles")
+        .select("id, name, team_id, created_at, approved")
+        .eq("role", "coach")
+        .eq("approved", true)
+        .order("name")
+    }
+
+    const approved = (approvedQuery.data || []).filter((c) => c.is_rejected !== true)
+
+    const { data: teamList } = await supabase.from("teams").select("id, name").order("name")
 
     const { data: inv } = await supabase
       .from("coach_invites")
@@ -31,6 +66,11 @@ export function PsychologistCoachAdmin({ psychologistId }) {
       .limit(10)
 
     setPendingCoaches(pending || [])
+    setApprovedCoaches(approved || [])
+    setTeams(teamList || [])
+    setCoachTeams(
+      Object.fromEntries([...(pending || []), ...(approved || [])].map((coach) => [coach.id, coach.team_id || ""]))
+    )
     setInvites(inv || [])
     setLoading(false)
   }, [psychologistId])
@@ -38,6 +78,15 @@ export function PsychologistCoachAdmin({ psychologistId }) {
   useEffect(() => {
     load()
   }, [load])
+
+  useEffect(() => {
+    if (!loading && window.location.hash === "#coach-approvals") {
+      document.getElementById("coach-approvals")?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      })
+    }
+  }, [loading])
 
   const createInvite = async () => {
     setMessage("")
@@ -64,7 +113,57 @@ export function PsychologistCoachAdmin({ psychologistId }) {
     setMessage(t("invites.copied"))
   }
 
+  const createTeam = async (event) => {
+    event.preventDefault()
+    const name = newTeamName.trim()
+    if (!name) return
+
+    setMessage("")
+    const { error } = await supabase.from("teams").insert([{ name }])
+    if (error) {
+      setMessage(error.message)
+      return
+    }
+
+    setNewTeamName("")
+    setMessage(t("teams.created"))
+    await load()
+  }
+
+  const updateCoachTeam = async (coachId, teamId) => {
+    setCoachTeams((prev) => ({ ...prev, [coachId]: teamId }))
+    setMessage("")
+
+    const { error } = await supabase
+      .from("profiles")
+      .update({ team_id: teamId || null })
+      .eq("id", coachId)
+
+    if (error) setMessage(error.message)
+    else {
+      setMessage(t("teams.assigned"))
+      await load()
+    }
+  }
+
   const approveCoach = async (coachId) => {
+    const teamId = coachTeams[coachId]
+    if (!teamId) {
+      setMessage(t("teams.requiredForCoach"))
+      return
+    }
+
+    setMessage("")
+    const { error: teamError } = await supabase
+      .from("profiles")
+      .update({ team_id: teamId })
+      .eq("id", coachId)
+
+    if (teamError) {
+      setMessage(teamError.message)
+      return
+    }
+
     const { error } = await supabase.rpc("approve_coach", { coach_profile_id: coachId })
     if (error) setMessage(error.message)
     else {
@@ -88,6 +187,43 @@ export function PsychologistCoachAdmin({ psychologistId }) {
 
   return (
     <div className="admin-grid">
+      <Card title={t("teams.manageTitle")} subtitle={t("teams.manageSubtitle")}>
+        <form className="team-create" onSubmit={createTeam}>
+          <input
+            value={newTeamName}
+            onChange={(event) => setNewTeamName(event.target.value)}
+            placeholder={t("teams.newPlaceholder")}
+          />
+          <Button type="submit">{t("teams.create")}</Button>
+        </form>
+        {teams.length > 0 && (
+          <ul className="team-chip-list">
+            {teams.map((team) => (
+              <li key={team.id}>{team.name}</li>
+            ))}
+          </ul>
+        )}
+      </Card>
+
+      <Card title={t("teams.previewTitle")} subtitle={t("teams.previewSubtitle")}>
+        <div className="coach-preview-controls">
+          <label className="team-selector__label">
+            <span>{t("teams.previewTeam")}</span>
+            <select value={previewTeamId} onChange={(event) => setPreviewTeamId(event.target.value)}>
+              <option value="">{t("teams.chooseForCoach")}</option>
+              {teams.map((team) => (
+                <option key={team.id} value={team.id}>
+                  {team.name}
+                </option>
+              ))}
+            </select>
+          </label>
+          <Button onClick={() => onPreviewCoachTeam?.(previewTeamId)} disabled={!previewTeamId}>
+            {t("teams.previewOpen")}
+          </Button>
+        </div>
+      </Card>
+
       <Card title={t("invites.title")} subtitle={t("invites.subtitle")}>
         <div className="invite-actions">
           <Button onClick={createInvite}>{t("invites.generate")}</Button>
@@ -116,24 +252,69 @@ export function PsychologistCoachAdmin({ psychologistId }) {
         )}
       </Card>
 
-      <Card title={t("invites.pendingTitle")} subtitle={t("invites.pendingSubtitle")}>
-        {pendingCoaches.length === 0 ? (
-          <p className="empty-state">{t("invites.noPending")}</p>
+      <div id="coach-approvals" className="scroll-anchor">
+        <Card title={t("invites.pendingTitle")} subtitle={t("invites.pendingSubtitle")}>
+          {pendingCoaches.length === 0 ? (
+            <p className="empty-state">{t("invites.noPending")}</p>
+          ) : (
+            <ul className="roster-list">
+              {pendingCoaches.map((coach) => (
+                <li key={coach.id}>
+                  <div>
+                    <strong>{coach.name}</strong>
+                    <span>{new Date(coach.created_at).toLocaleDateString()}</span>
+                  </div>
+                  <div className="coach-actions">
+                    <select
+                      value={coachTeams[coach.id] || ""}
+                      onChange={(event) =>
+                        setCoachTeams((prev) => ({ ...prev, [coach.id]: event.target.value }))
+                      }
+                    >
+                      <option value="">{t("teams.chooseForCoach")}</option>
+                      {teams.map((team) => (
+                        <option key={team.id} value={team.id}>
+                          {team.name}
+                        </option>
+                      ))}
+                    </select>
+                    <Button variant="ghost" onClick={() => approveCoach(coach.id)}>
+                      {t("invites.approve")}
+                    </Button>
+                    <Button variant="ghost" className="btn--danger-text" onClick={() => rejectCoach(coach.id)}>
+                      {t("invites.reject")}
+                    </Button>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
+        </Card>
+      </div>
+
+      <Card title={t("teams.coachAssignmentsTitle")} subtitle={t("teams.coachAssignmentsSubtitle")}>
+        {approvedCoaches.length === 0 ? (
+          <p className="empty-state">{t("teams.noApprovedCoaches")}</p>
         ) : (
           <ul className="roster-list">
-            {pendingCoaches.map((coach) => (
+            {approvedCoaches.map((coach) => (
               <li key={coach.id}>
                 <div>
                   <strong>{coach.name}</strong>
-                  <span>{new Date(coach.created_at).toLocaleDateString()}</span>
+                  <span>{teams.find((team) => team.id === coach.team_id)?.name || t("teams.noTeam")}</span>
                 </div>
                 <div className="coach-actions">
-                  <Button variant="ghost" onClick={() => approveCoach(coach.id)}>
-                    {t("invites.approve")}
-                  </Button>
-                  <Button variant="ghost" className="btn--danger-text" onClick={() => rejectCoach(coach.id)}>
-                    {t("invites.reject")}
-                  </Button>
+                  <select
+                    value={coachTeams[coach.id] || ""}
+                    onChange={(event) => updateCoachTeam(coach.id, event.target.value)}
+                  >
+                    <option value="">{t("teams.noTeam")}</option>
+                    {teams.map((team) => (
+                      <option key={team.id} value={team.id}>
+                        {team.name}
+                      </option>
+                    ))}
+                  </select>
                 </div>
               </li>
             ))}

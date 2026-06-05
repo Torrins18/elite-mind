@@ -1,13 +1,19 @@
-import { useCallback, useEffect, useState } from "react"
+import { useCallback, useEffect, useMemo, useState } from "react"
 import { supabase } from "../supabase"
 import { useTranslation } from "../i18n/LanguageContext"
 import { Card } from "../components/ui/Card"
 import { StatCard } from "../components/ui/StatCard"
 import { LoadingSpinner } from "../components/ui/LoadingSpinner"
-import { Badge } from "../components/ui/Badge"
 import { CheckInChart } from "../components/CheckInChart"
-import { averageMetrics, calculateRiskLevel, countByRisk } from "../lib/risk"
-import { lastNDays } from "../lib/dates"
+import { InsightCard } from "../components/InsightCard"
+import { averageMetrics, calculateRiskLevel } from "../lib/risk"
+import { buildTeamInsight } from "../lib/insights"
+import {
+  CHECK_IN_WINDOW_DAYS,
+  countAthletesActiveThisWeek,
+  isDateWithinLastDays,
+  lastNDays,
+} from "../lib/dates"
 
 const COACH_COLUMNS =
   "id, athlete_id, check_in_date, mood, stress, sleep_quality, energy, focus, created_at"
@@ -59,20 +65,41 @@ export function CoachDashboard({ profile, teamName }) {
     load()
   }, [load])
 
+  const latestByAthlete = useMemo(
+    () =>
+      athletes.map((a) => {
+        const latest = checkIns.find((c) => c.athlete_id === a.id)
+        return { athlete: a, latest, risk: calculateRiskLevel(latest) }
+      }),
+    [athletes, checkIns]
+  )
+
+  const teamInsight = useMemo(
+    () => buildTeamInsight({ athletes, checkIns, latestByAthlete }, t, { forCoach: true }),
+    [athletes, checkIns, latestByAthlete, t]
+  )
+
+  const athleteRiskCounts = useMemo(
+    () =>
+      latestByAthlete.reduce(
+        (acc, row) => {
+          if (!row.latest) return acc
+          acc[row.risk] += 1
+          return acc
+        },
+        { low: 0, medium: 0, high: 0 }
+      ),
+    [latestByAthlete]
+  )
+
   if (loading) return <LoadingSpinner label={t("coach.loading")} />
 
-  const latestByAthlete = athletes.map((a) => {
-    const latest = checkIns.find((c) => c.athlete_id === a.id)
-    return { athlete: a, latest, risk: calculateRiskLevel(latest) }
-  })
-
-  const atRisk = latestByAthlete.filter((x) => x.risk === "high")
   const teamAvg = averageMetrics(checkIns)
-  const riskCounts = countByRisk(checkIns)
-  const completionToday = latestByAthlete.filter((x) => {
-    const today = new Date().toISOString().slice(0, 10)
-    return x.latest?.check_in_date === today
-  }).length
+  const athleteIds = athletes.map((a) => a.id)
+  const activeThisWeek = countAthletesActiveThisWeek(checkIns, athleteIds)
+  const inactiveCount = latestByAthlete.filter(
+    (x) => !isDateWithinLastDays(x.latest?.check_in_date, CHECK_IN_WINDOW_DAYS)
+  ).length
 
   const teamTrend = checkIns.reduce((acc, c) => {
     const key = c.check_in_date
@@ -102,76 +129,57 @@ export function CoachDashboard({ profile, teamName }) {
       <div className="stats-row">
         <StatCard label={t("coach.athletes")} value={athletes.length} />
         <StatCard
-          label={t("coach.checkedInToday")}
-          value={`${completionToday}/${athletes.length}`}
-          hint={t("coach.dailyCompliance")}
+          label={t("coach.checkedInThisWeek")}
+          value={`${activeThisWeek}/${athletes.length}`}
+          hint={t("coach.weeklyCompliance")}
         />
         <StatCard label={t("coach.teamAvgMood")} value={teamAvg.mood || "—"} />
         <StatCard
-          label={t("coach.highRiskAlerts")}
-          value={atRisk.length}
-          hint={t("coach.requiresAttention")}
-          accent="var(--danger)"
+          label={t("coach.teamAvgStress")}
+          value={teamAvg.stress || "—"}
+          hint={t("coach.aggregatedOnly")}
         />
       </div>
 
-      {atRisk.length > 0 && (
-        <Card title={t("coach.riskAlerts")} subtitle={t("coach.riskAlertsSubtitle")}>
-          <ul className="alert-list">
-            {atRisk.map(({ athlete, latest, risk }) => (
-              <li key={athlete.id} className="alert-list__item alert-list__item--high">
-                <div>
-                  <strong>{athlete.name}</strong>
-                  <span>
-                    {t("coach.moodStressSleep", {
-                      mood: latest?.mood,
-                      stress: latest?.stress,
-                      sleep: latest?.sleep_quality,
-                    })}
-                  </span>
-                </div>
-                <Badge variant={risk}>{t(`risk.${risk}`)}</Badge>
-              </li>
-            ))}
-          </ul>
-        </Card>
-      )}
+      <Card>
+        <InsightCard
+          title={t("insights.teamTitle")}
+          insight={teamInsight}
+          footer={t("insights.footerCoach")}
+        />
+      </Card>
 
-      <div className="stats-row stats-row--compact">
-        <StatCard label={t("coach.stable")} value={riskCounts.low} />
-        <StatCard label={t("coach.watch")} value={riskCounts.medium} />
-        <StatCard label={t("coach.atRisk")} value={riskCounts.high} />
-      </div>
+      <Card title={t("coach.teamSummary")} subtitle={t("coach.teamSummarySubtitle")}>
+        <ul className="team-summary-list">
+          <li>
+            <span>{t("coach.summaryCompliance")}</span>
+            <strong>
+              {athletes.length
+                ? `${Math.round((activeThisWeek / athletes.length) * 100)}%`
+                : "—"}
+            </strong>
+          </li>
+          <li>
+            <span>{t("coach.summaryStable")}</span>
+            <strong>{athleteRiskCounts.low}</strong>
+          </li>
+          <li>
+            <span>{t("coach.summaryWatch")}</span>
+            <strong>{athleteRiskCounts.medium}</strong>
+          </li>
+          <li>
+            <span>{t("coach.summaryAtRisk")}</span>
+            <strong>{athleteRiskCounts.high}</strong>
+          </li>
+          <li>
+            <span>{t("coach.summaryInactive")}</span>
+            <strong>{inactiveCount}</strong>
+          </li>
+        </ul>
+        <p className="team-summary-note">{t("coach.privacyNote")}</p>
+      </Card>
 
       <CheckInChart checkIns={aggregatedTrend} />
-
-      <Card title={t("coach.roster")} subtitle={t("coach.rosterSubtitle")}>
-        {athletes.length === 0 ? (
-          <p className="empty-state">{t("coach.noAthletes")}</p>
-        ) : (
-          <ul className="roster-list">
-            {latestByAthlete.map(({ athlete, latest, risk }) => (
-              <li key={athlete.id}>
-                <div>
-                  <strong>{athlete.name}</strong>
-                  <span>
-                    {latest
-                      ? t("coach.moodEnergy", {
-                          mood: latest.mood,
-                          energy: latest.energy,
-                          date: latest.check_in_date,
-                        })
-                      : t("coach.noRecentCheckIn")}
-                  </span>
-                </div>
-                <Badge variant={latest ? risk : "default"}>
-                  {latest ? t(`risk.${risk}`) : t("risk.noData")}
-                </Badge>
-              </li>
-            ))}
-          </ul>
-        )}
-      </Card>
     </div>
   )
 }

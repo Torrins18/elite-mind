@@ -1,14 +1,26 @@
-export function SliderField({ label, value, onChange, lowLabel, highLabel }) {
+export function SliderField({
+  label,
+  hint,
+  value,
+  onChange,
+  lowLabel,
+  highLabel,
+  min = 1,
+  max = 10,
+}) {
   return (
     <label className="slider-field">
       <div className="slider-field__row">
-        <span>{label}</span>
-        <span className="slider-field__value">{value}/10</span>
+        <span className="slider-field__label">{label}</span>
+        <span className="slider-field__value">
+          {value}/{max}
+        </span>
       </div>
+      {hint && <p className="slider-field__hint">{hint}</p>}
       <input
         type="range"
-        min={1}
-        max={10}
+        min={min}
+        max={max}
         value={value}
         onChange={(e) => onChange(Number(e.target.value))}
       />

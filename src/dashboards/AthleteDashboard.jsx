@@ -7,7 +7,7 @@ import { Card } from "../components/ui/Card"
 import { StatCard } from "../components/ui/StatCard"
 import { LoadingSpinner } from "../components/ui/LoadingSpinner"
 import { Badge } from "../components/ui/Badge"
-import { todayISO } from "../lib/dates"
+import { isDateWithinLastDays, todayISO } from "../lib/dates"
 import { calculateRiskLevel } from "../lib/risk"
 
 export function AthleteDashboard({ profile, teamName }) {
@@ -43,6 +43,7 @@ export function AthleteDashboard({ profile, teamName }) {
   const latest = checkIns[0]
   const risk = calculateRiskLevel(latest)
   const streak = checkIns.length
+  const loggedThisWeek = latest ? isDateWithinLastDays(latest.check_in_date) : false
 
   return (
     <div className="dashboard-grid">
@@ -67,9 +68,9 @@ export function AthleteDashboard({ profile, teamName }) {
       <div className="stats-row">
         <StatCard label={t("athlete.checkInsLogged")} value={streak} hint={t("athlete.last14Days")} />
         <StatCard
-          label={t("athlete.todayMood")}
-          value={todayCheckIn?.mood ?? "—"}
-          hint={todayCheckIn ? t("athlete.logged") : t("athlete.notLogged")}
+          label={t("athlete.latestMood")}
+          value={latest?.mood ?? "—"}
+          hint={loggedThisWeek ? t("athlete.loggedThisWeek") : t("athlete.notLoggedThisWeek")}
         />
         <StatCard
           label={t("athlete.avgEnergy")}
@@ -95,7 +96,12 @@ export function AthleteDashboard({ profile, teamName }) {
         />
       </div>
 
-      <CheckInForm athleteId={profile.id} existing={todayCheckIn} onSaved={load} />
+      <CheckInForm
+        athleteId={profile.id}
+        existing={todayCheckIn}
+        checkIns={checkIns}
+        onSaved={load}
+      />
 
       <CheckInChart checkIns={checkIns.slice(0, 7)} />
 

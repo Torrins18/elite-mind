@@ -39,7 +39,7 @@ git push -u origin main
 
 | Name | Value |
 |------|--------|
-| `VITE_SUPABASE_URL` | `https://pmjptxnwrboesprlfeod.supabase.co` |
+| `VITE_SUPABASE_URL` | `https://wdibvfgvgmpgorzaraud.supabase.co` |
 | `VITE_SUPABASE_ANON_KEY` | tu clave anon de Supabase |
 
 5. Clic en **Deploy**

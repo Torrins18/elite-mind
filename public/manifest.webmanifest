@@ -1,0 +1,19 @@
+{
+  "name": "Elite Mind",
+  "short_name": "Elite Mind",
+  "description": "Rendimiento mental para deportistas y equipos",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#060b14",
+  "theme_color": "#060b14",
+  "orientation": "portrait-primary",
+  "lang": "es",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

@@ -107,6 +107,11 @@ input:focus, textarea:focus {
   box-shadow: var(--shadow);
 }
 
+.auth-panel--single {
+  max-width: 520px;
+  grid-template-columns: 1fr;
+}
+
 @media (max-width: 800px) {
   .auth-panel {
     grid-template-columns: 1fr;
@@ -166,6 +171,14 @@ input:focus, textarea:focus {
   cursor: pointer;
   font-size: 0.9rem;
   padding: 8px 0;
+}
+
+.auth-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  align-items: center;
+  justify-content: space-between;
 }
 
 /* Shell */
@@ -377,6 +390,131 @@ input:focus, textarea:focus {
 .badge--default { background: rgba(148, 163, 184, 0.15); color: var(--text-muted); }
 
 /* Check-in form */
+.insight-card {
+  padding: 16px 18px;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: rgba(17, 24, 39, 0.55);
+}
+
+.insight-card--positive {
+  border-color: rgba(52, 211, 153, 0.35);
+  background: rgba(52, 211, 153, 0.08);
+}
+
+.insight-card--warning {
+  border-color: rgba(251, 191, 36, 0.35);
+  background: rgba(251, 191, 36, 0.08);
+}
+
+.insight-card--danger {
+  border-color: rgba(248, 113, 113, 0.4);
+  background: rgba(248, 113, 113, 0.1);
+}
+
+.insight-card__header {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.insight-card__header h3 {
+  font-size: 1rem;
+  font-family: "Inter", system-ui, sans-serif;
+}
+
+.insight-card__badge {
+  display: inline-block;
+  width: fit-content;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--accent);
+  background: var(--accent-dim);
+}
+
+.insight-card__text {
+  font-size: 0.95rem;
+  line-height: 1.55;
+  color: var(--text);
+}
+
+.insight-card__footer {
+  margin-top: 10px;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.insight-card-wrap {
+  margin-bottom: 18px;
+}
+
+.team-summary-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 10px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.team-summary-list li {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--bg-elevated);
+}
+
+.team-summary-list span {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+.team-summary-list strong {
+  font-size: 1.25rem;
+  color: var(--text);
+}
+
+.team-summary-note {
+  margin-top: 14px;
+  font-size: 0.84rem;
+  color: var(--text-muted);
+  line-height: 1.45;
+}
+
+.privacy-notice {
+  margin: 24px auto 32px;
+  max-width: 1200px;
+  padding: 16px 20px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: rgba(17, 24, 39, 0.45);
+}
+
+.privacy-notice__title {
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.privacy-notice ul {
+  margin: 0;
+  padding-left: 1.1rem;
+  color: var(--text-muted);
+  font-size: 0.84rem;
+  line-height: 1.5;
+}
+
+.privacy-notice li + li {
+  margin-top: 4px;
+}
+
 .check-in-form {
   display: flex;
   flex-direction: column;
@@ -395,7 +533,20 @@ input:focus, textarea:focus {
 .slider-field__row {
   display: flex;
   justify-content: space-between;
+  gap: 12px;
   font-weight: 500;
+}
+
+.slider-field__label {
+  line-height: 1.35;
+}
+
+.slider-field__hint {
+  margin: -4px 0 4px;
+  font-size: 0.82rem;
+  font-weight: 400;
+  color: var(--text-muted);
+  line-height: 1.4;
 }
 
 .slider-field__value {
@@ -419,6 +570,90 @@ input:focus, textarea:focus {
 .form-message {
   color: var(--success);
   font-size: 0.9rem;
+}
+
+.check-in-block {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: rgba(17, 24, 39, 0.45);
+}
+
+.check-in-block--weekly {
+  border-color: rgba(34, 211, 238, 0.22);
+  background: rgba(34, 211, 238, 0.05);
+}
+
+.check-in-block__header h3 {
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: 1.05rem;
+  margin: 8px 0 4px;
+}
+
+.check-in-block__header p {
+  font-size: 0.86rem;
+  color: var(--text-muted);
+  line-height: 1.45;
+}
+
+.check-in-block__badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  background: rgba(148, 163, 184, 0.15);
+  color: var(--text-muted);
+}
+
+.check-in-block__badge--weekly {
+  background: var(--accent-dim);
+  color: var(--accent);
+}
+
+.check-in-weekly-next {
+  padding: 12px 14px;
+  border-radius: 10px;
+  font-size: 0.86rem;
+  color: var(--text-muted);
+  background: rgba(148, 163, 184, 0.08);
+  border: 1px dashed var(--border);
+}
+
+.notes-field__hint {
+  margin: -4px 0 2px;
+  font-size: 0.82rem;
+  font-weight: 400;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+.notes-field--optional {
+  margin-top: 4px;
+}
+
+.extended-review {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px 14px;
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  background: rgba(34, 211, 238, 0.08);
+  border: 1px solid rgba(34, 211, 238, 0.16);
+}
+
+.extended-review p {
+  font-size: 0.85rem;
+}
+
+.extended-review strong {
+  color: var(--text);
 }
 
 /* Lists */
@@ -591,33 +826,92 @@ input:focus, textarea:focus {
   z-index: 2;
 }
 
+.auth-form__hint--role {
+  margin-top: 0;
+}
+
 .role-picker {
   border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 14px 16px;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
+  border-radius: 16px;
+  padding: 14px;
+  margin: 0 0 12px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 10px;
+  background: rgba(17, 24, 39, 0.56);
 }
 
 .role-picker legend {
   font-weight: 600;
   font-size: 0.9rem;
-  margin-bottom: 4px;
+  padding: 0 6px;
+  margin-bottom: 10px;
   color: var(--text);
 }
 
 .role-picker__option {
-  display: flex;
-  align-items: center;
-  gap: 10px;
+  position: relative;
+  display: grid;
+  grid-template-columns: 18px 1fr;
+  align-items: flex-start;
+  gap: 12px;
+  min-height: 92px;
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--bg-elevated);
   cursor: pointer;
   color: var(--text-muted);
+  transition: border-color 0.15s, background 0.15s, transform 0.15s;
+}
+
+.role-picker__option:hover {
+  border-color: rgba(34, 211, 238, 0.35);
+  transform: translateY(-1px);
+}
+
+.role-picker__option input {
+  width: 18px;
+  height: 18px;
+  margin-top: 2px;
+  accent-color: var(--accent);
+}
+
+.role-picker__option span {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.role-picker__option strong {
+  color: var(--text);
+  font-size: 0.95rem;
+}
+
+.role-picker__option small {
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  line-height: 1.35;
 }
 
 .role-picker__option:has(input:checked) {
+  border-color: rgba(34, 211, 238, 0.75);
+  background: var(--accent-dim);
+  box-shadow: 0 0 0 1px rgba(34, 211, 238, 0.18);
+}
+
+.role-picker__option:has(input:checked) strong {
   color: var(--accent);
+}
+
+.role-picker .role-hint {
+  grid-column: 1 / -1;
+  padding: 10px 12px;
+  border: 1px solid rgba(251, 191, 36, 0.25);
+  border-radius: 10px;
+  background: rgba(251, 191, 36, 0.08);
+  color: var(--warning);
+  font-size: 0.82rem;
 }
 
 .team-selector {
@@ -642,6 +936,34 @@ input:focus, textarea:focus {
   font-weight: 500;
 }
 
+.team-create {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.team-create input {
+  flex: 1;
+}
+
+.team-chip-list {
+  list-style: none;
+  padding: 0;
+  margin: 16px 0 0;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.team-chip-list li {
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--bg-elevated);
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
 .team-selector select {
   width: 100%;
   padding: 14px 16px;
@@ -651,6 +973,267 @@ input:focus, textarea:focus {
   color: var(--text);
   font: inherit;
   cursor: pointer;
+}
+
+.scroll-anchor {
+  scroll-margin-top: 24px;
+}
+
+.onboarding-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  max-width: 520px;
+}
+
+.onboarding-form__field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-weight: 500;
+}
+
+.onboarding-form__hint {
+  font-size: 0.88rem;
+}
+
+.onboarding-form__check {
+  display: grid;
+  grid-template-columns: 20px 1fr;
+  gap: 10px;
+  align-items: start;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.onboarding-form__check input {
+  width: 18px;
+  height: 18px;
+  margin-top: 2px;
+  accent-color: var(--accent);
+}
+
+.onboarding-form__mail {
+  width: fit-content;
+  text-decoration: none;
+}
+
+.consent-detail {
+  display: grid;
+  gap: 10px;
+}
+
+.consent-detail strong {
+  color: var(--text);
+}
+
+.assessment-card {
+  max-width: 920px;
+  margin: 0 auto;
+}
+
+.assessment-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.assessment-progress {
+  height: 8px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+}
+
+.assessment-progress span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--accent), var(--gold));
+  transition: width 0.2s ease;
+}
+
+.assessment-steps {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.assessment-step {
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--bg-elevated);
+  color: var(--text-muted);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.assessment-step.active {
+  border-color: rgba(34, 211, 238, 0.75);
+  background: var(--accent-dim);
+  color: var(--accent);
+}
+
+.assessment-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.assessment-section__eyebrow {
+  color: var(--accent);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.assessment-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.assessment-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  color: var(--text);
+  font-weight: 600;
+}
+
+.assessment-readonly {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 6px;
+  min-height: 76px;
+  padding: 13px 14px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--bg-elevated);
+}
+
+.assessment-readonly span {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.assessment-readonly strong {
+  color: var(--accent);
+  font-size: 1.2rem;
+}
+
+.assessment-field--wide {
+  grid-column: 1 / -1;
+}
+
+.assessment-radio {
+  border: none;
+  padding: 0;
+  margin: 0;
+}
+
+.assessment-radio legend {
+  font-weight: 500;
+  margin-bottom: 10px;
+  padding: 0;
+  line-height: 1.4;
+}
+
+.assessment-radio__options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.assessment-radio__option {
+  display: grid;
+  grid-template-columns: 18px 1fr;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--bg-elevated);
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.assessment-radio__option:hover {
+  border-color: rgba(34, 211, 238, 0.35);
+}
+
+.assessment-radio__option input {
+  width: 18px;
+  height: 18px;
+  margin-top: 2px;
+  accent-color: var(--accent);
+}
+
+.assessment-radio__option span {
+  line-height: 1.35;
+  color: var(--text);
+}
+
+.assessment-radio__option:has(input:checked) {
+  border-color: rgba(34, 211, 238, 0.75);
+  background: var(--accent-dim);
+}
+
+.assessment-field input[type="range"] {
+  accent-color: var(--accent);
+  min-height: 30px;
+}
+
+.assessment-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.assessment-review {
+  display: grid;
+  gap: 16px;
+}
+
+.assessment-review__section {
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--bg-elevated);
+}
+
+.assessment-review__section h3 {
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: 0.95rem;
+  margin-bottom: 12px;
+}
+
+.assessment-review__section dl {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px 16px;
+  margin: 0;
+}
+
+.assessment-review__section div {
+  min-width: 0;
+}
+
+.assessment-review__section dt {
+  color: var(--text-muted);
+  font-size: 0.78rem;
+}
+
+.assessment-review__section dd {
+  margin: 2px 0 0;
+  color: var(--text);
+  word-break: break-word;
 }
 
 .invite-banner {
@@ -672,6 +1255,41 @@ input:focus, textarea:focus {
   display: flex;
   flex-direction: column;
   gap: 20px;
+}
+
+.coach-preview-controls {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 12px;
+  align-items: end;
+}
+
+.coach-preview-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 18px;
+  border: 1px solid rgba(34, 211, 238, 0.28);
+  border-radius: 16px;
+  background: rgba(8, 145, 178, 0.08);
+}
+
+.coach-preview-panel__bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.coach-preview-panel__bar h3 {
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: 1rem;
+  margin-bottom: 4px;
+}
+
+.coach-preview-panel__bar p {
+  color: var(--text-muted);
+  font-size: 0.9rem;
 }
 
 .invite-actions {
@@ -722,6 +1340,12 @@ input:focus, textarea:focus {
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
+}
+
+.coach-actions select {
+  min-width: 180px;
+  padding: 10px 12px;
+  border-radius: 10px;
 }
 
 .btn--danger-text {
@@ -949,9 +1573,43 @@ input:focus, textarea:focus {
     min-height: 44px;
   }
 
+  .coach-preview-controls,
+  .coach-preview-panel__bar {
+    grid-template-columns: 1fr;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
   .athlete-picker__btn {
     min-height: 52px;
     padding: 14px 16px;
+  }
+
+  .role-picker {
+    grid-template-columns: 1fr;
+    padding: 12px;
+  }
+
+  .role-picker__option {
+    min-height: 76px;
+  }
+
+  .role-picker .role-hint {
+    font-size: 0.86rem;
+  }
+
+  .assessment-grid,
+  .assessment-review__section dl,
+  .extended-review {
+    grid-template-columns: 1fr;
+  }
+
+  .assessment-actions {
+    flex-direction: column-reverse;
+  }
+
+  .assessment-actions .btn {
+    width: 100%;
   }
 
   .team-selector .btn,

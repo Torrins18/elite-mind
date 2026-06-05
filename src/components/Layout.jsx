@@ -1,5 +1,6 @@
 import { useTranslation } from "../i18n/LanguageContext"
 import { LanguageSwitcher } from "./LanguageSwitcher"
+import { PrivacyNotice } from "./PrivacyNotice"
 import { Button } from "./ui/Button"
 
 export function Layout({ profile, session, teamName, onLogout, children }) {
@@ -32,6 +33,7 @@ export function Layout({ profile, session, teamName, onLogout, children }) {
       </header>
 
       <main className="main-content">{children}</main>
+      {profile && <PrivacyNotice />}
     </div>
   )
 }

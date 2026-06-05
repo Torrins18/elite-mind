@@ -1,0 +1,36 @@
+# Configuració Supabase — ordre d'execució
+
+Si la pàgina no carrega o falten funcions, executa **tot** això al **SQL Editor** de Supabase, **en aquest ordre**:
+
+| # | Fitxer |
+|---|--------|
+| 1 | `schema.sql` |
+| 2 | `fix-profiles.sql` |
+| 3 | `seed-categories.sql` |
+| 4 | `coach-invites.sql` |
+| 5 | `reject-coach.sql` |
+| 6 | `privacy-onboarding.sql` |
+| 7 | `initial-assessment.sql` |
+| 8 | `teams-management.sql` (opcional) |
+| 9 | `extended-checkins.sql` (si existeix) |
+| 10 | `seed-demo.sql` (opcional) |
+
+Després de cada fitxer ha de sortir **Success**.
+
+**Rutina esportista (pilot):** 1-2 autoavaluacions per setmana (no cal diari).
+
+## Comprovar
+
+A **Table Editor** hauries de veure:
+
+- `profiles` (amb columnes `approved`, `date_of_birth`, `initial_assessment_completed_at`…)
+- `teams`, `check_ins`, `coach_invites`, `athlete_initial_assessments`
+
+## Vercel
+
+A Vercel → Settings → Environment Variables:
+
+- `VITE_SUPABASE_URL`
+- `VITE_SUPABASE_ANON_KEY`
+
+Després **Redeploy**. Guia completa de pilot: `PILOT-CHECKLIST.md` a l'arrel del projecte.
