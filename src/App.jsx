@@ -18,6 +18,11 @@ import { InitialAssessment } from "./components/InitialAssessment"
 import { AthleteDashboard } from "./dashboards/AthleteDashboard"
 import { CoachDashboard } from "./dashboards/CoachDashboard"
 import { PsychologistDashboard } from "./dashboards/PsychologistDashboard"
+import {
+  clearAuthCallbackFromUrl,
+  hasAuthCallbackInUrl,
+  isPasswordRecoveryUrl,
+} from "./lib/authCallback"
 
 function App() {
   const { t } = useTranslation()
@@ -29,17 +34,31 @@ function App() {
   const [booting, setBooting] = useState(true)
 
   useEffect(() => {
+    let settled = false
+    const callbackPending = hasAuthCallbackInUrl()
+
+    const finishBoot = () => {
+      if (!settled) {
+        settled = true
+        setBooting(false)
+      }
+    }
+
+    const bootTimeout = callbackPending
+      ? window.setTimeout(finishBoot, 10000)
+      : null
+
     supabase.auth.getSession().then(({ data }) => {
       setSession(data.session)
       if (data.session) {
         if (isPasswordRecoveryUrl()) {
           setPasswordRecovery(true)
-          setBooting(false)
+          finishBoot()
         } else {
           loadProfile(data.session)
         }
-      } else {
-        setBooting(false)
+      } else if (!callbackPending) {
+        finishBoot()
       }
     })
 
@@ -47,24 +66,34 @@ function App() {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((event, nextSession) => {
       setSession(nextSession)
+
       if (event === "PASSWORD_RECOVERY") {
         setPasswordRecovery(true)
-        setBooting(false)
+        finishBoot()
         return
       }
 
       if (nextSession) {
+        if (isPasswordRecoveryUrl()) {
+          setPasswordRecovery(true)
+          finishBoot()
+          return
+        }
         loadProfile(nextSession)
-      } else {
-        setProfile(null)
-        setTeamName("")
-        setProfileError("")
-        setPasswordRecovery(false)
-        setBooting(false)
+        return
       }
+
+      setProfile(null)
+      setTeamName("")
+      setProfileError("")
+      setPasswordRecovery(false)
+      finishBoot()
     })
 
-    return () => subscription.unsubscribe()
+    return () => {
+      subscription.unsubscribe()
+      if (bootTimeout) window.clearTimeout(bootTimeout)
+    }
   }, [])
 
   const loadTeamName = async (teamId) => {
@@ -109,7 +138,7 @@ function App() {
 
   const finishPasswordRecovery = async () => {
     setPasswordRecovery(false)
-    window.history.replaceState(null, "", window.location.pathname)
+    clearAuthCallbackFromUrl()
     if (session) await loadProfile(session)
   }
 
@@ -121,12 +150,12 @@ function App() {
     )
   }
 
-  if (!session) {
-    return <LoginPage />
+  if (session && passwordRecovery) {
+    return <ResetPasswordPage onCompleted={finishPasswordRecovery} onLogout={logout} />
   }
 
-  if (passwordRecovery) {
-    return <ResetPasswordPage onCompleted={finishPasswordRecovery} onLogout={logout} />
+  if (!session) {
+    return <LoginPage />
   }
 
   if (profile?.role === "coach" && profile.is_rejected) {
@@ -221,10 +250,3 @@ function App() {
 }
 
 export default App
-
-function isPasswordRecoveryUrl() {
-  return (
-    window.location.hash.includes("type=recovery") ||
-    window.location.search.includes("type=recovery")
-  )
-}

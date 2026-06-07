@@ -5,5 +5,12 @@ const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY
 
 export const supabase = createClient(
   supabaseUrl || "https://wdibvfgvgmpgorzaraud.supabase.co",
-  supabaseKey || "sb_publishable_v6Oex6NVYMrWQQbMI7RtLQ_0oZIKnYJ"
+  supabaseKey || "sb_publishable_v6Oex6NVYMrWQQbMI7RtLQ_0oZIKnYJ",
+  {
+    auth: {
+      detectSessionInUrl: true,
+      flowType: "implicit",
+      persistSession: true,
+    },
+  }
 )
