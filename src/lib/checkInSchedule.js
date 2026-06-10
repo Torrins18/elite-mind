@@ -15,6 +15,13 @@ export function daysBetween(startDate, endDate) {
   return Math.floor((end - start) / 86_400_000)
 }
 
+/** True when today's check-in covers everything currently due (daily + weekly if applicable). */
+export function isTodayCheckInComplete(checkIn, checkIns, today) {
+  if (!checkIn) return false
+  if (isWeeklyReflectionDue(checkIns, today) && !hasWeeklyReflection(checkIn)) return false
+  return true
+}
+
 /** Weekly reflection is due on first check-in of the week or if last one was 7+ days ago. */
 export function isWeeklyReflectionDue(checkIns, today) {
   const withWeekly = (checkIns || []).filter(hasWeeklyReflection)

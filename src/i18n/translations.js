@@ -302,8 +302,10 @@ export const translations = {
         "Responde tu autoevaluación mental. Recomendamos 1-2 registros por semana (unos 2 min cada uno).",
       todayTitle: "Estado de hoy",
       todaySubtitle: "Un vistazo rápido a tu registro diario.",
-      todayDone: "Ya has completado tu autoevaluación de hoy. Puedes actualizarla si lo necesitas.",
+      todayDone: "Registro de hoy completado. Gracias por responder.",
       todayPending: "Aún no has registrado tu autoevaluación de hoy.",
+      weeklyPending: "Has registrado el pulso de hoy. Falta completar la reflexión semanal.",
+      updateResponses: "Actualizar respuestas de hoy",
     },
 
     athleteContact: {
@@ -332,6 +334,9 @@ export const translations = {
       titleWeekly: "Autoevaluación + reflexión semanal",
       subtitleWeekly:
         "Primero tu pulso actual; después, preguntas sobre la semana (solo el/la psicólogo/a las ve).",
+      titleWeeklyOnly: "Reflexión semanal",
+      subtitleWeeklyOnly:
+        "Responde las preguntas sobre la semana. Solo el/la psicólogo/a verá tus respuestas.",
       dailyBadge: "Registro",
       dailyTitle: "Pulso mental",
       dailyIntro: "Valora cómo estás ahora mismo (1 = muy bajo, 10 = muy alto).",
@@ -883,8 +888,10 @@ export const translations = {
         "Respon la teva autoavaluació mental. Recomanem 1-2 registres per setmana (uns 2 min cadascun).",
       todayTitle: "Estat d'avui",
       todaySubtitle: "Una ullada ràpida al teu registre diari.",
-      todayDone: "Ja has completat la teva autoavaluació d'avui. Pots actualitzar-la si cal.",
+      todayDone: "Registre d'avui completat. Gràcies per respondre.",
       todayPending: "Encara no has registrat la teva autoavaluació d'avui.",
+      weeklyPending: "Has registrat el pols d'avui. Falta completar la reflexió setmanal.",
+      updateResponses: "Actualitzar respostes d'avui",
     },
 
     athleteContact: {
@@ -913,6 +920,9 @@ export const translations = {
       titleWeekly: "Autoavaluació + reflexió setmanal",
       subtitleWeekly:
         "Primer el teu pols actual; després, preguntes sobre la setmana (només ho veu el/la psicòleg/òloga).",
+      titleWeeklyOnly: "Reflexió setmanal",
+      subtitleWeeklyOnly:
+        "Respon les preguntes sobre la setmana. Només el/la psicòleg/òloga veurà les teves respostes.",
       dailyBadge: "Registre",
       dailyTitle: "Pols mental",
       dailyIntro: "Valora com estàs ara mateix (1 = molt baix, 10 = molt alt).",

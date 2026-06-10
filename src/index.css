@@ -649,6 +649,17 @@ input:focus, textarea:focus {
   border: 1px dashed var(--border);
 }
 
+.today-status__actions {
+  margin-top: 12px;
+}
+
+.check-in-form__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
 .athlete-contact__actions {
   display: flex;
   flex-wrap: wrap;

@@ -24,7 +24,14 @@ const DEFAULT = {
   next_goal: "",
 }
 
-export function CheckInForm({ athleteId, existing, checkIns = [], onSaved }) {
+export function CheckInForm({
+  athleteId,
+  existing,
+  checkIns = [],
+  onSaved,
+  onCancel,
+  hideDailySection = false,
+}) {
   const { t } = useTranslation()
   const today = todayISO()
   const [form, setForm] = useState(existing ? { ...DEFAULT, ...existing } : { ...DEFAULT })
@@ -79,12 +86,21 @@ export function CheckInForm({ athleteId, existing, checkIns = [], onSaved }) {
     onSaved?.()
   }
 
-  const title = showWeekly ? t("checkIn.titleWeekly") : t("checkIn.titleDaily")
-  const subtitle = showWeekly ? t("checkIn.subtitleWeekly") : t("checkIn.subtitleDaily")
+  const title = hideDailySection
+    ? t("checkIn.titleWeeklyOnly")
+    : showWeekly
+      ? t("checkIn.titleWeekly")
+      : t("checkIn.titleDaily")
+  const subtitle = hideDailySection
+    ? t("checkIn.subtitleWeeklyOnly")
+    : showWeekly
+      ? t("checkIn.subtitleWeekly")
+      : t("checkIn.subtitleDaily")
 
   return (
     <Card title={title} subtitle={subtitle}>
       <form className="check-in-form" onSubmit={submit}>
+        {!hideDailySection && (
         <section className="check-in-block">
           <header className="check-in-block__header">
             <span className="check-in-block__badge">{t("checkIn.dailyBadge")}</span>
@@ -144,6 +160,7 @@ export function CheckInForm({ athleteId, existing, checkIns = [], onSaved }) {
             />
           </label>
         </section>
+        )}
 
         {showWeekly ? (
           <section className="check-in-block check-in-block--weekly">
@@ -210,15 +227,22 @@ export function CheckInForm({ athleteId, existing, checkIns = [], onSaved }) {
 
         {message && <p className="form-message">{message}</p>}
 
-        <Button type="submit" disabled={saving}>
-          {saving
-            ? t("checkIn.saving")
-            : existing
-              ? t("checkIn.updateBtn")
-              : showWeekly
-                ? t("checkIn.submitWeeklyBtn")
-                : t("checkIn.submitDailyBtn")}
-        </Button>
+        <div className="check-in-form__actions">
+          {onCancel && (
+            <Button type="button" variant="ghost" onClick={onCancel} disabled={saving}>
+              {t("common.close")}
+            </Button>
+          )}
+          <Button type="submit" disabled={saving}>
+            {saving
+              ? t("checkIn.saving")
+              : existing
+                ? t("checkIn.updateBtn")
+                : showWeekly
+                  ? t("checkIn.submitWeeklyBtn")
+                  : t("checkIn.submitDailyBtn")}
+          </Button>
+        </div>
       </form>
     </Card>
   )

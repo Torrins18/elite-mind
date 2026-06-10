@@ -1,17 +1,25 @@
-import { useCallback, useEffect, useState } from "react"
+import { useCallback, useEffect, useMemo, useState } from "react"
 import { supabase } from "../supabase"
 import { useTranslation } from "../i18n/LanguageContext"
 import { CheckInForm } from "../components/CheckInForm"
 import { AthletePsychologistContact } from "../components/AthletePsychologistContact"
 import { Card } from "../components/ui/Card"
+import { Button } from "../components/ui/Button"
 import { LoadingSpinner } from "../components/ui/LoadingSpinner"
 import { todayISO } from "../lib/dates"
+import {
+  isTodayCheckInComplete,
+  isWeeklyReflectionDue,
+} from "../lib/checkInSchedule"
 
 export function AthleteDashboard({ profile, teamName }) {
   const { t } = useTranslation()
   const [checkIns, setCheckIns] = useState([])
   const [todayCheckIn, setTodayCheckIn] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [editing, setEditing] = useState(false)
+
+  const today = todayISO()
 
   const load = useCallback(async () => {
     setLoading(true)
@@ -25,15 +33,37 @@ export function AthleteDashboard({ profile, teamName }) {
 
     if (!error && data) {
       setCheckIns(data)
-      setTodayCheckIn(data.find((c) => c.check_in_date === todayISO()) || null)
+      const todayRow = data.find((c) => c.check_in_date === today) || null
+      setTodayCheckIn(todayRow)
+
+      if (todayRow && isTodayCheckInComplete(todayRow, data, today)) {
+        setEditing(false)
+      }
     }
 
     setLoading(false)
-  }, [profile.id])
+  }, [profile.id, today])
 
   useEffect(() => {
     load()
   }, [load])
+
+  const todayComplete = useMemo(
+    () => isTodayCheckInComplete(todayCheckIn, checkIns, today),
+    [todayCheckIn, checkIns, today]
+  )
+
+  const weeklyPending = useMemo(
+    () => Boolean(todayCheckIn) && isWeeklyReflectionDue(checkIns, today) && !todayComplete,
+    [todayCheckIn, checkIns, today, todayComplete]
+  )
+
+  const showForm = !todayComplete || editing
+
+  const handleSaved = async () => {
+    await load()
+    setEditing(false)
+  }
 
   if (loading) return <LoadingSpinner label={t("athlete.loading")} />
 
@@ -57,17 +87,36 @@ export function AthleteDashboard({ profile, teamName }) {
       </section>
 
       <Card title={t("athlete.todayTitle")} subtitle={t("athlete.todaySubtitle")}>
-        <p className={`today-status ${todayCheckIn ? "today-status--done" : "today-status--pending"}`}>
-          {todayCheckIn ? t("athlete.todayDone") : t("athlete.todayPending")}
+        <p
+          className={`today-status ${
+            todayComplete ? "today-status--done" : "today-status--pending"
+          }`}
+        >
+          {todayComplete
+            ? t("athlete.todayDone")
+            : weeklyPending
+              ? t("athlete.weeklyPending")
+              : t("athlete.todayPending")}
         </p>
+        {todayComplete && !showForm && (
+          <div className="today-status__actions">
+            <Button variant="ghost" onClick={() => setEditing(true)}>
+              {t("athlete.updateResponses")}
+            </Button>
+          </div>
+        )}
       </Card>
 
-      <CheckInForm
-        athleteId={profile.id}
-        existing={todayCheckIn}
-        checkIns={checkIns}
-        onSaved={load}
-      />
+      {showForm && (
+        <CheckInForm
+          athleteId={profile.id}
+          existing={todayCheckIn}
+          checkIns={checkIns}
+          onSaved={handleSaved}
+          onCancel={todayComplete ? () => setEditing(false) : undefined}
+          hideDailySection={weeklyPending && !editing}
+        />
+      )}
 
       <AthletePsychologistContact userId={profile.id} />
     </div>
