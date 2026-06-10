@@ -2,13 +2,10 @@ import { useCallback, useEffect, useState } from "react"
 import { supabase } from "../supabase"
 import { useTranslation } from "../i18n/LanguageContext"
 import { CheckInForm } from "../components/CheckInForm"
-import { CheckInChart } from "../components/CheckInChart"
+import { AthletePsychologistContact } from "../components/AthletePsychologistContact"
 import { Card } from "../components/ui/Card"
-import { StatCard } from "../components/ui/StatCard"
 import { LoadingSpinner } from "../components/ui/LoadingSpinner"
-import { Badge } from "../components/ui/Badge"
-import { isDateWithinLastDays, todayISO } from "../lib/dates"
-import { calculateRiskLevel } from "../lib/risk"
+import { todayISO } from "../lib/dates"
 
 export function AthleteDashboard({ profile, teamName }) {
   const { t } = useTranslation()
@@ -40,13 +37,8 @@ export function AthleteDashboard({ profile, teamName }) {
 
   if (loading) return <LoadingSpinner label={t("athlete.loading")} />
 
-  const latest = checkIns[0]
-  const risk = calculateRiskLevel(latest)
-  const streak = checkIns.length
-  const loggedThisWeek = latest ? isDateWithinLastDays(latest.check_in_date) : false
-
   return (
-    <div className="dashboard-grid">
+    <div className="dashboard-grid dashboard-grid--athlete">
       <section className="hero-strip">
         <div>
           <h2>
@@ -62,39 +54,13 @@ export function AthleteDashboard({ profile, teamName }) {
             {t("athlete.subtitle")}
           </p>
         </div>
-        {latest && <Badge variant={risk}>{t(`risk.${risk}`)}</Badge>}
       </section>
 
-      <div className="stats-row">
-        <StatCard label={t("athlete.checkInsLogged")} value={streak} hint={t("athlete.last14Days")} />
-        <StatCard
-          label={t("athlete.latestMood")}
-          value={latest?.mood ?? "—"}
-          hint={loggedThisWeek ? t("athlete.loggedThisWeek") : t("athlete.notLoggedThisWeek")}
-        />
-        <StatCard
-          label={t("athlete.avgEnergy")}
-          value={
-            checkIns.length
-              ? (
-                  checkIns.slice(0, 7).reduce((s, c) => s + c.energy, 0) /
-                  Math.min(7, checkIns.length)
-                ).toFixed(1)
-              : "—"
-          }
-        />
-        <StatCard
-          label={t("athlete.avgStress")}
-          value={
-            checkIns.length
-              ? (
-                  checkIns.slice(0, 7).reduce((s, c) => s + c.stress, 0) /
-                  Math.min(7, checkIns.length)
-                ).toFixed(1)
-              : "—"
-          }
-        />
-      </div>
+      <Card title={t("athlete.todayTitle")} subtitle={t("athlete.todaySubtitle")}>
+        <p className={`today-status ${todayCheckIn ? "today-status--done" : "today-status--pending"}`}>
+          {todayCheckIn ? t("athlete.todayDone") : t("athlete.todayPending")}
+        </p>
+      </Card>
 
       <CheckInForm
         athleteId={profile.id}
@@ -103,29 +69,7 @@ export function AthleteDashboard({ profile, teamName }) {
         onSaved={load}
       />
 
-      <CheckInChart checkIns={checkIns.slice(0, 7)} />
-
-      {checkIns.length > 0 && (
-        <Card title={t("athlete.recentCheckIns")} subtitle={t("athlete.recentSubtitle")}>
-          <ul className="check-in-list">
-            {checkIns.map((c) => {
-              const r = calculateRiskLevel(c)
-              return (
-                <li key={c.id}>
-                  <span>{c.check_in_date}</span>
-                  <span>
-                    {t("athlete.mood")} {c.mood}
-                  </span>
-                  <span>
-                    {t("athlete.stress")} {c.stress}
-                  </span>
-                  <Badge variant={r}>{t(`risk.${r}`)}</Badge>
-                </li>
-              )
-            })}
-          </ul>
-        </Card>
-      )}
+      <AthletePsychologistContact userId={profile.id} />
     </div>
   )
 }

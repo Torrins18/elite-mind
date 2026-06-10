@@ -24,22 +24,40 @@ export function PsychologistDashboard({ profile }) {
   const [selectedId, setSelectedId] = useState(null)
   const [categoryFilter, setCategoryFilter] = useState("")
   const [coachPreviewTeamId, setCoachPreviewTeamId] = useState("")
+  const [appointmentRequests, setAppointmentRequests] = useState([])
+  const [psychologistMessages, setPsychologistMessages] = useState([])
   const [loading, setLoading] = useState(true)
 
   const load = useCallback(async () => {
     setLoading(true)
 
-    const [{ data: roster, error: rosterError }, { data: teamList }, { data: ins }, assessmentRes] =
-      await Promise.all([
-        supabase.from("profiles").select("*").eq("role", "athlete").order("name"),
-        supabase.from("teams").select("id, name").order("name"),
-        supabase
-          .from("check_ins")
-          .select("*")
-          .order("check_in_date", { ascending: false })
-          .limit(500),
-        supabase.from("athlete_initial_assessments").select("*"),
-      ])
+    const [
+      { data: roster, error: rosterError },
+      { data: teamList },
+      { data: ins },
+      assessmentRes,
+      appointmentsRes,
+      messagesRes,
+    ] = await Promise.all([
+      supabase.from("profiles").select("*").eq("role", "athlete").order("name"),
+      supabase.from("teams").select("id, name").order("name"),
+      supabase
+        .from("check_ins")
+        .select("*")
+        .order("check_in_date", { ascending: false })
+        .limit(500),
+      supabase.from("athlete_initial_assessments").select("*"),
+      supabase
+        .from("appointment_requests")
+        .select("*")
+        .eq("status", "pending")
+        .order("created_at", { ascending: false }),
+      supabase
+        .from("psychologist_messages")
+        .select("*")
+        .eq("status", "unread")
+        .order("created_at", { ascending: false }),
+    ])
 
     const initialAssessments = assessmentRes.error ? [] : assessmentRes.data || []
 
@@ -51,6 +69,8 @@ export function PsychologistDashboard({ profile }) {
     setTeams(teamList || [])
     setCheckIns(ins || [])
     setAssessments(initialAssessments || [])
+    setAppointmentRequests(appointmentsRes.error ? [] : appointmentsRes.data || [])
+    setPsychologistMessages(messagesRes.error ? [] : messagesRes.data || [])
     setSelectedId((prev) => {
       const list = roster || []
       if (prev && list.some((a) => a.id === prev)) return prev
@@ -77,6 +97,33 @@ export function PsychologistDashboard({ profile }) {
     const ids = new Set(filteredAthletes.map((a) => a.id))
     return checkIns.filter((c) => ids.has(c.athlete_id))
   }, [checkIns, filteredAthletes])
+
+  const athleteMap = useMemo(
+    () => Object.fromEntries(athletes.map((a) => [a.id, a])),
+    [athletes]
+  )
+
+  const markAppointmentHandled = async (id) => {
+    const { error } = await supabase
+      .from("appointment_requests")
+      .update({ status: "scheduled" })
+      .eq("id", id)
+
+    if (!error) {
+      setAppointmentRequests((rows) => rows.filter((row) => row.id !== id))
+    }
+  }
+
+  const markMessageRead = async (id) => {
+    const { error } = await supabase
+      .from("psychologist_messages")
+      .update({ status: "read" })
+      .eq("id", id)
+
+    if (!error) {
+      setPsychologistMessages((rows) => rows.filter((row) => row.id !== id))
+    }
+  }
 
   const exportCsv = () => {
     const rows = buildCheckInsExport({
@@ -156,6 +203,88 @@ export function PsychologistDashboard({ profile }) {
         psychologistId={profile.id}
         onPreviewCoachTeam={setCoachPreviewTeamId}
       />
+
+      {(appointmentRequests.length > 0 || psychologistMessages.length > 0) && (
+        <div className="psych-inbox-grid">
+          <Card
+            title={t("psychologist.pendingAppointments")}
+            subtitle={t("psychologist.pendingAppointmentsSubtitle")}
+          >
+            {appointmentRequests.length === 0 ? (
+              <p className="empty-state">{t("psychologist.noPendingAppointments")}</p>
+            ) : (
+              <ul className="inbox-list">
+                {appointmentRequests.map((item) => {
+                  const athlete = athleteMap[item.user_id]
+                  return (
+                    <li key={item.id} className="inbox-list__item">
+                      <div className="inbox-list__meta">
+                        <strong>{athlete?.name || t("psychologist.unknownAthlete")}</strong>
+                        <span>
+                          {athlete?.team_id ? teamMap[athlete.team_id] : t("risk.noData")}
+                          {" · "}
+                          {new Date(item.created_at).toLocaleString()}
+                        </span>
+                      </div>
+                      <p className="inbox-list__body">
+                        {item.message || t("psychologist.appointmentNoMessage")}
+                      </p>
+                      <div className="inbox-list__actions">
+                        <Button variant="ghost" onClick={() => markAppointmentHandled(item.id)}>
+                          {t("psychologist.markAppointmentHandled")}
+                        </Button>
+                        {athlete && (
+                          <Button variant="ghost" onClick={() => setSelectedId(athlete.id)}>
+                            {t("psychologist.viewAthlete")}
+                          </Button>
+                        )}
+                      </div>
+                    </li>
+                  )
+                })}
+              </ul>
+            )}
+          </Card>
+
+          <Card
+            title={t("psychologist.unreadMessages")}
+            subtitle={t("psychologist.unreadMessagesSubtitle")}
+          >
+            {psychologistMessages.length === 0 ? (
+              <p className="empty-state">{t("psychologist.noUnreadMessages")}</p>
+            ) : (
+              <ul className="inbox-list">
+                {psychologistMessages.map((item) => {
+                  const athlete = athleteMap[item.user_id]
+                  return (
+                    <li key={item.id} className="inbox-list__item">
+                      <div className="inbox-list__meta">
+                        <strong>{athlete?.name || t("psychologist.unknownAthlete")}</strong>
+                        <span>
+                          {athlete?.team_id ? teamMap[athlete.team_id] : t("risk.noData")}
+                          {" · "}
+                          {new Date(item.created_at).toLocaleString()}
+                        </span>
+                      </div>
+                      <blockquote className="inbox-list__quote">{item.message}</blockquote>
+                      <div className="inbox-list__actions">
+                        <Button variant="ghost" onClick={() => markMessageRead(item.id)}>
+                          {t("psychologist.markMessageRead")}
+                        </Button>
+                        {athlete && (
+                          <Button variant="ghost" onClick={() => setSelectedId(athlete.id)}>
+                            {t("psychologist.viewAthlete")}
+                          </Button>
+                        )}
+                      </div>
+                    </li>
+                  )
+                })}
+              </ul>
+            )}
+          </Card>
+        </div>
+      )}
 
       {coachPreviewTeamId && (
         <section className="coach-preview-panel">
