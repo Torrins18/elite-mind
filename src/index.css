@@ -443,6 +443,14 @@ input:focus, textarea:focus {
   color: var(--text);
 }
 
+.insight-card__text--muted {
+  color: var(--text-muted);
+}
+
+.insight-card--loading {
+  opacity: 0.92;
+}
+
 .insight-card__footer {
   margin-top: 10px;
   font-size: 0.78rem;

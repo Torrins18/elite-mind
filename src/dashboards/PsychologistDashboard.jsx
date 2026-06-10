@@ -10,13 +10,14 @@ import { Button } from "../components/ui/Button"
 import { CheckInChart } from "../components/CheckInChart"
 import { InsightCard } from "../components/InsightCard"
 import { averageMetrics, calculateRiskLevel, countByRisk } from "../lib/risk"
-import { buildAthleteInsight, buildTeamInsight } from "../lib/insights"
+import { buildTeamInsight } from "../lib/insights"
+import { useAthleteInsight } from "../hooks/useAthleteInsight"
 import { PsychologistCoachAdmin } from "../components/PsychologistCoachAdmin"
 import { consentStatus, isAdultInSpain } from "../lib/age"
 import { CoachDashboard } from "./CoachDashboard"
 
 export function PsychologistDashboard({ profile }) {
-  const { t } = useTranslation()
+  const { t, lang } = useTranslation()
   const [athletes, setAthletes] = useState([])
   const [teams, setTeams] = useState([])
   const [checkIns, setCheckIns] = useState([])
@@ -164,14 +165,26 @@ export function PsychologistDashboard({ profile }) {
     [filteredAthletes, filteredCheckIns, latestByAthlete, t]
   )
 
-  const athleteInsight = useMemo(() => {
-    if (!selected) return null
-    return buildAthleteInsight({ athlete: selected, checkIns: athleteCheckIns }, t)
-  }, [selected, athleteCheckIns, t])
+  const selectedAssessment = useMemo(
+    () => assessments.find((item) => item.athlete_id === selectedId) ?? null,
+    [assessments, selectedId]
+  )
+
+  const {
+    insight: athleteInsight,
+    source: athleteInsightSource,
+    loading: athleteInsightLoading,
+  } = useAthleteInsight({
+    athlete: selected,
+    checkIns: athleteCheckIns,
+    assessment: selectedAssessment,
+    teamName: selected?.team_id ? teamMap[selected.team_id] : "",
+    lang,
+    t,
+    enabled: Boolean(selected),
+  })
 
   if (loading) return <LoadingSpinner label={t("psychologist.loading")} />
-
-  const selectedAssessment = assessments.find((item) => item.athlete_id === selectedId)
 
   const emotionalRisk = athleteCheckIns.filter(
     (c) => calculateRiskLevel(c) === "high" || (c.personal_notes && c.personal_notes.length > 20)
@@ -400,6 +413,8 @@ export function PsychologistDashboard({ profile }) {
                     title={t("insights.athleteTitle")}
                     insight={athleteInsight}
                     footer={t("insights.footer")}
+                    loading={athleteInsightLoading}
+                    source={athleteInsightSource}
                   />
                 </div>
                 <CheckInChart checkIns={athleteCheckIns.slice(0, 14)} />
