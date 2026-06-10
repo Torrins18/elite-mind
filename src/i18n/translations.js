@@ -70,6 +70,8 @@ export const translations = {
       hintRegisterCoach:
         "Has recibido un enlace válido. Tras registrarte, el psicólogo deberá aprobar tu acceso.",
       inviteValid: "Invitación válida — registro de entrenador/a",
+      inviteInvalid:
+        "La invitación no es válida o ha caducado. Puedes iniciar sesión o registrarte como deportista.",
       checkingInvite: "Comprobando invitación...",
       createCoachAccount: "Crear cuenta de entrenador/a",
       email: "Correo electrónico",
@@ -619,6 +621,8 @@ export const translations = {
       hintRegisterCoach:
         "Has rebut un enllaç vàlid. Després de registrar-te, el psicòleg haurà d'aprovar el teu accés.",
       inviteValid: "Invitació vàlida — registre d'entrenador/a",
+      inviteInvalid:
+        "La invitació no és vàlida o ha caducat. Pots iniciar sessió o registrar-te com a esportista.",
       checkingInvite: "Comprovant invitació...",
       createCoachAccount: "Crear compte d'entrenador/a",
       email: "Correu electrònic",

@@ -18,12 +18,24 @@ export function clearPendingInvite() {
   localStorage.removeItem(INVITE_STORAGE_KEY)
 }
 
-export async function validateCoachInvite(token) {
+export async function validateCoachInvite(token, { timeoutMs = 8000 } = {}) {
   if (!token) return false
 
-  const { data, error } = await supabase.rpc("validate_coach_invite", {
+  const rpc = supabase.rpc("validate_coach_invite", {
     invite_token: token,
   })
 
-  return !error && data === true
+  let timeoutId
+  const timeout = new Promise((_, reject) => {
+    timeoutId = window.setTimeout(() => reject(new Error("invite_timeout")), timeoutMs)
+  })
+
+  try {
+    const { data, error } = await Promise.race([rpc, timeout])
+    return !error && data === true
+  } catch {
+    return false
+  } finally {
+    window.clearTimeout(timeoutId)
+  }
 }

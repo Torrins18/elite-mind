@@ -22,26 +22,38 @@ export function LoginPage() {
   const [message, setMessage] = useState("")
   const [coachInviteValid, setCoachInviteValid] = useState(false)
   const [inviteToken, setInviteToken] = useState(null)
-  const [checkingInvite, setCheckingInvite] = useState(true)
+  const [checkingInvite, setCheckingInvite] = useState(() => Boolean(getInviteFromUrl()))
 
   useEffect(() => {
     const token = getInviteFromUrl()
-    if (!token) {
-      setCheckingInvite(false)
-      return
-    }
+    if (!token) return
 
-    validateCoachInvite(token).then((valid) => {
-      setCoachInviteValid(valid)
-      setInviteToken(valid ? token : null)
-      if (valid) {
-        savePendingInvite(token)
-        setSignupRole("coach")
-        setMode("signup")
-      }
-      setCheckingInvite(false)
-    })
-  }, [])
+    let cancelled = false
+
+    validateCoachInvite(token)
+      .then((valid) => {
+        if (cancelled) return
+        setCoachInviteValid(valid)
+        setInviteToken(valid ? token : null)
+        if (valid) {
+          savePendingInvite(token)
+          setSignupRole("coach")
+          setMode("signup")
+        } else {
+          setMessage(t("login.inviteInvalid"))
+        }
+      })
+      .catch(() => {
+        if (!cancelled) setMessage(t("login.inviteInvalid"))
+      })
+      .finally(() => {
+        if (!cancelled) setCheckingInvite(false)
+      })
+
+    return () => {
+      cancelled = true
+    }
+  }, [t])
 
   const login = async (e) => {
     e.preventDefault()
