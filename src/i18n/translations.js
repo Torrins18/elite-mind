@@ -83,6 +83,13 @@ export const translations = {
       toggleLogin: "¿Ya tienes cuenta? Iniciar sesión",
       confirmEmail:
         "Cuenta creada. Revisa tu email para confirmar, luego inicia sesión. Tu perfil se creará al entrar.",
+      errors: {
+        rateLimit:
+          "Demasiados intentos de registro o correos enviados. Espera unos minutos o pide al psicólogo que cree la cuenta de prueba.",
+        tooSoon: "Espera un minuto antes de volver a intentar el registro.",
+        invalidCredentials: "Correo o contraseña incorrectos, o el email aún no está confirmado.",
+        alreadyRegistered: "Este correo ya está registrado. Prueba a iniciar sesión.",
+      },
     },
 
     passwordReset: {
@@ -634,6 +641,13 @@ export const translations = {
       toggleLogin: "Ja tens compte? Iniciar sessió",
       confirmEmail:
         "Compte creat. Revisa el teu email per confirmar, després inicia sessió. El teu perfil es crearà en entrar.",
+      errors: {
+        rateLimit:
+          "Massa intents de registre o correus enviats. Espera uns minuts o demana al psicòleg que creï el compte de prova.",
+        tooSoon: "Espera un minut abans de tornar a intentar el registre.",
+        invalidCredentials: "Correu o contrasenya incorrectes, o el correu encara no està confirmat.",
+        alreadyRegistered: "Aquest correu ja està registrat. Prova d'iniciar sessió.",
+      },
     },
 
     passwordReset: {

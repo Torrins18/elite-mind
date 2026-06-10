@@ -8,6 +8,7 @@ import {
   clearPendingInvite,
 } from "../lib/invites"
 import { notifyCoachRegistration } from "../lib/coachNotifications"
+import { mapAuthError } from "../lib/authErrors"
 import { LanguageSwitcher } from "../components/LanguageSwitcher"
 import { RolePicker } from "../components/RolePicker"
 import { Button } from "../components/ui/Button"
@@ -60,7 +61,7 @@ export function LoginPage() {
     setError("")
     setMessage("")
     const { error: err } = await supabase.auth.signInWithPassword({ email, password })
-    if (err) setError(err.message)
+    if (err) setError(mapAuthError(err.message, t))
   }
 
   const signUp = async (e) => {
@@ -85,7 +86,7 @@ export function LoginPage() {
     })
 
     if (err) {
-      setError(err.message)
+      setError(mapAuthError(err.message, t))
       return
     }
 
@@ -160,7 +161,7 @@ export function LoginPage() {
     })
 
     if (resetError) {
-      setError(resetError.message)
+      setError(mapAuthError(resetError.message, t))
       return
     }
 
