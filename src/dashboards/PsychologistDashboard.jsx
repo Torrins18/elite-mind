@@ -134,7 +134,7 @@ export function PsychologistDashboard({ profile }) {
       t,
     })
     const suffix = categoryFilter ? teamMap[categoryFilter] : "todos"
-    downloadCsv(`elite-mind-checkins-${suffix}.csv`, rows)
+    downloadCsv(`zona-mental-checkins-${suffix}.csv`, rows)
   }
 
   const latestByAthlete = useMemo(

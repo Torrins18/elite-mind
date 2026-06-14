@@ -1,6 +1,7 @@
 import { useState } from "react"
 import { supabase } from "../supabase"
 import { useTranslation } from "../i18n/LanguageContext"
+import { BrandLogo } from "../components/BrandLogo"
 import { LanguageSwitcher } from "../components/LanguageSwitcher"
 import { Button } from "../components/ui/Button"
 
@@ -45,6 +46,9 @@ export function ResetPasswordPage({ onCompleted, onLogout }) {
       </div>
       <div className="auth-panel auth-panel--single">
         <form className="auth-form" onSubmit={updatePassword}>
+          <div className="auth-form__brand auth-form__brand--always">
+            <BrandLogo variant="compact" />
+          </div>
           <h2>{t("passwordReset.newTitle")}</h2>
           <p className="auth-form__hint">{t("passwordReset.newSubtitle")}</p>
 

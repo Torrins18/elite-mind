@@ -9,6 +9,7 @@ import {
 } from "../lib/invites"
 import { notifyCoachRegistration } from "../lib/coachNotifications"
 import { mapAuthError } from "../lib/authErrors"
+import { BrandLogo } from "../components/BrandLogo"
 import { LanguageSwitcher } from "../components/LanguageSwitcher"
 import { RolePicker } from "../components/RolePicker"
 import { Button } from "../components/ui/Button"
@@ -179,12 +180,8 @@ export function LoginPage() {
       </div>
       <div className="auth-panel">
         <div className="auth-panel__hero">
-          <span className="auth-panel__badge">{t("login.badge")}</span>
-          <h1>
-            {t("login.heroTitle")}
-            <br />
-            {t("login.heroTitle2")}
-          </h1>
+          <BrandLogo variant="hero" />
+          <p className="auth-panel__tagline">{t("login.tagline")}</p>
           <p>{t("login.heroText")}</p>
         </div>
 
@@ -192,6 +189,9 @@ export function LoginPage() {
           className="auth-form"
           onSubmit={isForgotMode ? requestPasswordReset : mode === "login" ? login : signUp}
         >
+          <div className="auth-form__brand">
+            <BrandLogo variant="compact" />
+          </div>
           <h2>
             {isForgotMode
               ? t("passwordReset.title")

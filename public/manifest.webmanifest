@@ -1,7 +1,7 @@
 {
-  "name": "Elite Mind",
-  "short_name": "Elite Mind",
-  "description": "Rendimiento mental para deportistas y equipos",
+  "name": "Zona Mental+",
+  "short_name": "Zona Mental+",
+  "description": "Psicología deportiva — mide, entiende, potencia",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#060b14",
@@ -10,10 +10,16 @@
   "lang": "es",
   "icons": [
     {
-      "src": "/favicon.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
+      "src": "/zona-mental-logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
       "purpose": "any"
+    },
+    {
+      "src": "/zona-mental-logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ]
 }

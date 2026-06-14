@@ -1,7 +1,7 @@
 export const translations = {
   es: {
-    appName: "Elite Mind",
-    appEyebrow: "Rendimiento mental",
+    appName: "Zona Mental+",
+    appEyebrow: "Psicología deportiva",
     signOut: "Cerrar sesión",
     retry: "Reintentar",
     loadingSession: "Cargando sesión...",
@@ -50,11 +50,9 @@ export const translations = {
     },
 
     login: {
-      badge: "Psicología deportiva",
-      heroTitle: "Entrena la mente.",
-      heroTitle2: "Domina el rendimiento.",
+      tagline: "Mide. Entiende. Potencia.",
       heroText:
-        "Autoevaluaciones mentales, inteligencia de equipo para entrenadores y visión clínica completa para psicólogos — diseñado para el deporte de élite.",
+        "Autoevaluaciones mentales, inteligencia de equipo para entrenadores y visión clínica completa para psicólogos.",
       welcome: "Bienvenido/a de nuevo",
       register: "Crear cuenta",
       hintLogin: "Inicia sesión en tu panel de rendimiento.",
@@ -209,9 +207,9 @@ export const translations = {
       guardianConsentRequired: "El tutor legal debe aceptar y firmar el consentimiento.",
       guardianConsentText:
         "Como tutor legal, autorizo el uso de esta app por parte del/de la menor, confirmo que soy responsable legal y acepto el tratamiento de los datos necesarios para el seguimiento de rendimiento mental.",
-      guardianEmailSubject: "Consentimiento legal para Elite Mind",
+      guardianEmailSubject: "Consentimiento legal para Zona Mental+",
       guardianEmailBody:
-        "Hola, necesitamos que un tutor legal revise y firme el consentimiento para que el/la menor pueda usar Elite Mind. Por favor, completa tus datos en la app junto al/la deportista.",
+        "Hola, necesitamos que un tutor legal revise y firme el consentimiento para que el/la menor pueda usar Zona Mental+. Por favor, completa tus datos en la app junto al/la deportista.",
       emailGuardian: "Preparar email al tutor",
       signAndContinue: "Firmar y continuar",
       correctBirthDate: "Corregir fecha de nacimiento",
@@ -590,8 +588,8 @@ export const translations = {
   },
 
   ca: {
-    appName: "Elite Mind",
-    appEyebrow: "Rendiment mental",
+    appName: "Zona Mental+",
+    appEyebrow: "Psicologia de l'esport",
     signOut: "Tancar sessió",
     retry: "Reintentar",
     loadingSession: "Carregant sessió...",
@@ -640,11 +638,9 @@ export const translations = {
     },
 
     login: {
-      badge: "Psicologia de l'esport",
-      heroTitle: "Entrena la ment.",
-      heroTitle2: "Domina el rendiment.",
+      tagline: "Mesura. Entén. Potencia.",
       heroText:
-        "Autoavaluacions mentals, intel·ligència d'equip per a entrenadors i visió clínica completa per a psicòlegs — dissenyat per a l'esport d'elit.",
+        "Autoavaluacions mentals, intel·ligència d'equip per a entrenadors i visió clínica completa per a psicòlegs.",
       welcome: "Benvingut/da de nou",
       register: "Crear compte",
       hintLogin: "Inicia sessió al teu panell de rendiment.",
@@ -799,9 +795,9 @@ export const translations = {
       guardianConsentRequired: "El tutor legal ha d'acceptar i signar el consentiment.",
       guardianConsentText:
         "Com a tutor legal, autoritzo l'ús d'aquesta app per part del/de la menor, confirmo que en soc responsable legal i accepto el tractament de les dades necessàries per al seguiment del rendiment mental.",
-      guardianEmailSubject: "Consentiment legal per a Elite Mind",
+      guardianEmailSubject: "Consentiment legal per a Zona Mental+",
       guardianEmailBody:
-        "Hola, necessitem que un tutor legal revisi i signi el consentiment perquè el/la menor pugui utilitzar Elite Mind. Si us plau, completa les teves dades a l'app al costat de l'esportista.",
+        "Hola, necessitem que un tutor legal revisi i signi el consentiment perquè el/la menor pugui utilitzar Zona Mental+. Si us plau, completa les teves dades a l'app al costat de l'esportista.",
       emailGuardian: "Preparar email al tutor",
       signAndContinue: "Signar i continuar",
       correctBirthDate: "Corregir data de naixement",

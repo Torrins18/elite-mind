@@ -1,4 +1,5 @@
 import { useTranslation } from "../i18n/LanguageContext"
+import { BrandLogo } from "./BrandLogo"
 import { LanguageSwitcher } from "./LanguageSwitcher"
 import { PrivacyNotice } from "./PrivacyNotice"
 import { Button } from "./ui/Button"
@@ -10,11 +11,7 @@ export function Layout({ profile, session, teamName, onLogout, children }) {
     <div className="app-shell">
       <header className="topbar">
         <div className="topbar__brand">
-          <span className="topbar__mark" aria-hidden />
-          <div>
-            <p className="topbar__eyebrow">{t("appEyebrow")}</p>
-            <h1 className="topbar__title">{t("appName")}</h1>
-          </div>
+          <BrandLogo variant="bar" />
         </div>
 
         <div className="topbar__user">
