@@ -108,6 +108,7 @@ export function summarizeAthlete({ athlete, checkIns }) {
     stressTrend: trendDelta(rows, "stress"),
     energyTrend: trendDelta(rows, "energy"),
     sleepTrend: trendDelta(rows, "sleep_quality"),
+    focusTrend: trendDelta(rows, "focus"),
     weakAreas,
     hasRecentNotes: Boolean(latest?.personal_notes?.trim()),
     hasData: Boolean(latest),

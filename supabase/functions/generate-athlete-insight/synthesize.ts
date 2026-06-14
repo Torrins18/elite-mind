@@ -1,4 +1,4 @@
-export function synthesizeAthleteNarrative(context) {
+export function synthesizeAthleteNarrative(context: Record<string, unknown>) {
   const lang = context.lang === "ca" ? "ca" : "es"
   const name = context.athlete?.name || (lang === "ca" ? "l'esportista" : "el deportista")
   const latest = context.metrics?.latest

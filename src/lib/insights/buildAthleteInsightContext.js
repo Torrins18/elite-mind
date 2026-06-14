@@ -33,6 +33,7 @@ export function buildAthleteInsightContext({ athlete, checkIns, assessment, team
         stress: summary.stressTrend,
         energy: summary.energyTrend,
         sleep: summary.sleepTrend,
+        focus: summary.focusTrend,
       },
       weakAreas: summary.weakAreas,
       totalEntries: summary.totalEntries,
