@@ -740,6 +740,110 @@ input:focus, textarea:focus {
   justify-content: flex-end;
 }
 
+.psych-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 4px;
+  border-radius: 14px;
+  background: rgba(148, 163, 184, 0.06);
+  border: 1px solid var(--border);
+}
+
+.psych-tabs__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.psych-tabs__btn.active {
+  color: var(--text);
+  background: rgba(34, 211, 238, 0.1);
+  border-color: rgba(34, 211, 238, 0.25);
+}
+
+.psych-tabs__badge {
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: var(--danger);
+  color: #fff;
+  font-size: 0.72rem;
+  line-height: 20px;
+  text-align: center;
+}
+
+.team-overview-grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 14px;
+}
+
+.team-overview-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  border-radius: 14px;
+  background: rgba(148, 163, 184, 0.06);
+  border: 1px solid var(--border);
+}
+
+.team-overview-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.team-overview-card__header h3 {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.team-overview-card__insight {
+  margin: 0;
+  font-size: 0.88rem;
+  line-height: 1.45;
+  color: var(--text-muted);
+}
+
+.team-overview-card__stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px 14px;
+  margin: 0;
+}
+
+.team-overview-card__stats div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.team-overview-card__stats dt {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.team-overview-card__stats dd {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
 .psych-inbox-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -945,8 +1049,19 @@ input:focus, textarea:focus {
 
 @media (max-width: 900px) {
   .psych-layout,
-  .psych-inbox-grid {
+  .psych-inbox-grid,
+  .team-overview-grid {
     grid-template-columns: 1fr;
+  }
+
+  .psych-tabs {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .psych-tabs__btn {
+    flex: 0 0 auto;
   }
 }
 
