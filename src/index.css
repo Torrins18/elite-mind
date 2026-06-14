@@ -844,6 +844,33 @@ input:focus, textarea:focus {
   font-weight: 600;
 }
 
+.check-in-register {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.check-in-register__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: rgba(148, 163, 184, 0.06);
+  border: 1px solid var(--border);
+  font-size: 0.9rem;
+}
+
+.check-in-register__status {
+  color: var(--success, #34d399);
+  font-weight: 600;
+  font-size: 0.82rem;
+}
+
 .psych-inbox-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));

@@ -1,9 +1,6 @@
 import { Card } from "../ui/Card"
-import { Badge } from "../ui/Badge"
-import { Button } from "../ui/Button"
 import { CheckInChart } from "../CheckInChart"
 import { InsightCard } from "../InsightCard"
-import { calculateRiskLevel } from "../../lib/risk"
 import { consentStatus, isAdultInSpain } from "../../lib/age"
 
 export function PsychologistAthleteDetail({
@@ -16,10 +13,6 @@ export function PsychologistAthleteDetail({
   insightSource,
   t,
 }) {
-  const emotionalRisk = checkIns.filter(
-    (c) => calculateRiskLevel(c) === "high" || (c.personal_notes && c.personal_notes.length > 20)
-  )
-
   return (
     <>
       <Card title={athlete.name} subtitle={t("psychologist.historySubtitle")}>
@@ -121,103 +114,24 @@ export function PsychologistAthleteDetail({
         )}
       </Card>
 
-      {emotionalRisk.length > 0 && (
-        <Card
-          title={t("psychologist.emotionalRisk")}
-          subtitle={t("psychologist.emotionalRiskSubtitle")}
-        >
-          <ul className="notes-list">
-            {emotionalRisk.slice(0, 8).map((c) => {
-              const r = calculateRiskLevel(c)
-              return (
-                <li key={c.id}>
-                  <div className="notes-list__meta">
-                    <span>{c.check_in_date}</span>
-                    <Badge variant={r}>{t(`risk.${r}`)}</Badge>
-                  </div>
-                  <p className="notes-list__metrics">
-                    {t("psychologist.moodStress", {
-                      mood: c.mood,
-                      stress: c.stress,
-                    })}{" "}
-                    · {t("checkIn.metricSleep")} {c.sleep_quality} · {t("checkIn.metricEnergy")}{" "}
-                    {c.energy}
-                  </p>
-                  {c.personal_notes && <blockquote>{c.personal_notes}</blockquote>}
-                </li>
-              )
-            })}
+      <Card
+        title={t("psychologist.checkInLog")}
+        subtitle={t("psychologist.checkInLogSubtitleSimple")}
+      >
+        {checkIns.length === 0 ? (
+          <p className="empty-state">{t("psychologist.noCheckIns")}</p>
+        ) : (
+          <ul className="check-in-register">
+            {checkIns.map((c) => (
+              <li key={c.id} className="check-in-register__row">
+                <span>{c.check_in_date}</span>
+                <span className="check-in-register__status">{t("psychologist.checkInResponded")}</span>
+              </li>
+            ))}
           </ul>
-        </Card>
-      )}
-
-      <Card title={t("psychologist.checkInLog")} subtitle={t("psychologist.checkInLogSubtitle")}>
-        <ul className="notes-list">
-          {checkIns.length === 0 ? (
-            <p className="empty-state">{t("psychologist.noCheckIns")}</p>
-          ) : (
-            checkIns.map((c) => {
-              const r = calculateRiskLevel(c)
-              return (
-                <li key={c.id}>
-                  <div className="notes-list__meta">
-                    <span>{c.check_in_date}</span>
-                    <Badge variant={r}>{t(`risk.${r}`)}</Badge>
-                  </div>
-                  <p className="notes-list__metrics">
-                    {t("checkIn.metricMood")} {c.mood} · {t("checkIn.metricStress")} {c.stress} ·{" "}
-                    {t("checkIn.metricSleep")} {c.sleep_quality} · {t("checkIn.metricEnergy")}{" "}
-                    {c.energy} · {t("checkIn.metricFocus")} {c.focus}
-                  </p>
-                  {c.personal_notes ? (
-                    <blockquote>{c.personal_notes}</blockquote>
-                  ) : (
-                    <p className="notes-list__empty">{t("psychologist.noNotes")}</p>
-                  )}
-                  {hasExtendedCheckIn(c) && (
-                    <div className="extended-review">
-                      <p>
-                        <strong>{t("checkIn.performanceRating")}:</strong>{" "}
-                        {c.performance_rating ?? "—"}/10
-                      </p>
-                      <p>
-                        <strong>{t("checkIn.involvementRating")}:</strong>{" "}
-                        {c.involvement_rating ?? "—"}/10
-                      </p>
-                      {c.general_mood_words && (
-                        <p>
-                          <strong>{t("checkIn.generalMoodWords")}:</strong> {c.general_mood_words}
-                        </p>
-                      )}
-                      {c.mood_change_event && (
-                        <p>
-                          <strong>{t("checkIn.moodChangeEvent")}:</strong> {c.mood_change_event}
-                        </p>
-                      )}
-                      {c.next_goal && (
-                        <p>
-                          <strong>{t("checkIn.nextGoal")}:</strong> {c.next_goal}
-                        </p>
-                      )}
-                    </div>
-                  )}
-                </li>
-              )
-            })
-          )}
-        </ul>
+        )}
       </Card>
     </>
-  )
-}
-
-function hasExtendedCheckIn(checkIn) {
-  return Boolean(
-    checkIn.performance_rating !== null ||
-      checkIn.involvement_rating !== null ||
-      checkIn.general_mood_words ||
-      checkIn.mood_change_event ||
-      checkIn.next_goal
   )
 }
 
