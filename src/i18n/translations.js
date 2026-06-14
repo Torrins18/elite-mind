@@ -403,7 +403,7 @@ export const translations = {
       aiLabel: "IA",
       loading: "Generando lectura clínica...",
       footerEnhanced:
-        "Lectura combinada con métricas, notas, objetivos y evaluación inicial (IA o síntesis clínica).",
+        "Lectura clínica en lenguaje natural, combinada con métricas, notas y tendencias recientes.",
       footer:
         "Generado a partir de las autoevaluaciones de los últimos 7 días (objetivo: 1-2 registros/semana por deportista).",
       footerCoach:
@@ -1003,7 +1003,7 @@ export const translations = {
       aiLabel: "IA",
       loading: "Generant lectura clínica...",
       footerEnhanced:
-        "Lectura combinada amb mètriques, notes, objectius i avaluació inicial (IA o síntesi clínica).",
+        "Lectura clínica en llenguatge natural, combinada amb mètriques, notes i tendències recents.",
       footer:
         "Generat a partir de les autoavaluacions dels últims 7 dies (objectiu: 1-2 registres/setmana per esportista).",
       footerCoach:

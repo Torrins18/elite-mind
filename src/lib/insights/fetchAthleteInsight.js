@@ -1,6 +1,6 @@
 import { supabase } from "../../supabase"
-import { buildAthleteInsight } from "./athleteInsight"
 import { buildAthleteInsightContext } from "./buildAthleteInsightContext"
+import { synthesizeAthleteNarrative } from "./synthesizeAthleteNarrative"
 
 export async function fetchAthleteInsight({
   athlete,
@@ -10,10 +10,19 @@ export async function fetchAthleteInsight({
   lang,
   t,
 }) {
-  const fallback = () => ({
-    insight: buildAthleteInsight({ athlete, checkIns }, t),
-    source: "rules",
-  })
+  const fallback = () => {
+    const context = buildAthleteInsightContext({
+      athlete,
+      checkIns,
+      assessment,
+      teamName,
+      lang,
+    })
+    return {
+      insight: synthesizeAthleteNarrative(context),
+      source: "synthesis",
+    }
+  }
 
   if (!athlete) return { insight: null, source: null }
 

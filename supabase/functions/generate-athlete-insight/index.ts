@@ -122,20 +122,16 @@ async function generateWithOpenAI(apiKey: string, context: InsightContext) {
         {
           role: "system",
           content:
-            "Ets un/a assistent de psicologia de l'esport per a professionals. Genera lectures clíniques breus, factuals i accionables. No diagnostiquis. Màxim 2 frases i ~45 paraules. Respon només JSON amb claus tone i text. tone ha de ser una de: positive, neutral, warning, danger.",
+            "Ets un/a psicòleg/òloga de l'esport escrivint notes clíniques breus per a un company. Escriu com una persona, no com un informe tècnic. Una o dues frases fluides, màxim ~40 paraules. No llistis mètriques amb X/10, no facis seccions tipus 'Context clínic', no posis cometes ni bullet points. Connecta tendències (energia, son, estrès, ànim) amb el que cal vigilar. No diagnostiquis. Respon només JSON: {\"tone\":\"positive|neutral|warning|danger\",\"text\":\"...\"}.",
         },
         {
           role: "user",
-          content: `Idioma de sortida: ${lang}.
+          content: `Idioma: ${lang}.
 
-Combina mètriques recents, notes personals, objectius, esdeveniments d'ànim i avaluació inicial (context personal, familiar, son, pressió, objectiu esportiu).
+Exemple de to desitjat (català):
+"Veient els resultats dels últims dies, l'esportista està més cansat i amb menys energia que fa uns dies; convé controlar perquè tampoc dorm bé."
 
-Prioritza:
-1) risc o tendències rellevants
-2) temes de notes i objectius recents
-3) factors clau de l'avaluació inicial (suport familiar, pressió, son, objectiu actual)
-
-Dades:
+Genera una lectura similar per a aquestes dades:
 ${payload}`,
         },
       ],
@@ -159,136 +155,172 @@ ${payload}`,
 
 function synthesizeInsight(context: InsightContext) {
   const lang = context.lang === "ca" ? "ca" : "es"
-  const name = context.athlete?.name || (lang === "ca" ? "L'esportista" : "El deportista")
+  const name = context.athlete?.name || (lang === "ca" ? "l'esportista" : "el deportista")
   const latest = context.metrics?.latest
+  const trends = context.metrics?.trends || {}
   const risk = context.metrics?.risk || "neutral"
-  const avg7 = context.metrics?.avg7 || {}
-  const notes = context.qualitative?.personalNotes || []
-  const goals = context.qualitative?.nextGoals || []
-  const events = context.qualitative?.moodEvents || []
-  const assessment = context.initialAssessment
-
-  const parts: string[] = []
+  const note = context.qualitative?.personalNotes?.[0]?.text || ""
 
   if (!latest) {
     return {
       tone: "neutral",
       text:
         lang === "ca"
-          ? `${name} encara no té autoavaluacions recents per generar una lectura combinada.`
-          : `${name} aún no tiene autoevaluaciones recientes para generar una lectura combinada.`,
+          ? `Veient els registres disponibles, ${name} encara no té autoavaluacions recents.`
+          : `Viendo los registros disponibles, ${name} aún no tiene autoevaluaciones recientes.`,
     }
   }
 
-  const metricLine =
-    lang === "ca"
-      ? `Ànim mitjà ${avg7.mood ?? latest.mood}/10, estrès ${avg7.stress ?? latest.stress}/10 i energia ${avg7.energy ?? latest.energy}/10 (7 dies).`
-      : `Ánimo medio ${avg7.mood ?? latest.mood}/10, estrés ${avg7.stress ?? latest.stress}/10 y energía ${avg7.energy ?? latest.energy}/10 (7 días).`
-
-  parts.push(
-    lang === "ca"
-      ? `${name} es manté ${riskLabel(risk, lang)} amb ${metricLine}`
-      : `${name} se mantiene ${riskLabel(risk, lang)} con ${metricLine}`
-  )
-
-  const noteSnippet = notes[0]?.text
-  const goalSnippet = goals[0]?.text
-  const eventSnippet = events[0]?.text
-  const qualitativeBits: string[] = []
-
-  if (noteSnippet) {
-    qualitativeBits.push(
-      lang === "ca"
-        ? `notes recents sobre «${truncate(noteSnippet, 90)}»`
-        : `notas recientes sobre «${truncate(noteSnippet, 90)}»`
-    )
-  }
-  if (goalSnippet) {
-    qualitativeBits.push(
-      lang === "ca"
-        ? `objectiu proper: «${truncate(goalSnippet, 70)}»`
-        : `objetivo próximo: «${truncate(goalSnippet, 70)}»`
-    )
-  }
-  if (eventSnippet) {
-    qualitativeBits.push(
-      lang === "ca"
-        ? `esdeveniment rellevant: «${truncate(eventSnippet, 70)}»`
-        : `evento relevante: «${truncate(eventSnippet, 70)}»`
-    )
+  const noteMentionsSleep = /dorm|son|descans/i.test(note)
+  const signals = {
+    energyDown: (trends.energy ?? 0) <= -0.5 || latest.energy <= 5,
+    sleepBad: (trends.sleep ?? 0) <= -0.5 || latest.sleep <= 4 || noteMentionsSleep,
+    stressUp: (trends.stress ?? 0) >= 0.5 || latest.stress >= 7,
+    moodDown: (trends.mood ?? 0) <= -0.5 || latest.mood <= 4,
+    noteMentionsFatigue: /cansad|cansat|fatig|esgot|malament|mal descans/i.test(note),
   }
 
-  const assessmentBits = extractAssessmentHighlights(assessment, lang)
-  if (assessmentBits.length) {
-    qualitativeBits.push(assessmentBits.join("; "))
+  if (lang === "ca") {
+    return buildCaNarrative(name, risk, signals)
   }
 
-  if (qualitativeBits.length) {
-    parts.push(
-      lang === "ca"
-        ? `Context clínic: ${qualitativeBits.join("; ")}.`
-        : `Contexto clínico: ${qualitativeBits.join("; ")}.`
-    )
+  return buildEsNarrative(name, risk, signals)
+}
+
+function buildCaNarrative(
+  name: string,
+  risk: string,
+  signals: {
+    energyDown: boolean
+    sleepBad: boolean
+    stressUp: boolean
+    moodDown: boolean
+    noteMentionsFatigue: boolean
+  }
+) {
+  const intro = `Veient els resultats dels últims dies, ${name}`
+
+  if (risk === "high") {
+    return {
+      tone: "danger",
+      text: `${intro} acumula senyals de sobrecàrrega emocional; convé prioritzar contacte i revisar càrrega avui.`,
+    }
+  }
+
+  if (
+    !signals.energyDown &&
+    !signals.sleepBad &&
+    !signals.stressUp &&
+    !signals.moodDown &&
+    !signals.noteMentionsFatigue
+  ) {
+    return {
+      tone: risk === "low" ? "positive" : "neutral",
+      text:
+        risk === "low"
+          ? `${intro} es manté estable i respon bé als últims registres.`
+          : `${intro} es manté en una línia acceptable; continuar el seguiment habitual.`,
+    }
+  }
+
+  const parts: string[] = []
+
+  if (signals.energyDown) {
+    parts.push("està més cansat i amb menys energia que fa uns dies")
+  } else if (signals.moodDown) {
+    parts.push("mostra un ànim més baix que fa uns dies")
+  } else if (signals.noteMentionsFatigue) {
+    parts.push("refereix cansament als darrers registres")
+  }
+
+  if (signals.stressUp && !signals.energyDown) {
+    parts.push("percep més pressió o estrès que abans")
+  }
+
+  let text = `${intro} ${parts.join(" i ")}`
+
+  if (signals.sleepBad) {
+    text += parts.length
+      ? "; convé controlar perquè tampoc dorm bé"
+      : " dorm poc bé darrerament; convé fer seguiment del descans"
+  } else if (signals.noteMentionsFatigue) {
+    text += parts.length
+      ? "; en les notes parla de cansament o mal descans, val la pena repassar-ho"
+      : " comenta cansament o mal descans a les notes; convé fer seguiment"
   }
 
   return {
     tone: riskToTone(risk),
-    text: parts.join(" "),
+    text: `${text}.`,
   }
 }
 
-function extractAssessmentHighlights(assessment: InsightContext["initialAssessment"], lang: "ca" | "es") {
-  if (!assessment) return []
+function buildEsNarrative(
+  name: string,
+  risk: string,
+  signals: {
+    energyDown: boolean
+    sleepBad: boolean
+    stressUp: boolean
+    moodDown: boolean
+    noteMentionsFatigue: boolean
+  }
+) {
+  const intro = `Viendo los resultados de los últimos días, ${name}`
 
-  const bits: string[] = []
-  const sports = assessment.sports || {}
-  const support = assessment.support || {}
-  const personal = assessment.personal || {}
-  const sleep = assessment.sleep || {}
-
-  if (sports.currentGoal) {
-    bits.push(
-      lang === "ca"
-        ? `objectiu inicial: ${sports.currentGoal}`
-        : `objetivo inicial: ${sports.currentGoal}`
-    )
-  }
-  if (sports.perceivedPressure) {
-    bits.push(
-      lang === "ca"
-        ? `pressió percebuda ${sports.perceivedPressure}`
-        : `presión percibida ${sports.perceivedPressure}`
-    )
-  }
-  if (support.familySupport) {
-    bits.push(
-      lang === "ca"
-        ? `suport familiar ${support.familySupport}`
-        : `apoyo familiar ${support.familySupport}`
-    )
-  }
-  if (personal.balanceDifficulty) {
-    bits.push(
-      lang === "ca"
-        ? `equilibri vida-esport ${personal.balanceDifficulty}`
-        : `equilibrio vida-deporte ${personal.balanceDifficulty}`
-    )
-  }
-  if (sleep.sleepHoursTypical) {
-    bits.push(
-      lang === "ca"
-        ? `son habitual ${sleep.sleepHoursTypical}`
-        : `sueño habitual ${sleep.sleepHoursTypical}`
-    )
+  if (risk === "high") {
+    return {
+      tone: "danger",
+      text: `${intro} acumula señales de sobrecarga emocional; conviene priorizar contacto y revisar carga hoy.`,
+    }
   }
 
-  return bits.slice(0, 3)
-}
+  if (
+    !signals.energyDown &&
+    !signals.sleepBad &&
+    !signals.stressUp &&
+    !signals.moodDown &&
+    !signals.noteMentionsFatigue
+  ) {
+    return {
+      tone: risk === "low" ? "positive" : "neutral",
+      text:
+        risk === "low"
+          ? `${intro} se mantiene estable y responde bien a los últimos registros.`
+          : `${intro} se mantiene en una línea aceptable; continuar el seguimiento habitual.`,
+    }
+  }
 
-function riskLabel(risk: string, lang: "ca" | "es") {
-  if (risk === "high") return lang === "ca" ? "en risc" : "en riesgo"
-  if (risk === "medium") return lang === "ca" ? "en vigilància" : "en vigilancia"
-  return lang === "ca" ? "estable" : "estable"
+  const parts: string[] = []
+
+  if (signals.energyDown) {
+    parts.push("está más cansado y con menos energía que hace unos días")
+  } else if (signals.moodDown) {
+    parts.push("muestra un ánimo más bajo que hace unos días")
+  } else if (signals.noteMentionsFatigue) {
+    parts.push("refiere cansancio en los registros recientes")
+  }
+
+  if (signals.stressUp && !signals.energyDown) {
+    parts.push("percibe más presión o estrés que antes")
+  }
+
+  let text = `${intro} ${parts.join(" y ")}`
+
+  if (signals.sleepBad) {
+    text += parts.length
+      ? "; conviene controlar porque tampoco duerme bien"
+      : " duerme mal últimamente; conviene hacer seguimiento del descanso"
+  } else if (signals.noteMentionsFatigue) {
+    text += parts.length
+      ? "; en las notas habla de cansancio o mal descanso, vale la pena repasarlo"
+      : " comenta cansancio o mal descanso en las notas; conviene hacer seguimiento"
+  }
+
+  return {
+    tone: riskToTone(risk),
+    text: `${text}.`,
+  }
 }
 
 function riskToTone(risk: string) {
@@ -302,12 +334,6 @@ function normalizeTone(tone: unknown) {
   const value = String(tone || "neutral")
   if (["positive", "neutral", "warning", "danger"].includes(value)) return value
   return "neutral"
-}
-
-function truncate(text: string, max: number) {
-  const clean = text.replace(/\s+/g, " ").trim()
-  if (clean.length <= max) return clean
-  return `${clean.slice(0, max - 1)}…`
 }
 
 function json(payload: unknown, status = 200) {
