@@ -6,6 +6,7 @@ import { StatCard } from "../components/ui/StatCard"
 import { LoadingSpinner } from "../components/ui/LoadingSpinner"
 import { CheckInChart } from "../components/CheckInChart"
 import { InsightCard } from "../components/InsightCard"
+import { TeamJoinLink } from "../components/TeamJoinLink"
 import { averageMetrics, calculateRiskLevel } from "../lib/risk"
 import { buildTeamInsight } from "../lib/insights"
 import {
@@ -22,6 +23,7 @@ export function CoachDashboard({ profile, teamName }) {
   const { t } = useTranslation()
   const [athletes, setAthletes] = useState([])
   const [checkIns, setCheckIns] = useState([])
+  const [teamJoinToken, setTeamJoinToken] = useState(null)
   const [loading, setLoading] = useState(true)
 
   const load = useCallback(async () => {
@@ -30,9 +32,18 @@ export function CoachDashboard({ profile, teamName }) {
     if (!profile.team_id) {
       setAthletes([])
       setCheckIns([])
+      setTeamJoinToken(null)
       setLoading(false)
       return
     }
+
+    const { data: teamRow } = await supabase
+      .from("teams")
+      .select("join_token")
+      .eq("id", profile.team_id)
+      .maybeSingle()
+
+    setTeamJoinToken(teamRow?.join_token || null)
 
     const { data: roster } = await supabase
       .from("profiles")
@@ -125,6 +136,12 @@ export function CoachDashboard({ profile, teamName }) {
           <p>{t("coach.subtitle")}</p>
         </div>
       </section>
+
+      {teamJoinToken && (
+        <Card title={t("teams.joinLinkTitle")} subtitle={t("teams.joinLinkCoachSubtitle")}>
+          <TeamJoinLink joinToken={teamJoinToken} teamName={teamName} />
+        </Card>
+      )}
 
       <div className="stats-row">
         <StatCard label={t("coach.athletes")} value={athletes.length} />

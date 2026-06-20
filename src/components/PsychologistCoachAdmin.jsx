@@ -3,7 +3,7 @@ import { supabase } from "../supabase"
 import { useTranslation } from "../i18n/LanguageContext"
 import { Card } from "./ui/Card"
 import { Button } from "./ui/Button"
-import { PsychologistAthleteRoster } from "./PsychologistAthleteRoster"
+import { TeamJoinLink } from "./TeamJoinLink"
 
 export function PsychologistCoachAdmin({ psychologistId, onPreviewCoachTeam }) {
   const { t } = useTranslation()
@@ -57,7 +57,10 @@ export function PsychologistCoachAdmin({ psychologistId, onPreviewCoachTeam }) {
 
     const approved = (approvedQuery.data || []).filter((c) => c.is_rejected !== true)
 
-    const { data: teamList } = await supabase.from("teams").select("id, name").order("name")
+    const { data: teamList } = await supabase
+      .from("teams")
+      .select("id, name, join_token")
+      .order("name")
 
     const { data: inv } = await supabase
       .from("coach_invites")
@@ -198,15 +201,19 @@ export function PsychologistCoachAdmin({ psychologistId, onPreviewCoachTeam }) {
           <Button type="submit">{t("teams.create")}</Button>
         </form>
         {teams.length > 0 && (
-          <ul className="team-chip-list">
+          <ul className="team-join-list">
             {teams.map((team) => (
-              <li key={team.id}>{team.name}</li>
+              <li key={team.id}>
+                <TeamJoinLink
+                  joinToken={team.join_token}
+                  teamName={team.name}
+                  onCopied={setMessage}
+                />
+              </li>
             ))}
           </ul>
         )}
       </Card>
-
-      <PsychologistAthleteRoster psychologistId={psychologistId} />
 
       <Card title={t("teams.previewTitle")} subtitle={t("teams.previewSubtitle")}>
         <div className="coach-preview-controls">

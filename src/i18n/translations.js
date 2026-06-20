@@ -72,10 +72,10 @@ export const translations = {
         "La invitación no es válida o ha caducado. Puedes iniciar sesión si ya tienes cuenta.",
       athleteJoinInvalid:
         "El enlace de activación no es válido o ha caducado. Pide uno nuevo al psicólogo o entrenador.",
-      athleteJoinValid: "Invitación para {name} — equipo {team}",
+      athleteJoinValid: "Enlace válido — registro en el equipo {team}",
       activateAthlete: "Activar cuenta de deportista",
       hintActivateAthlete:
-        "Activa tu cuenta con el correo indicado en la invitación. Tu equipo ya está asignado.",
+        "Crea tu cuenta de deportista. Al activarla quedarás asignado al equipo del enlace.",
       athleteInviteRequired:
         "Los deportistas necesitan un enlace de invitación del psicólogo para registrarse.",
       hintRegisterCoachOpen:
@@ -140,30 +140,6 @@ export const translations = {
       rejected: "Solicitud rechazada.",
     },
 
-    athleteInvites: {
-      title: "Deportistas del club",
-      subtitle: "Importa la plantilla y envía enlaces de activación individuales.",
-      flowHint:
-        "Flujo recomendado: crea el equipo → importa deportistas → copia cada enlace → el deportista activa su cuenta.",
-      teamLabel: "Equipo",
-      teamRequired: "Elige un equipo antes de importar.",
-      importLabel: "Importar deportistas",
-      importPlaceholder: "Un deportista por línea:\nAna García, ana@club.com\nPau Soler, pau@club.com",
-      importHint: "Formato: Nombre, email (opcional). Caducidad: 30 días. Cada enlace solo se usa una vez.",
-      importButton: "Generar invitaciones",
-      importing: "Generando...",
-      importEmpty: "No se encontraron filas válidas. Usa «Nombre, email» por línea.",
-      imported: "{count} invitaciones creadas.",
-      copyLink: "Copiar enlace",
-      copyAllPending: "Copiar todos los enlaces pendientes",
-      copied: "Enlace copiado al portapapeles.",
-      copiedAll: "{count} enlaces copiados al portapapeles.",
-      pending: "Pendiente",
-      used: "Activada",
-      noInvites: "Aún no hay invitaciones. Importa deportistas para generar enlaces.",
-      schemaMissing: "Ejecuta supabase/athlete-invites.sql en Supabase para activar las invitaciones.",
-    },
-
     rejectedCoach: {
       title: "Solicitud no aprobada",
       subtitle: "Tu acceso como entrenador/a no ha sido validado.",
@@ -198,7 +174,7 @@ export const translations = {
 
     teams: {
       manageTitle: "Equipos",
-      manageSubtitle: "Crea equipos y asigna entrenadores al grupo correspondiente.",
+      manageSubtitle: "Crea equipos y comparte el enlace de inscripción con tus deportistas.",
       newPlaceholder: "Nombre del nuevo equipo",
       create: "Crear equipo",
       created: "Equipo creado correctamente.",
@@ -214,6 +190,12 @@ export const translations = {
       previewTeam: "Equipo a revisar",
       previewOpen: "Ver panel",
       previewingTitle: "Previsualización de entrenador",
+      joinLinkTitle: "Enlace de inscripción del equipo",
+      joinLinkCoachSubtitle: "Comparte este enlace con los deportistas para que se registren en tu equipo.",
+      joinLinkHint: "Un solo enlace por equipo. Cada deportista crea su cuenta y queda asignado automáticamente.",
+      copyJoinLink: "Copiar enlace",
+      joinLinkCopied: "Enlace copiado al portapapeles.",
+      joinLinkMissing: "Ejecuta supabase/team-join-links.sql en Supabase para activar los enlaces de equipo.",
     },
 
     onboarding: {
@@ -707,10 +689,10 @@ export const translations = {
         "La invitació no és vàlida o ha caducat. Pots iniciar sessió si ja tens compte.",
       athleteJoinInvalid:
         "L'enllaç d'activació no és vàlid o ha caducat. Demana'n un de nou al psicòleg o entrenador.",
-      athleteJoinValid: "Invitació per a {name} — equip {team}",
+      athleteJoinValid: "Enllaç vàlid — registre a l'equip {team}",
       activateAthlete: "Activar compte d'esportista",
       hintActivateAthlete:
-        "Activa el teu compte amb el correu indicat a la invitació. El teu equip ja està assignat.",
+        "Crea el teu compte d'esportista. En activar-lo quedaràs assignat a l'equip de l'enllaç.",
       athleteInviteRequired:
         "Els esportistes necessiten un enllaç d'invitació del psicòleg per registrar-se.",
       hintRegisterCoachOpen:
@@ -775,30 +757,6 @@ export const translations = {
       rejected: "Sol·licitud rebutjada.",
     },
 
-    athleteInvites: {
-      title: "Esportistes del club",
-      subtitle: "Importa la plantilla i envia enllaços d'activació individuals.",
-      flowHint:
-        "Flux recomanat: crea l'equip → importa esportistes → copia cada enllaç → l'esportista activa el compte.",
-      teamLabel: "Equip",
-      teamRequired: "Tria un equip abans d'importar.",
-      importLabel: "Importar esportistes",
-      importPlaceholder: "Un esportista per línia:\nAna García, ana@club.com\nPau Soler, pau@club.com",
-      importHint: "Format: Nom, email (opcional). Caducitat: 30 dies. Cada enllaç només s'usa una vegada.",
-      importButton: "Generar invitacions",
-      importing: "Generant...",
-      importEmpty: "No s'han trobat files vàlides. Usa «Nom, email» per línia.",
-      imported: "{count} invitacions creades.",
-      copyLink: "Copiar enllaç",
-      copyAllPending: "Copiar tots els enllaços pendents",
-      copied: "Enllaç copiat al porta-retalls.",
-      copiedAll: "{count} enllaços copiats al porta-retalls.",
-      pending: "Pendent",
-      used: "Activada",
-      noInvites: "Encara no hi ha invitacions. Importa esportistes per generar enllaços.",
-      schemaMissing: "Executa supabase/athlete-invites.sql a Supabase per activar les invitacions.",
-    },
-
     rejectedCoach: {
       title: "Sol·licitud no aprovada",
       subtitle: "El teu accés com a entrenador/a no ha estat validat.",
@@ -833,7 +791,7 @@ export const translations = {
 
     teams: {
       manageTitle: "Equips",
-      manageSubtitle: "Crea equips i assigna entrenadors al grup corresponent.",
+      manageSubtitle: "Crea equips i comparteix l'enllaç d'inscripció amb els teus esportistes.",
       newPlaceholder: "Nom del nou equip",
       create: "Crear equip",
       created: "Equip creat correctament.",
@@ -849,6 +807,12 @@ export const translations = {
       previewTeam: "Equip a revisar",
       previewOpen: "Veure panell",
       previewingTitle: "Previsualització d'entrenador",
+      joinLinkTitle: "Enllaç d'inscripció de l'equip",
+      joinLinkCoachSubtitle: "Comparteix aquest enllaç amb els esportistes perquè es registrin al teu equip.",
+      joinLinkHint: "Un sol enllaç per equip. Cada esportista crea el seu compte i queda assignat automàticament.",
+      copyJoinLink: "Copiar enllaç",
+      joinLinkCopied: "Enllaç copiat al porta-retalls.",
+      joinLinkMissing: "Executa supabase/team-join-links.sql a Supabase per activar els enllaços d'equip.",
     },
 
     onboarding: {

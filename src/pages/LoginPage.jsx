@@ -54,7 +54,6 @@ export function LoginPage() {
           savePendingAthleteJoin(athleteToken)
           setSignupRole("athlete")
           setMode("signup")
-          if (info.email) setEmail(info.email)
         } else {
           setMessage(t("login.athleteJoinInvalid"))
         }
@@ -283,10 +282,7 @@ export function LoginPage() {
 
           {isSignupMode && athleteJoinValid && athleteJoinInfo && (
             <p className="invite-banner">
-              {t("login.athleteJoinValid", {
-                team: athleteJoinInfo.team_name,
-                name: athleteJoinInfo.full_name,
-              })}
+              {t("login.athleteJoinValid", { team: athleteJoinInfo.team_name })}
             </p>
           )}
 
@@ -309,7 +305,6 @@ export function LoginPage() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            readOnly={Boolean(athleteJoinValid && athleteJoinInfo?.email)}
           />
           {!isForgotMode && (
             <input
