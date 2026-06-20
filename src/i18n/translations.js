@@ -57,7 +57,7 @@ export const translations = {
       register: "Crear cuenta",
       hintLogin: "Inicia sesión en tu panel de rendimiento.",
       hintRegister:
-        "Elige si te registras como deportista o entrenador/a. Los entrenadores deberán ser aprobados por el psicólogo.",
+        "Los deportistas solo pueden activar su cuenta con el enlace de invitación del psicólogo. Los entrenadores pueden registrarse y quedarán pendientes de aprobación.",
       roleTitle: "Tipo de cuenta",
       athleteOnly: "Registro abierto para deportistas y entrenadores.",
       athleteRoleHint: "Autoevaluaciones y seguimiento personal.",
@@ -69,7 +69,18 @@ export const translations = {
         "Has recibido un enlace válido. Tras registrarte, el psicólogo deberá aprobar tu acceso.",
       inviteValid: "Invitación válida — registro de entrenador/a",
       inviteInvalid:
-        "La invitación no es válida o ha caducado. Puedes iniciar sesión o registrarte como deportista.",
+        "La invitación no es válida o ha caducado. Puedes iniciar sesión si ya tienes cuenta.",
+      athleteJoinInvalid:
+        "El enlace de activación no es válido o ha caducado. Pide uno nuevo al psicólogo o entrenador.",
+      athleteJoinValid: "Invitación para {name} — equipo {team}",
+      activateAthlete: "Activar cuenta de deportista",
+      hintActivateAthlete:
+        "Activa tu cuenta con el correo indicado en la invitación. Tu equipo ya está asignado.",
+      athleteInviteRequired:
+        "Los deportistas necesitan un enlace de invitación del psicólogo para registrarse.",
+      hintRegisterCoachOpen:
+        "Registro de entrenador/a. Tu acceso quedará pendiente hasta la aprobación del psicólogo.",
+      activateAccount: "Activar cuenta",
       checkingInvite: "Comprobando invitación...",
       createCoachAccount: "Crear cuenta de entrenador/a",
       email: "Correo electrónico",
@@ -127,6 +138,30 @@ export const translations = {
       reject: "Rechazar",
       rejectConfirm: "¿Rechazar esta solicitud de entrenador/a?",
       rejected: "Solicitud rechazada.",
+    },
+
+    athleteInvites: {
+      title: "Deportistas del club",
+      subtitle: "Importa la plantilla y envía enlaces de activación individuales.",
+      flowHint:
+        "Flujo recomendado: crea el equipo → importa deportistas → copia cada enlace → el deportista activa su cuenta.",
+      teamLabel: "Equipo",
+      teamRequired: "Elige un equipo antes de importar.",
+      importLabel: "Importar deportistas",
+      importPlaceholder: "Un deportista por línea:\nAna García, ana@club.com\nPau Soler, pau@club.com",
+      importHint: "Formato: Nombre, email (opcional). Caducidad: 30 días. Cada enlace solo se usa una vez.",
+      importButton: "Generar invitaciones",
+      importing: "Generando...",
+      importEmpty: "No se encontraron filas válidas. Usa «Nombre, email» por línea.",
+      imported: "{count} invitaciones creadas.",
+      copyLink: "Copiar enlace",
+      copyAllPending: "Copiar todos los enlaces pendientes",
+      copied: "Enlace copiado al portapapeles.",
+      copiedAll: "{count} enlaces copiados al portapapeles.",
+      pending: "Pendiente",
+      used: "Activada",
+      noInvites: "Aún no hay invitaciones. Importa deportistas para generar enlaces.",
+      schemaMissing: "Ejecuta supabase/athlete-invites.sql en Supabase para activar las invitaciones.",
     },
 
     rejectedCoach: {
@@ -229,6 +264,7 @@ export const translations = {
       support: "Apoyo familiar y social",
       choose: "Selecciona una opción",
       teamRequired: "Selecciona tu equipo para continuar.",
+      teamAssigned: "Equipo asignado por invitación",
       back: "Atrás",
       next: "Siguiente",
       submit: "Enviar evaluación",
@@ -656,7 +692,7 @@ export const translations = {
       register: "Crear compte",
       hintLogin: "Inicia sessió al teu panell de rendiment.",
       hintRegister:
-        "Tria si et registres com a esportista o entrenador/a. Els entrenadors hauran de ser aprovats pel psicòleg.",
+        "Els esportistes només poden activar el compte amb l'enllaç d'invitació del psicòleg. Els entrenadors es poden registrar i quedaran pendents d'aprovació.",
       roleTitle: "Tipus de compte",
       athleteOnly: "Registre obert per a esportistes i entrenadors.",
       athleteRoleHint: "Autoavaluacions i seguiment personal.",
@@ -668,7 +704,18 @@ export const translations = {
         "Has rebut un enllaç vàlid. Després de registrar-te, el psicòleg haurà d'aprovar el teu accés.",
       inviteValid: "Invitació vàlida — registre d'entrenador/a",
       inviteInvalid:
-        "La invitació no és vàlida o ha caducat. Pots iniciar sessió o registrar-te com a esportista.",
+        "La invitació no és vàlida o ha caducat. Pots iniciar sessió si ja tens compte.",
+      athleteJoinInvalid:
+        "L'enllaç d'activació no és vàlid o ha caducat. Demana'n un de nou al psicòleg o entrenador.",
+      athleteJoinValid: "Invitació per a {name} — equip {team}",
+      activateAthlete: "Activar compte d'esportista",
+      hintActivateAthlete:
+        "Activa el teu compte amb el correu indicat a la invitació. El teu equip ja està assignat.",
+      athleteInviteRequired:
+        "Els esportistes necessiten un enllaç d'invitació del psicòleg per registrar-se.",
+      hintRegisterCoachOpen:
+        "Registre d'entrenador/a. El teu accés quedarà pendent fins a l'aprovació del psicòleg.",
+      activateAccount: "Activar compte",
       checkingInvite: "Comprovant invitació...",
       createCoachAccount: "Crear compte d'entrenador/a",
       email: "Correu electrònic",
@@ -726,6 +773,30 @@ export const translations = {
       reject: "Rebutjar",
       rejectConfirm: "Rebutjar aquesta sol·licitud d'entrenador/a?",
       rejected: "Sol·licitud rebutjada.",
+    },
+
+    athleteInvites: {
+      title: "Esportistes del club",
+      subtitle: "Importa la plantilla i envia enllaços d'activació individuals.",
+      flowHint:
+        "Flux recomanat: crea l'equip → importa esportistes → copia cada enllaç → l'esportista activa el compte.",
+      teamLabel: "Equip",
+      teamRequired: "Tria un equip abans d'importar.",
+      importLabel: "Importar esportistes",
+      importPlaceholder: "Un esportista per línia:\nAna García, ana@club.com\nPau Soler, pau@club.com",
+      importHint: "Format: Nom, email (opcional). Caducitat: 30 dies. Cada enllaç només s'usa una vegada.",
+      importButton: "Generar invitacions",
+      importing: "Generant...",
+      importEmpty: "No s'han trobat files vàlides. Usa «Nom, email» per línia.",
+      imported: "{count} invitacions creades.",
+      copyLink: "Copiar enllaç",
+      copyAllPending: "Copiar tots els enllaços pendents",
+      copied: "Enllaç copiat al porta-retalls.",
+      copiedAll: "{count} enllaços copiats al porta-retalls.",
+      pending: "Pendent",
+      used: "Activada",
+      noInvites: "Encara no hi ha invitacions. Importa esportistes per generar enllaços.",
+      schemaMissing: "Executa supabase/athlete-invites.sql a Supabase per activar les invitacions.",
     },
 
     rejectedCoach: {
@@ -828,6 +899,7 @@ export const translations = {
       support: "Suport familiar i social",
       choose: "Selecciona una opció",
       teamRequired: "Selecciona el teu equip per continuar.",
+      teamAssigned: "Equip assignat per invitació",
       back: "Enrere",
       next: "Següent",
       submit: "Enviar avaluació",

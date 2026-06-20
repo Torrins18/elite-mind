@@ -3,6 +3,7 @@ import { supabase } from "../supabase"
 import { useTranslation } from "../i18n/LanguageContext"
 import { Card } from "./ui/Card"
 import { Button } from "./ui/Button"
+import { PsychologistAthleteRoster } from "./PsychologistAthleteRoster"
 
 export function PsychologistCoachAdmin({ psychologistId, onPreviewCoachTeam }) {
   const { t } = useTranslation()
@@ -204,6 +205,8 @@ export function PsychologistCoachAdmin({ psychologistId, onPreviewCoachTeam }) {
           </ul>
         )}
       </Card>
+
+      <PsychologistAthleteRoster psychologistId={psychologistId} />
 
       <Card title={t("teams.previewTitle")} subtitle={t("teams.previewSubtitle")}>
         <div className="coach-preview-controls">

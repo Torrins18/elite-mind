@@ -2,10 +2,14 @@ import { useEffect, useState } from "react"
 import { supabase } from "../supabase"
 import { useTranslation } from "../i18n/LanguageContext"
 import {
-  getInviteFromUrl,
-  savePendingInvite,
+  getCoachInviteFromUrl,
+  getAthleteJoinFromUrl,
+  savePendingCoachInvite,
+  savePendingAthleteJoin,
   validateCoachInvite,
-  clearPendingInvite,
+  validateAthleteJoin,
+  clearPendingCoachInvite,
+  clearPendingAthleteJoin,
 } from "../lib/invites"
 import { notifyCoachRegistration } from "../lib/coachNotifications"
 import { mapAuthError } from "../lib/authErrors"
@@ -19,38 +23,64 @@ export function LoginPage() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [mode, setMode] = useState("login")
-  const [signupRole, setSignupRole] = useState("athlete")
+  const [signupRole, setSignupRole] = useState("coach")
   const [error, setError] = useState("")
   const [message, setMessage] = useState("")
   const [coachInviteValid, setCoachInviteValid] = useState(false)
+  const [athleteJoinValid, setAthleteJoinValid] = useState(false)
+  const [athleteJoinInfo, setAthleteJoinInfo] = useState(null)
   const [inviteToken, setInviteToken] = useState(null)
-  const [checkingInvite, setCheckingInvite] = useState(() => Boolean(getInviteFromUrl()))
+  const [joinToken, setJoinToken] = useState(null)
+  const [checkingInvite, setCheckingInvite] = useState(
+    () => Boolean(getCoachInviteFromUrl() || getAthleteJoinFromUrl())
+  )
 
   useEffect(() => {
-    const token = getInviteFromUrl()
-    if (!token) return
+    const coachToken = getCoachInviteFromUrl()
+    const athleteToken = getAthleteJoinFromUrl()
+    if (!coachToken && !athleteToken) return
 
     let cancelled = false
 
-    validateCoachInvite(token)
-      .then((valid) => {
+    const validate = async () => {
+      if (athleteToken) {
+        const info = await validateAthleteJoin(athleteToken)
         if (cancelled) return
-        setCoachInviteValid(valid)
-        setInviteToken(valid ? token : null)
-        if (valid) {
-          savePendingInvite(token)
-          setSignupRole("coach")
+
+        if (info) {
+          setAthleteJoinValid(true)
+          setAthleteJoinInfo(info)
+          setJoinToken(athleteToken)
+          savePendingAthleteJoin(athleteToken)
+          setSignupRole("athlete")
           setMode("signup")
+          if (info.email) setEmail(info.email)
         } else {
-          setMessage(t("login.inviteInvalid"))
+          setMessage(t("login.athleteJoinInvalid"))
         }
-      })
-      .catch(() => {
-        if (!cancelled) setMessage(t("login.inviteInvalid"))
-      })
-      .finally(() => {
-        if (!cancelled) setCheckingInvite(false)
-      })
+        setCheckingInvite(false)
+        return
+      }
+
+      const valid = await validateCoachInvite(coachToken)
+      if (cancelled) return
+
+      setCoachInviteValid(valid)
+      setInviteToken(valid ? coachToken : null)
+      if (valid) {
+        savePendingCoachInvite(coachToken)
+        setSignupRole("coach")
+        setMode("signup")
+      } else {
+        setMessage(t("login.inviteInvalid"))
+      }
+      setCheckingInvite(false)
+    }
+
+    validate().catch(() => {
+      if (!cancelled) setMessage(t("login.inviteInvalid"))
+      if (!cancelled) setCheckingInvite(false)
+    })
 
     return () => {
       cancelled = true
@@ -65,14 +95,39 @@ export function LoginPage() {
     if (err) setError(mapAuthError(err.message, t))
   }
 
+  const finishAthleteActivation = async (userId, displayName) => {
+    if (!athleteJoinValid || !joinToken) return
+
+    const { error: inviteError } = await supabase.rpc("consume_athlete_invite", {
+      invite_token: joinToken,
+    })
+
+    if (inviteError) {
+      setError(inviteError.message)
+      return false
+    }
+
+    clearPendingAthleteJoin()
+    return true
+  }
+
   const signUp = async (e) => {
     e.preventDefault()
     setError("")
     setMessage("")
 
-    const isCoachSignup =
-      Boolean(coachInviteValid && inviteToken) || signupRole === "coach"
-    const displayName = email.split("@")[0]
+    const isCoachSignup = Boolean(coachInviteValid && inviteToken) || signupRole === "coach"
+    const isAthleteSignup = Boolean(athleteJoinValid && joinToken)
+
+    if (!isCoachSignup && !isAthleteSignup) {
+      setError(t("login.athleteInviteRequired"))
+      return
+    }
+
+    const displayName =
+      isAthleteSignup && athleteJoinInfo?.full_name
+        ? athleteJoinInfo.full_name
+        : email.split("@")[0]
     const role = isCoachSignup ? "coach" : "athlete"
 
     const { data, error: err } = await supabase.auth.signUp({
@@ -117,7 +172,7 @@ export function LoginPage() {
 
       if (inviteToken) {
         await supabase.rpc("consume_coach_invite", { invite_token: inviteToken })
-        clearPendingInvite()
+        clearPendingCoachInvite()
       }
     }
 
@@ -125,23 +180,29 @@ export function LoginPage() {
       if (isCoachSignup) {
         await finishCoachRegistration(data.user.id)
         await notifyPsychologist()
-      } else {
+      } else if (isAthleteSignup) {
         const { error: profileError } = await supabase.from("profiles").insert([
           {
             id: data.user.id,
             name: displayName,
-            role,
-            approved: role !== "coach",
+            role: "athlete",
+            approved: true,
           },
         ])
-        if (profileError) setError(profileError.message)
+        if (profileError) {
+          setError(profileError.message)
+          return
+        }
+        const ok = await finishAthleteActivation(data.user.id, displayName)
+        if (!ok) return
       }
       return
     }
 
     if (data.user && !data.session) {
       await notifyPsychologist()
-      if (coachInviteValid && inviteToken) savePendingInvite(inviteToken)
+      if (coachInviteValid && inviteToken) savePendingCoachInvite(inviteToken)
+      if (athleteJoinValid && joinToken) savePendingAthleteJoin(joinToken)
       setMessage(t("login.confirmEmail"))
       setMode("login")
     }
@@ -172,6 +233,7 @@ export function LoginPage() {
 
   const isForgotMode = mode === "forgot"
   const isSignupMode = mode === "signup"
+  const hasValidInvite = coachInviteValid || athleteJoinValid
 
   return (
     <div className="auth-page">
@@ -197,33 +259,46 @@ export function LoginPage() {
               ? t("passwordReset.title")
               : mode === "login"
                 ? t("login.welcome")
-                : coachInviteValid
-                ? t("login.registerCoach")
-                : signupRole === "coach"
-                  ? t("login.registerCoach")
-                  : t("login.register")}
+                : athleteJoinValid
+                  ? t("login.activateAthlete")
+                  : coachInviteValid
+                    ? t("login.registerCoach")
+                    : signupRole === "coach"
+                      ? t("login.registerCoach")
+                      : t("login.register")}
           </h2>
-          {!isSignupMode || coachInviteValid ? (
+          {!isSignupMode || hasValidInvite ? (
             <p className="auth-form__hint">
               {isForgotMode
                 ? t("passwordReset.subtitle")
                 : mode === "login"
                   ? t("login.hintLogin")
-                  : t("login.hintRegisterCoach")}
+                  : athleteJoinValid
+                    ? t("login.hintActivateAthlete")
+                    : t("login.hintRegisterCoach")}
             </p>
           ) : null}
 
           {checkingInvite && <p className="auth-form__hint">{t("login.checkingInvite")}</p>}
 
+          {isSignupMode && athleteJoinValid && athleteJoinInfo && (
+            <p className="invite-banner">
+              {t("login.athleteJoinValid", {
+                team: athleteJoinInfo.team_name,
+                name: athleteJoinInfo.full_name,
+              })}
+            </p>
+          )}
+
           {isSignupMode && coachInviteValid && (
             <p className="invite-banner">{t("login.inviteValid")}</p>
           )}
 
-          {isSignupMode && !coachInviteValid && (
+          {isSignupMode && !hasValidInvite && (
             <>
-              <RolePicker value={signupRole} onChange={setSignupRole} />
+              <RolePicker value={signupRole} onChange={setSignupRole} showCoachHint />
               <p className="auth-form__hint auth-form__hint--role">
-                {t("login.hintRegister")}
+                {signupRole === "coach" ? t("login.hintRegisterCoachOpen") : t("login.athleteInviteRequired")}
               </p>
             </>
           )}
@@ -234,6 +309,7 @@ export function LoginPage() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
+            readOnly={Boolean(athleteJoinValid && athleteJoinInfo?.email)}
           />
           {!isForgotMode && (
             <input
@@ -249,15 +325,15 @@ export function LoginPage() {
           {error && <p className="form-error">{error}</p>}
           {message && <p className="form-message">{message}</p>}
 
-          <Button type="submit" disabled={checkingInvite}>
+          <Button type="submit" disabled={checkingInvite || (isSignupMode && !hasValidInvite && signupRole === "athlete")}>
             {isForgotMode
               ? t("passwordReset.send")
               : mode === "login"
                 ? t("login.signIn")
-                : coachInviteValid || signupRole === "coach"
-                  ? t("login.createCoachAccount")
-                  : signupRole === "athlete"
-                    ? t("login.createAthleteAccount")
+                : athleteJoinValid
+                  ? t("login.activateAccount")
+                  : coachInviteValid || signupRole === "coach"
+                    ? t("login.createCoachAccount")
                     : t("login.createAccount")}
           </Button>
 
@@ -267,7 +343,7 @@ export function LoginPage() {
               className="link-btn"
               onClick={() => {
                 setMode(isForgotMode || mode === "signup" ? "login" : "signup")
-                setSignupRole("athlete")
+                setSignupRole("coach")
                 setError("")
                 setMessage("")
               }}

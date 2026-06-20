@@ -1,5 +1,10 @@
 import { supabase } from "../supabase"
-import { getPendingInvite, clearPendingInvite } from "./invites"
+import {
+  getPendingCoachInvite,
+  clearPendingCoachInvite,
+  getPendingAthleteJoin,
+  clearPendingAthleteJoin,
+} from "./invites"
 
 export async function fetchOrCreateProfile(session) {
   const userId = session.user.id
@@ -51,11 +56,24 @@ export async function fetchOrCreateProfile(session) {
     }
   }
 
-  // Consumir invitació pendent després de confirmar email
-  const pendingInvite = getPendingInvite()
-  if (pendingInvite && profile.role === "coach" && !profile.approved) {
-    await supabase.rpc("consume_coach_invite", { invite_token: pendingInvite })
-    clearPendingInvite()
+  const pendingCoachInvite = getPendingCoachInvite()
+  if (pendingCoachInvite && profile.role === "coach" && !profile.approved) {
+    await supabase.rpc("consume_coach_invite", { invite_token: pendingCoachInvite })
+    clearPendingCoachInvite()
+
+    const { data: refreshed } = await supabase
+      .from("profiles")
+      .select("*")
+      .eq("id", userId)
+      .single()
+
+    if (refreshed) profile = refreshed
+  }
+
+  const pendingAthleteJoin = getPendingAthleteJoin()
+  if (pendingAthleteJoin && profile.role === "athlete" && !profile.team_id) {
+    await supabase.rpc("consume_athlete_invite", { invite_token: pendingAthleteJoin })
+    clearPendingAthleteJoin()
 
     const { data: refreshed } = await supabase
       .from("profiles")

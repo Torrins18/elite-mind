@@ -78,6 +78,8 @@ export function InitialAssessment({ profile, onCompleted }) {
     }
   }, [])
 
+  const teamLocked = Boolean(profile?.team_id)
+
   const steps = useMemo(
     () => [
       {
@@ -235,6 +237,7 @@ export function InitialAssessment({ profile, onCompleted }) {
             t={t}
             teams={teams}
             calculatedAge={calculatedAge}
+            teamLocked={teamLocked}
           />
         </section>
 
@@ -257,12 +260,12 @@ export function InitialAssessment({ profile, onCompleted }) {
   )
 }
 
-function Fields({ stepKey, form, update, t, teams, calculatedAge }) {
+function Fields({ stepKey, form, update, t, teams, calculatedAge, teamLocked }) {
   if (stepKey === "personal") {
     return (
       <div className="assessment-grid">
         <ReadOnlyField label={t("initialAssessment.fields.calculatedAge")} value={calculatedAge ?? "-"} />
-        <TeamField teams={teams} form={form} update={update} t={t} />
+        <TeamField teams={teams} form={form} update={update} t={t} locked={teamLocked} />
         <TextField id="sportPosition" form={form} update={update} t={t} />
         <TextField id="yearsCompeting" type="number" form={form} update={update} t={t} />
         <TextField id="categoryLevel" form={form} update={update} t={t} />
@@ -377,7 +380,18 @@ function ReadOnlyField({ label, value }) {
   )
 }
 
-function TeamField({ teams, form, update, t }) {
+function TeamField({ teams, form, update, t, locked }) {
+  const teamName = teams.find((team) => team.id === form.teamId)?.name
+
+  if (locked && form.teamId) {
+    return (
+      <ReadOnlyField
+        label={t("initialAssessment.fields.teamId")}
+        value={teamName || t("initialAssessment.teamAssigned")}
+      />
+    )
+  }
+
   return (
     <label className="assessment-field">
       <span>{t("initialAssessment.fields.teamId")}</span>

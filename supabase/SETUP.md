@@ -12,8 +12,9 @@ Si la pàgina no carrega o falten funcions, executa **tot** això al **SQL Edito
 | 6 | `privacy-onboarding.sql` |
 | 7 | `initial-assessment.sql` |
 | 8 | `teams-management.sql` (opcional) |
-| 9 | `extended-checkins.sql` (si existeix) |
-| 10 | `seed-demo.sql` (opcional) |
+| 9 | `athlete-invites.sql` (invitacions esportista) |
+| 10 | `extended-checkins.sql` (si existeix) |
+| 11 | `seed-demo.sql` (opcional) |
 
 Després de cada fitxer ha de sortir **Success**.
 
@@ -24,7 +25,7 @@ Després de cada fitxer ha de sortir **Success**.
 A **Table Editor** hauries de veure:
 
 - `profiles` (amb columnes `approved`, `date_of_birth`, `initial_assessment_completed_at`…)
-- `teams`, `check_ins`, `coach_invites`, `athlete_initial_assessments`
+- `teams`, `check_ins`, `coach_invites`, `athlete_invites`, `athlete_initial_assessments`
 
 ## Vercel
 
