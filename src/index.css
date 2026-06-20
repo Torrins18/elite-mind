@@ -676,6 +676,152 @@ input:focus, textarea:focus {
   border: 1px dashed var(--border);
 }
 
+.weekly-eor-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.weekly-eor-wrap__intro {
+  padding: 0 4px;
+}
+
+.weekly-eor-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.weekly-eor-block--key {
+  border-color: rgba(251, 191, 36, 0.28);
+  background: rgba(251, 191, 36, 0.06);
+}
+
+.choice-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.choice-group__btn {
+  flex: 1 1 100px;
+  min-height: 44px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: rgba(15, 23, 42, 0.55);
+  color: var(--text);
+  font: inherit;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.choice-group__btn:hover {
+  border-color: rgba(34, 211, 238, 0.35);
+}
+
+.choice-group__btn--active {
+  border-color: var(--accent);
+  background: var(--accent-dim);
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.weekly-eor-panel__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.weekly-eor-index {
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: rgba(15, 23, 42, 0.45);
+}
+
+.weekly-eor-index--good {
+  border-color: rgba(52, 211, 153, 0.25);
+}
+
+.weekly-eor-index--warning {
+  border-color: rgba(251, 191, 36, 0.28);
+}
+
+.weekly-eor-index--danger,
+.weekly-eor-index--highlight {
+  border-color: rgba(248, 113, 113, 0.35);
+  background: rgba(248, 113, 113, 0.08);
+}
+
+.weekly-eor-index__label {
+  display: block;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+
+.weekly-eor-index__value {
+  font-size: 1.35rem;
+}
+
+.weekly-eor-panel__alerts {
+  list-style: none;
+  margin: 14px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.weekly-eor-panel__alert {
+  padding: 10px 12px;
+  border-radius: 10px;
+  font-size: 0.9rem;
+}
+
+.weekly-eor-panel__alert--danger {
+  color: #fecaca;
+  background: rgba(248, 113, 113, 0.12);
+  border: 1px solid rgba(248, 113, 113, 0.25);
+}
+
+.weekly-eor-panel__alert--warning {
+  color: #fde68a;
+  background: rgba(251, 191, 36, 0.1);
+  border: 1px solid rgba(251, 191, 36, 0.22);
+}
+
+.weekly-eor-panel__alert--key {
+  color: #bfdbfe;
+  background: rgba(59, 130, 246, 0.12);
+  border: 1px solid rgba(59, 130, 246, 0.25);
+}
+
+.weekly-eor-panel__notes {
+  margin: 14px 0 0;
+  display: grid;
+  gap: 12px;
+}
+
+.weekly-eor-panel__notes dt {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+
+.weekly-eor-panel__notes dd {
+  margin: 0;
+  line-height: 1.45;
+}
+
+.athlete-picker__badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: flex-end;
+}
+
 .dashboard-grid--athlete {
   max-width: 720px;
 }
@@ -1045,12 +1191,21 @@ input:focus, textarea:focus {
   height: 260px;
 }
 
+.chart-wrap--tall {
+  height: 320px;
+}
+
 .chart-legend {
   display: flex;
   gap: 20px;
   margin-top: 12px;
   font-size: 0.85rem;
   color: var(--text-muted);
+}
+
+.chart-legend--wrap {
+  flex-wrap: wrap;
+  gap: 10px 16px;
 }
 
 .dot {
@@ -1065,6 +1220,135 @@ input:focus, textarea:focus {
 .dot--cyan { background: #22d3ee; }
 .dot--gold { background: #fbbf24; }
 .dot--red { background: #f87171; }
+.dot--green { background: #34d399; }
+.dot--blue { background: #60a5fa; }
+
+.coach-weekly-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.coach-weekly-section__header h3 {
+  margin: 0 0 4px;
+  font-size: 1.15rem;
+}
+
+.coach-weekly-section__header p {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
+.coach-weekly-meta {
+  margin: 0 0 14px;
+  font-size: 0.86rem;
+  color: var(--text-muted);
+}
+
+.coach-weekly-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.coach-weekly-stat {
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: rgba(15, 23, 42, 0.45);
+}
+
+.coach-weekly-stat--good {
+  border-color: rgba(52, 211, 153, 0.25);
+}
+
+.coach-weekly-stat--warning {
+  border-color: rgba(251, 191, 36, 0.28);
+}
+
+.coach-weekly-stat--danger {
+  border-color: rgba(248, 113, 113, 0.35);
+  background: rgba(248, 113, 113, 0.08);
+}
+
+.coach-weekly-stat__label {
+  display: block;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+
+.coach-weekly-stat__value {
+  font-size: 1.35rem;
+}
+
+.eor-index-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px;
+}
+
+.eor-index-summary--compact {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.eor-index-summary__item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: rgba(15, 23, 42, 0.45);
+}
+
+.eor-index-summary--compact .eor-index-summary__item {
+  padding: 8px 10px;
+  border-radius: 10px;
+}
+
+.eor-index-summary__item--good {
+  border-color: rgba(52, 211, 153, 0.25);
+}
+
+.eor-index-summary__item--warning {
+  border-color: rgba(251, 191, 36, 0.28);
+}
+
+.eor-index-summary__item--danger {
+  border-color: rgba(248, 113, 113, 0.35);
+  background: rgba(248, 113, 113, 0.08);
+}
+
+.eor-index-summary__label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+.eor-index-summary--compact .eor-index-summary__label {
+  font-size: 0.72rem;
+}
+
+.eor-index-summary__value {
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+.eor-index-summary--compact .eor-index-summary__value {
+  font-size: 1.05rem;
+}
+
+.athlete-picker__eor {
+  display: block;
+  margin-top: 8px;
+}
 
 /* Psychologist layout */
 .psych-layout {

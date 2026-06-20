@@ -1,3 +1,5 @@
+import { computeWeeklyIndexes } from "./weeklyEor"
+
 export const RISK_COLORS = {
   low: "var(--success)",
   medium: "var(--warning)",
@@ -6,6 +8,20 @@ export const RISK_COLORS = {
 
 export function calculateRiskLevel(checkIn) {
   if (!checkIn) return "low"
+
+  const eor = computeWeeklyIndexes(checkIn)
+  if (eor) {
+    let score = 0
+    if (eor.mental != null && eor.mental <= 4) score += 2
+    if (eor.wellbeing != null && eor.wellbeing <= 4) score += 1
+    if (eor.social != null && eor.social <= 4) score += 1
+    if (eor.coachCommunication != null && eor.coachCommunication <= 3) score += 1
+    if (eor.wantsPsychologistTalk) score += 2
+
+    if (score >= 3) return "high"
+    if (score >= 1) return "medium"
+    return "low"
+  }
 
   let score = 0
   if (checkIn.mood <= 4) score += 2

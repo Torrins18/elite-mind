@@ -4,20 +4,32 @@ import { useTranslation } from "../i18n/LanguageContext"
 import { Card } from "../components/ui/Card"
 import { StatCard } from "../components/ui/StatCard"
 import { LoadingSpinner } from "../components/ui/LoadingSpinner"
-import { CheckInChart } from "../components/CheckInChart"
+import { WeeklyEorChart } from "../components/WeeklyEorTeamChart"
 import { InsightCard } from "../components/InsightCard"
 import { TeamJoinLink } from "../components/TeamJoinLink"
-import { averageMetrics, calculateRiskLevel } from "../lib/risk"
+import { CoachWeeklySnapshot } from "../components/CoachWeeklySnapshot"
+import { EorIndexSummary } from "../components/EorIndexSummary"
+import { calculateRiskLevel } from "../lib/risk"
 import { buildTeamInsight } from "../lib/insights"
+import { buildCoachWeeklyInsight } from "../lib/insights/buildCoachWeeklyInsight"
+import {
+  aggregateWeeklyEorTrend,
+  getLatestWeeklyTeamSnapshot,
+} from "../lib/coachTeamAnalytics"
+import { getLatestWeeklyReflection } from "../lib/weeklyEor"
 import {
   CHECK_IN_WINDOW_DAYS,
   countAthletesActiveThisWeek,
   isDateWithinLastDays,
-  lastNDays,
 } from "../lib/dates"
 
 const COACH_COLUMNS =
-  "id, athlete_id, check_in_date, mood, stress, sleep_quality, energy, focus, created_at"
+  "id, athlete_id, check_in_date, created_at, " +
+  "performance_rating, involvement_rating, effort_rating, weekly_rest_quality, weekly_energy, " +
+  "physical_fatigue, general_recovery, confidence_rating, concentration_rating, motivation_rating, " +
+  "pressure_management, teammate_communication, coach_communication, group_integration, role_clarity, " +
+  "sport_life_balance, life_outside_sport, personal_time_management, " +
+  "weekly_went_well, weekly_main_difficulty, next_goal, psychologist_contact"
 
 export function CoachDashboard({ profile, teamName }) {
   const { t } = useTranslation()
@@ -60,13 +72,12 @@ export function CoachDashboard({ profile, teamName }) {
       return
     }
 
-    const since = lastNDays(7)[0]
     const { data: ins } = await supabase
       .from("check_ins")
       .select(COACH_COLUMNS)
       .in("athlete_id", athleteIds)
-      .gte("check_in_date", since)
       .order("check_in_date", { ascending: false })
+      .limit(1000)
 
     setCheckIns(ins || [])
     setLoading(false)
@@ -79,7 +90,9 @@ export function CoachDashboard({ profile, teamName }) {
   const latestByAthlete = useMemo(
     () =>
       athletes.map((a) => {
-        const latest = checkIns.find((c) => c.athlete_id === a.id)
+        const athleteRows = checkIns.filter((c) => c.athlete_id === a.id)
+        const latestWeekly = getLatestWeeklyReflection(athleteRows)
+        const latest = latestWeekly || athleteRows[0] || null
         return { athlete: a, latest, risk: calculateRiskLevel(latest) }
       }),
     [athletes, checkIns]
@@ -88,6 +101,22 @@ export function CoachDashboard({ profile, teamName }) {
   const teamInsight = useMemo(
     () => buildTeamInsight({ athletes, checkIns, latestByAthlete }, t, { forCoach: true }),
     [athletes, checkIns, latestByAthlete, t]
+  )
+
+  const weeklyTrend = useMemo(() => aggregateWeeklyEorTrend(checkIns), [checkIns])
+  const latestWeeklySnapshot = useMemo(
+    () => getLatestWeeklyTeamSnapshot(weeklyTrend),
+    [weeklyTrend]
+  )
+
+  const weeklyInsight = useMemo(
+    () =>
+      buildCoachWeeklyInsight({
+        weeklyTrend,
+        athleteCount: athletes.length,
+        t,
+      }),
+    [weeklyTrend, athletes.length, t]
   )
 
   const athleteRiskCounts = useMemo(
@@ -105,28 +134,11 @@ export function CoachDashboard({ profile, teamName }) {
 
   if (loading) return <LoadingSpinner label={t("coach.loading")} />
 
-  const teamAvg = averageMetrics(checkIns)
   const athleteIds = athletes.map((a) => a.id)
   const activeThisWeek = countAthletesActiveThisWeek(checkIns, athleteIds)
   const inactiveCount = latestByAthlete.filter(
     (x) => !isDateWithinLastDays(x.latest?.check_in_date, CHECK_IN_WINDOW_DAYS)
   ).length
-
-  const teamTrend = checkIns.reduce((acc, c) => {
-    const key = c.check_in_date
-    if (!acc[key]) acc[key] = []
-    acc[key].push(c)
-    return acc
-  }, {})
-
-  const aggregatedTrend = Object.entries(teamTrend)
-    .map(([date, rows]) => ({
-      check_in_date: date,
-      mood: Math.round(rows.reduce((s, r) => s + r.mood, 0) / rows.length),
-      energy: Math.round(rows.reduce((s, r) => s + r.energy, 0) / rows.length),
-      stress: Math.round(rows.reduce((s, r) => s + r.stress, 0) / rows.length),
-    }))
-    .sort((a, b) => a.check_in_date.localeCompare(b.check_in_date))
 
   return (
     <div className="dashboard-grid">
@@ -150,13 +162,18 @@ export function CoachDashboard({ profile, teamName }) {
           value={`${activeThisWeek}/${athletes.length}`}
           hint={t("coach.weeklyCompliance")}
         />
-        <StatCard label={t("coach.teamAvgMood")} value={teamAvg.mood || "—"} />
-        <StatCard
-          label={t("coach.teamAvgStress")}
-          value={teamAvg.stress || "—"}
-          hint={t("coach.aggregatedOnly")}
-        />
       </div>
+
+      <Card title={t("coach.eorTeamTitle")} subtitle={t("coach.eorTeamSubtitle")}>
+        <EorIndexSummary indexes={latestWeeklySnapshot} variant="coach" t={t} />
+      </Card>
+
+      <WeeklyEorChart
+        weeklyTrend={weeklyTrend}
+        variant="coach"
+        title={t("coach.historyChartTitle")}
+        subtitle={t("coach.historyChartSubtitle")}
+      />
 
       <Card>
         <InsightCard
@@ -196,7 +213,22 @@ export function CoachDashboard({ profile, teamName }) {
         <p className="team-summary-note">{t("coach.privacyNote")}</p>
       </Card>
 
-      <CheckInChart checkIns={aggregatedTrend} />
+      <section className="coach-weekly-section">
+        <header className="coach-weekly-section__header">
+          <h3>{t("coach.weeklySectionTitle")}</h3>
+          <p>{t("coach.weeklySectionSubtitle")}</p>
+        </header>
+
+        <Card>
+          <InsightCard
+            title={t("coach.weeklyInsightTitle")}
+            insight={weeklyInsight}
+            footer={t("coach.weeklyInsightFooter")}
+          />
+        </Card>
+
+        <CoachWeeklySnapshot snapshot={latestWeeklySnapshot} t={t} />
+      </section>
     </div>
   )
 }

@@ -28,6 +28,8 @@ function extractInsightSignals(context) {
   const weakAreas = context.metrics?.weakAreas || []
   const note = context.qualitative?.personalNotes?.[0]?.text || ""
   const assessment = context.initialAssessment || {}
+  const weeklyEor = context.metrics?.weeklyEor || {}
+  const weeklyDifficulty = context.qualitative?.weeklyDifficulties?.[0]?.text || ""
 
   const noteMentionsSleep = /dorm|son|descans/i.test(note)
   const noteMentionsFatigue = /cansad|cansat|fatig|esgot|malament|mal descans/i.test(note)
@@ -39,13 +41,24 @@ function extractInsightSignals(context) {
     longInactive: context.metrics?.daysSince != null && context.metrics.daysSince >= 7,
     weakAreas,
 
-    energyDown: (trends.energy ?? 0) <= -0.5 || latest.energy <= 5,
-    energyUp: (trends.energy ?? 0) >= 0.5 && latest.energy >= 7,
+    socialLow: weeklyEor.social != null && weeklyEor.social <= 5,
+    mentalLow: weeklyEor.mental != null && weeklyEor.mental <= 5,
+    mentalHigh: weeklyEor.mental != null && weeklyEor.mental >= 8,
+    wellbeingLow: weeklyEor.wellbeing != null && weeklyEor.wellbeing <= 5,
+    wellbeingHigh: weeklyEor.wellbeing != null && weeklyEor.wellbeing >= 8,
+    socialHigh: weeklyEor.social != null && weeklyEor.social >= 8,
+    coachCommLow: weeklyEor.coachCommunication != null && weeklyEor.coachCommunication <= 4,
+    roleClarityLow: weeklyEor.roleClarity != null && weeklyEor.roleClarity <= 4,
+    wantsPsychologistTalk: Boolean(weeklyEor.wantsPsychologistTalk),
+    hasEor: weeklyEor.mental != null,
+
+    energyDown: !weeklyEor.mental && ((trends.energy ?? 0) <= -0.5 || latest.energy <= 5),
+    energyUp: !weeklyEor.mental && (trends.energy ?? 0) >= 0.5 && latest.energy >= 7,
     sleepBad: (trends.sleep ?? 0) <= -0.5 || latest.sleep <= 4 || noteMentionsSleep,
-    stressUp: (trends.stress ?? 0) >= 0.5 || latest.stress >= 7,
-    stressDown: (trends.stress ?? 0) <= -0.5 && latest.stress <= 5,
-    moodDown: (trends.mood ?? 0) <= -0.5 || latest.mood <= 4,
-    moodUp: (trends.mood ?? 0) >= 0.5 && latest.mood >= 7,
+    stressUp: !weeklyEor.mental && ((trends.stress ?? 0) >= 0.5 || latest.stress >= 7),
+    stressDown: !weeklyEor.mental && (trends.stress ?? 0) <= -0.5 && latest.stress <= 5,
+    moodDown: !weeklyEor.mental && ((trends.mood ?? 0) <= -0.5 || latest.mood <= 4),
+    moodUp: !weeklyEor.mental && (trends.mood ?? 0) >= 0.5 && latest.mood >= 7,
     focusDown: (trends.focus ?? 0) <= -0.5 || latest.focus <= 4,
     performanceLow: latest.performance != null && latest.performance <= 4,
     performanceHigh: latest.performance != null && latest.performance >= 8,
@@ -57,6 +70,8 @@ function extractInsightSignals(context) {
     moodWords: truncate(context.qualitative?.moodWords?.[0] || "", 50),
     moodEvent: truncate(context.qualitative?.moodEvents?.[0]?.text || "", 70),
     nextGoal: truncate(context.qualitative?.nextGoals?.[0]?.text || "", 70),
+    weeklyWentWell: truncate(context.qualitative?.weeklyWentWell?.[0]?.text || "", 70),
+    weeklyDifficulty: truncate(weeklyDifficulty, 90),
 
     baselineSleepIssues: hasBaselineSleepIssues(assessment),
     highBaselinePressure: Number(assessment.sports?.perceivedPressure) >= 7,
@@ -202,6 +217,38 @@ function buildEsNarrative(name, signals) {
 }
 
 function buildMainObservationPartsCa(signals) {
+  if (signals.hasEor) {
+    const parts = []
+
+    if (signals.mentalLow) {
+      parts.push("mostra un índex mental baix a la revisió EOR")
+    } else if (signals.mentalHigh && signals.wellbeingHigh) {
+      parts.push("manté bon índex mental i benestar a la revisió EOR")
+    } else if (signals.mentalHigh) {
+      parts.push("manté bon índex mental a la revisió EOR")
+    }
+
+    if (signals.wellbeingLow) {
+      parts.push(
+        signals.mentalLow ? "i benestar baix" : "el benestar està per sota del que seria desitjable"
+      )
+    }
+
+    if (signals.coachCommLow) {
+      parts.push("però percep poca comunicació amb l'entrenador/a")
+    } else if (signals.socialLow) {
+      parts.push("amb senyals de desconnexió dins l'entorn d'equip")
+    } else if (signals.socialHigh && !signals.mentalLow) {
+      parts.push("amb bon clima social dins l'equip")
+    }
+
+    if (signals.roleClarityLow) {
+      parts.push("i manca de claredat sobre el seu rol")
+    }
+
+    return parts
+  }
+
   const parts = []
 
   if (signals.energyDown) {
@@ -240,10 +287,54 @@ function buildMainObservationPartsCa(signals) {
     parts.push("amb bona implicació amb l'equip")
   }
 
+  if (signals.coachCommLow) {
+    parts.push("però percep poca comunicació amb l'entrenador/a")
+  } else if (signals.socialLow) {
+    parts.push("amb senyals de desconnexió dins l'entorn d'equip")
+  }
+
+  if (signals.roleClarityLow) {
+    parts.push("i manca de claredat sobre el seu rol")
+  }
+
   return parts
 }
 
 function buildMainObservationPartsEs(signals) {
+  if (signals.hasEor) {
+    const parts = []
+
+    if (signals.mentalLow) {
+      parts.push("muestra un índice mental bajo en la revisión EOR")
+    } else if (signals.mentalHigh && signals.wellbeingHigh) {
+      parts.push("mantiene buen índice mental y bienestar en la revisión EOR")
+    } else if (signals.mentalHigh) {
+      parts.push("mantiene buen índice mental en la revisión EOR")
+    }
+
+    if (signals.wellbeingLow) {
+      parts.push(
+        signals.mentalLow
+          ? "y bienestar bajo"
+          : "el bienestar está por debajo de lo deseable"
+      )
+    }
+
+    if (signals.coachCommLow) {
+      parts.push("pero percibe poca comunicación con el/la entrenador/a")
+    } else if (signals.socialLow) {
+      parts.push("con señales de desconexión dentro del entorno de equipo")
+    } else if (signals.socialHigh && !signals.mentalLow) {
+      parts.push("con buen clima social dentro del equipo")
+    }
+
+    if (signals.roleClarityLow) {
+      parts.push("y falta de claridad sobre su rol")
+    }
+
+    return parts
+  }
+
   const parts = []
 
   if (signals.energyDown) {
@@ -282,6 +373,16 @@ function buildMainObservationPartsEs(signals) {
     parts.push("con buena implicación con el equipo")
   }
 
+  if (signals.coachCommLow) {
+    parts.push("pero percibe poca comunicación con el/la entrenador/a")
+  } else if (signals.socialLow) {
+    parts.push("con señales de desconexión dentro del entorno de equipo")
+  }
+
+  if (signals.roleClarityLow) {
+    parts.push("y falta de claridad sobre su rol")
+  }
+
   return parts
 }
 
@@ -304,6 +405,18 @@ function buildQualitativeDetailCa(signals) {
 
   if (signals.nextGoal) {
     bits.push(`el seu objectiu proper és ${lowerFirst(signals.nextGoal)}`)
+  }
+
+  if (signals.weeklyWentWell) {
+    bits.push(`destaca que ${lowerFirst(signals.weeklyWentWell)}`)
+  }
+
+  if (signals.weeklyDifficulty) {
+    bits.push(`i la dificultat principal ha estat ${lowerFirst(signals.weeklyDifficulty)}`)
+  }
+
+  if (signals.wantsPsychologistTalk) {
+    bits.push("ha indicat que podria necessitar parlar amb el psicòleg/òloga")
   }
 
   if (!bits.length) return ""
@@ -336,6 +449,18 @@ function buildQualitativeDetailEs(signals) {
 
   if (signals.nextGoal) {
     bits.push(`su objetivo próximo es ${lowerFirst(signals.nextGoal)}`)
+  }
+
+  if (signals.weeklyWentWell) {
+    bits.push(`destaca que ${lowerFirst(signals.weeklyWentWell)}`)
+  }
+
+  if (signals.weeklyDifficulty) {
+    bits.push(`y la dificultad principal ha sido ${lowerFirst(signals.weeklyDifficulty)}`)
+  }
+
+  if (signals.wantsPsychologistTalk) {
+    bits.push("ha indicado que podría necesitar hablar con el/la psicólogo/a")
   }
 
   if (!bits.length) return ""
@@ -388,6 +513,16 @@ function buildAssessmentHintEs(signals) {
 }
 
 function describePrimaryConcernCa(signals) {
+  if (signals.hasEor) {
+    const areas = []
+    if (signals.mentalLow) areas.push("mental")
+    if (signals.wellbeingLow) areas.push("benestar")
+    if (signals.socialLow) areas.push("social")
+    if (signals.coachCommLow) areas.push("comunicació entrenador")
+    if (signals.roleClarityLow) areas.push("rol")
+    return areas.slice(0, 3).join(", ")
+  }
+
   const areas = []
   if (signals.weakAreas.includes("mood") || signals.moodDown) areas.push("ànim")
   if (signals.weakAreas.includes("stress") || signals.stressUp) areas.push("estrès")
@@ -398,6 +533,16 @@ function describePrimaryConcernCa(signals) {
 }
 
 function describePrimaryConcernEs(signals) {
+  if (signals.hasEor) {
+    const areas = []
+    if (signals.mentalLow) areas.push("mental")
+    if (signals.wellbeingLow) areas.push("bienestar")
+    if (signals.socialLow) areas.push("social")
+    if (signals.coachCommLow) areas.push("comunicación entrenador")
+    if (signals.roleClarityLow) areas.push("rol")
+    return areas.slice(0, 3).join(", ")
+  }
+
   const areas = []
   if (signals.weakAreas.includes("mood") || signals.moodDown) areas.push("ánimo")
   if (signals.weakAreas.includes("stress") || signals.stressUp) areas.push("estrés")

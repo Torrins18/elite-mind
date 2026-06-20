@@ -11,7 +11,13 @@ import { useTranslation } from "../i18n/LanguageContext"
 import { formatDate } from "../lib/dates"
 import { Card } from "./ui/Card"
 
-export function CheckInChart({ checkIns, showStress = true }) {
+export function CheckInChart({
+  checkIns,
+  showStress = true,
+  title,
+  subtitle,
+  domain = [1, 10],
+}) {
   const { t, lang } = useTranslation()
 
   const data = [...checkIns]
@@ -23,22 +29,25 @@ export function CheckInChart({ checkIns, showStress = true }) {
       stress: c.stress,
     }))
 
+  const cardTitle = title || t("chart.title7d")
+  const cardSubtitle = subtitle || t("chart.subtitle7d")
+
   if (!data.length) {
     return (
-      <Card title={t("chart.trends")} subtitle={t("chart.trendsEmpty")}>
+      <Card title={cardTitle} subtitle={cardSubtitle}>
         <p className="empty-state">{t("chart.noData")}</p>
       </Card>
     )
   }
 
   return (
-    <Card title={t("chart.title7d")} subtitle={t("chart.subtitle7d")}>
-      <div className="chart-wrap chart-wrap--responsive">
+    <Card title={cardTitle} subtitle={cardSubtitle}>
+      <div className="chart-wrap chart-wrap--responsive chart-wrap--tall">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={data}>
             <CartesianGrid stroke="rgba(148,163,184,0.12)" vertical={false} />
             <XAxis dataKey="date" tick={{ fill: "#94a3b8", fontSize: 12 }} />
-            <YAxis domain={[1, 10]} tick={{ fill: "#94a3b8", fontSize: 12 }} />
+            <YAxis domain={domain} tick={{ fill: "#94a3b8", fontSize: 12 }} />
             <Tooltip
               contentStyle={{
                 background: "#0f172a",

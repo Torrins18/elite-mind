@@ -14,7 +14,8 @@ Si la pàgina no carrega o falten funcions, executa **tot** això al **SQL Edito
 | 8 | `teams-management.sql` (opcional) |
 | 9 | `team-join-links.sql` (enllaç d'inscripció per equip) |
 | 10 | `extended-checkins.sql` (si existeix) |
-| 11 | `seed-demo.sql` (opcional) |
+| 11 | `weekly-eor-checkins.sql` (revisió setmanal EOR) |
+| 12 | `seed-demo.sql` (opcional) |
 
 Després de cada fitxer ha de sortir **Success**.
 

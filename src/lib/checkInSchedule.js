@@ -1,13 +1,6 @@
-export function hasWeeklyReflection(checkIn) {
-  if (!checkIn) return false
-  return (
-    checkIn.performance_rating != null ||
-    checkIn.involvement_rating != null ||
-    Boolean(checkIn.general_mood_words?.trim()) ||
-    Boolean(checkIn.mood_change_event?.trim()) ||
-    Boolean(checkIn.next_goal?.trim())
-  )
-}
+import { hasWeeklyReflection } from "./weeklyEor"
+
+export { hasWeeklyReflection }
 
 export function daysBetween(startDate, endDate) {
   const start = new Date(`${startDate}T12:00:00`)

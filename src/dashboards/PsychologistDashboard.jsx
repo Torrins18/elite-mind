@@ -11,6 +11,11 @@ import { InsightCard } from "../components/InsightCard"
 import { calculateRiskLevel } from "../lib/risk"
 import { buildTeamInsight } from "../lib/insights"
 import { summarizeTeam } from "../lib/insights/metrics"
+import { computeWeeklyIndexes, getLatestWeeklyReflection } from "../lib/weeklyEor"
+import {
+  aggregateWeeklyEorTrend,
+  getLatestWeeklyTeamSnapshot,
+} from "../lib/coachTeamAnalytics"
 import { useAthleteInsight } from "../hooks/useAthleteInsight"
 import { PsychologistCoachAdmin } from "../components/PsychologistCoachAdmin"
 import { consentStatus } from "../lib/age"
@@ -21,6 +26,8 @@ import {
   buildConsentCounts,
 } from "../components/psychologist/PsychologistOverview"
 import { PsychologistAthleteDetail } from "../components/psychologist/PsychologistAthleteDetail"
+import { EorIndexSummary } from "../components/EorIndexSummary"
+import { WeeklyEorChart } from "../components/WeeklyEorTeamChart"
 
 const OVERVIEW_TAB = "overview"
 
@@ -116,6 +123,15 @@ export function PsychologistDashboard({ profile }) {
   const athleteCheckIns = useMemo(
     () => tabCheckIns.filter((c) => c.athlete_id === selectedId),
     [tabCheckIns, selectedId]
+  )
+
+  const teamWeeklyTrend = useMemo(
+    () => aggregateWeeklyEorTrend(tabCheckIns),
+    [tabCheckIns]
+  )
+  const teamWeeklySnapshot = useMemo(
+    () => getLatestWeeklyTeamSnapshot(teamWeeklyTrend),
+    [teamWeeklyTrend]
   )
 
   const orgLatestByAthlete = useMemo(
@@ -299,16 +315,18 @@ export function PsychologistDashboard({ profile }) {
                 label={t("coach.checkedInThisWeek")}
                 value={activeTeamSummary.summary.checkedInThisWeek}
               />
-              <StatCard
-                label={t("psychologist.orgAvgMood")}
-                value={activeTeamSummary.summary.teamAvg.mood || "—"}
-              />
-              <StatCard
-                label={t("psychologist.highEmotionalRisk")}
-                value={activeTeamSummary.summary.riskBreakdown.high}
-                accent="var(--danger)"
-              />
             </div>
+
+            <Card title={t("psychologist.teamEorTitle")} subtitle={t("psychologist.teamEorSubtitle")}>
+              <EorIndexSummary indexes={teamWeeklySnapshot} variant="psychologist" t={t} />
+            </Card>
+
+            <WeeklyEorChart
+              weeklyTrend={teamWeeklyTrend}
+              variant="psychologist"
+              title={t("psychologist.teamEorChartTitle")}
+              subtitle={t("psychologist.teamEorChartSubtitle")}
+            />
 
             <div className="psych-layout">
               <Card
@@ -321,6 +339,10 @@ export function PsychologistDashboard({ profile }) {
                   <ul className="athlete-picker">
                     {tabAthletes.map((a) => {
                       const latest = tabCheckIns.find((c) => c.athlete_id === a.id)
+                      const latestWeekly = getLatestWeeklyReflection(
+                        tabCheckIns.filter((c) => c.athlete_id === a.id)
+                      )
+                      const weeklyIndexes = computeWeeklyIndexes(latestWeekly)
                       const risk = calculateRiskLevel(latest)
                       return (
                         <li key={a.id}>
@@ -338,13 +360,28 @@ export function PsychologistDashboard({ profile }) {
                               <small className="athlete-picker__cat">
                                 {t(`consent.${consentStatus(a)}`)}
                               </small>
+                              {weeklyIndexes && (
+                                <span className="athlete-picker__eor">
+                                  <EorIndexSummary
+                                    indexes={weeklyIndexes}
+                                    variant="psychologist"
+                                    t={t}
+                                    compact
+                                  />
+                                </span>
+                              )}
                             </span>
-                            {latest && <Badge variant={risk}>{t(`risk.${risk}`)}</Badge>}
-                            {!a.initial_assessment_completed_at && (
-                              <Badge variant="default">
-                                {t("psychologist.assessmentMissing")}
-                              </Badge>
-                            )}
+                            <span className="athlete-picker__badges">
+                              {weeklyIndexes?.wantsPsychologistTalk && (
+                                <Badge variant="high">{t("psychologist.eorContactBadge")}</Badge>
+                              )}
+                              {latest && <Badge variant={risk}>{t(`risk.${risk}`)}</Badge>}
+                              {!a.initial_assessment_completed_at && (
+                                <Badge variant="default">
+                                  {t("psychologist.assessmentMissing")}
+                                </Badge>
+                              )}
+                            </span>
                           </button>
                         </li>
                       )
@@ -416,6 +453,7 @@ function buildTeamSummaries(teams, athletes, checkIns, t) {
       latestByAthlete,
     })
     const highRiskCount = latestByAthlete.filter((row) => row.risk === "high").length
+    const eorSnapshot = getLatestWeeklyTeamSnapshot(aggregateWeeklyEorTrend(teamCheckIns))
 
     return {
       team,
@@ -425,6 +463,7 @@ function buildTeamSummaries(teams, athletes, checkIns, t) {
       insight,
       summary,
       highRiskCount,
+      eorSnapshot,
     }
   })
 }

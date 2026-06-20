@@ -320,8 +320,10 @@ export const translations = {
       todaySubtitle: "Un vistazo rápido a tu registro diario.",
       todayDone: "Registro de hoy completado. Gracias por responder.",
       todayPending: "Aún no has registrado tu autoevaluación de hoy.",
-      weeklyPending: "Has registrado el pulso de hoy. Falta completar la reflexión semanal.",
+      weeklyPending: "Has registrado el pulso de hoy. Falta completar la revisión semanal EOR.",
       updateResponses: "Actualizar respuestas de hoy",
+      weeklyEorTitle: "Tu última revisión EOR",
+      weeklyEorSubtitle: "Resumen de tus índices semanales (solo tú y el/la psicólogo/a los ven).",
     },
 
     athleteContact: {
@@ -350,18 +352,81 @@ export const translations = {
       titleWeekly: "Autoevaluación + reflexión semanal",
       subtitleWeekly:
         "Primero tu pulso actual; después, preguntas sobre la semana (solo el/la psicólogo/a las ve).",
-      titleWeeklyOnly: "Reflexión semanal",
+      titleWeeklyOnly: "Revisión semanal EOR",
       subtitleWeeklyOnly:
-        "Responde las preguntas sobre la semana. Solo el/la psicólogo/a verá tus respuestas.",
+        "Valora la semana en escala 0-10. Solo el/la psicólogo/a verá tus respuestas.",
       dailyBadge: "Registro",
       dailyTitle: "Pulso mental",
       dailyIntro: "Valora cómo estás ahora mismo (1 = muy bajo, 10 = muy alto).",
       weeklyBadge: "Esta semana",
-      weeklyTitle: "Reflexión semanal",
+      weeklyTitle: "Revisión semanal EOR",
       weeklyIntro:
-        "Repasa entrenamientos, competición o la semana en general. Sé concreto/a en tus respuestas.",
+        "Cinco bloques EOR (rendimiento, cuerpo, mental, entorno y vida) en escala 0-10, más preguntas abiertas. Solo el/la psicólogo/a verá tus respuestas.",
       weeklyNextHint:
-        "La reflexión ampliada aparece en el primer registro de la semana o cada ~7 días. En los demás, solo el pulso mental.",
+        "La revisión EOR aparece en el primer registro de la semana o cada ~7 días. En los demás, solo el pulso mental.",
+      eorBlockPerformanceBadge: "Rendimiento",
+      eorBlockPerformanceTitle: "Rendimiento",
+      eorBlockBodyBadge: "Cuerpo",
+      eorBlockBodyTitle: "Cuerpo y recuperación",
+      eorBlockMentalBadge: "Mental",
+      eorBlockMentalTitle: "Estado mental",
+      eorBlockEnvironmentBadge: "Entorno",
+      eorBlockEnvironmentTitle: "Entorno deportivo",
+      eorBlockLifeBadge: "Vida",
+      eorBlockLifeTitle: "Vida fuera del deporte",
+      eorBlockOpenBadge: "Reflexión",
+      eorBlockOpenTitle: "Preguntas abiertas",
+      eorKeyQuestionBadge: "Clave",
+      eorPerformance: "Valora tu rendimiento esta semana",
+      eorPerformanceHint: "Entrenamientos, partidos o la semana deportiva en conjunto.",
+      eorInvolvement: "Valora tu implicación",
+      eorInvolvementHint: "Compromiso y actitud con el equipo u objetivo.",
+      eorEffort: "Valora el esfuerzo realizado",
+      eorEffortHint: "Intensidad y constancia del trabajo esta semana.",
+      eorRestQuality: "Calidad del descanso",
+      eorRestQualityHint: "Cómo has dormido y recuperado a lo largo de la semana.",
+      eorWeeklyEnergy: "Nivel de energía",
+      eorWeeklyEnergyHint: "Sensación general de carga disponible.",
+      eorPhysicalFatigue: "Fatiga física",
+      eorPhysicalFatigueHint: "0 = sin fatiga, 10 = muy fatigado/a.",
+      eorGeneralRecovery: "Recuperación general",
+      eorGeneralRecoveryHint: "Cómo de recuperado/a te sientes al cerrar la semana.",
+      eorConfidence: "Confianza",
+      eorConfidenceHint: "Confianza en ti y en tu capacidad de rendir.",
+      eorConcentration: "Concentración",
+      eorConcentrationHint: "Capacidad de mantener la atención en lo importante.",
+      eorMotivation: "Motivación",
+      eorMotivationHint: "Ganas de entrenar, competir y mejorar.",
+      eorPressureManagement: "Gestión de la presión",
+      eorPressureManagementHint: "0 = muy mal gestionada, 10 = muy bien gestionada.",
+      eorTeammateCommunication: "Comunicación con los compañeros/as",
+      eorTeammateCommunicationHint: "Te sientes escuchado/a y conectado/a con el grupo.",
+      eorCoachCommunication: "Comunicación con el/la entrenador/a",
+      eorCoachCommunicationHint: "Claridad, feedback y sensación de ser escuchado/a.",
+      eorGroupIntegration: "Integración dentro del grupo",
+      eorGroupIntegrationHint: "Te sientes parte del equipo y cómodo/a en el entorno.",
+      eorRoleClarity: "Claridad de mi rol dentro del equipo",
+      eorRoleClarityHint: "Entiendes tu función y lo que se espera de ti.",
+      eorSportLifeBalance: "Equilibrio deporte-estudios/trabajo",
+      eorSportLifeBalanceHint: "Balance entre exigencia deportiva y otras áreas.",
+      eorLifeOutsideSport: "Estado general fuera del deporte",
+      eorLifeOutsideSportHint: "Cómo te sientes en familia, estudios, trabajo o vida personal.",
+      eorPersonalTimeManagement: "Gestión del tiempo personal",
+      eorPersonalTimeManagementHint: "Organización y control de tus tiempos esta semana.",
+      eorWentWell: "¿Qué ha ido mejor esta semana?",
+      eorWentWellHint: "Un logro, avance o aspecto positivo concreto.",
+      eorWentWellPlaceholder: "Ej: buen partido, mejor comunicación con el entrenador…",
+      eorMainDifficulty: "¿Cuál ha sido tu dificultad principal?",
+      eorMainDifficultyHint: "Lo que más te ha costado o preocupado esta semana.",
+      eorMainDifficultyPlaceholder: "Ej: no me siento escuchado/a, fatiga acumulada…",
+      eorNextGoal: "¿Cuál es tu objetivo para la semana que viene?",
+      eorNextGoalHint: "Algo concreto y alcanzable.",
+      eorNextGoalPlaceholder: "Ej: hablar con el entrenador, dormir mejor, mantener la calma…",
+      eorPsychologistContact: "¿Necesitas hablar con el/la psicólogo/a?",
+      eorPsychologistContactHint: "Si marcas «Sí» o «Quizás», el/la psicólogo/a lo verá en su panel.",
+      eorPsychologistContact_no: "No",
+      eorPsychologistContact_maybe: "Quizás",
+      eorPsychologistContact_yes: "Sí",
       metricMood: "Ánimo",
       metricStress: "Estrés",
       metricSleep: "Sueño",
@@ -386,24 +451,8 @@ export const translations = {
       updateBtn: "Actualizar registro",
       submitDailyBtn: "Guardar autoevaluación",
       submitWeeklyBtn: "Guardar autoevaluación + reflexión",
-      performanceRating: "¿Cómo valoras tu rendimiento esta semana?",
-      performanceHint: "En entrenamientos, partidos o la semana deportiva en conjunto.",
-      involvementRating: "¿Cómo valoras tu implicación y actitud esta semana?",
-      involvementHint: "Esfuerzo, compromiso y actitud con el equipo o el objetivo.",
-      generalMoodWords: "¿Con qué palabra(s) definirías tu ánimo esta semana?",
-      generalMoodWordsHint: "Una o varias palabras que resuman cómo te has sentido.",
-      generalMoodWordsPlaceholder: "Ej: motivado/a, cansado/a, ilusionado/a, frustrado/a…",
-      moodChangeEvent: "¿Ha pasado algo importante que haya influido en tu estado de ánimo?",
-      moodChangeEventHint: "Lesión, resultado, conflicto, logro, cambio de rol, etc.",
-      moodChangeEventPlaceholder:
-        "Describe el hecho y cómo te ha afectado emocionalmente esta semana.",
-      nextGoal: "¿Cuál es tu objetivo principal para los próximos días?",
-      nextGoalHint: "Algo concreto y alcanzable en deporte o en tu bienestar mental.",
-      nextGoalPlaceholder: "Ej: dormir 8 h, mantener la calma en competición, hablar con el entrenador…",
-      ratingLow: "Muy bajo",
-      ratingHigh: "Excelente",
-      involvementLow: "Mínima",
-      involvementHigh: "Máxima",
+      ratingLow: "0",
+      ratingHigh: "10",
       low: "Muy bajo",
       high: "Muy alto",
       calm: "Muy tranquilo",
@@ -423,9 +472,9 @@ export const translations = {
       footerEnhanced:
         "Lectura clínica en lenguaje natural, combinada con métricas, notas y tendencias recientes.",
       footer:
-        "Generado a partir de las autoevaluaciones de los últimos 7 días (objetivo: 1-2 registros/semana por deportista).",
+        "Generado a partir de las revisiones EOR semanales y la actividad reciente del equipo.",
       footerCoach:
-        "Resumen agregado del equipo — sin datos individuales ni respuestas concretas por deportista.",
+        "Resumen agregado EOR del equipo — sin datos individuales ni comunicación con entrenador/a.",
       namePair: "{a} y {b}",
       nameList: "{names} y {last}",
       teamTitle: "Estado general del equipo",
@@ -447,40 +496,50 @@ export const translations = {
       team: {
         noAthletes: "Aún no hay deportistas asignados a este equipo. Cuando se registren, aquí verás un resumen automático del estado del grupo.",
         noData:
-          "Todavía no hay autoevaluaciones recientes. Anima al equipo a completar 1-2 registros por semana para activar el análisis.",
+          "Todavía no hay revisiones EOR semanales. Anima al equipo a completar la revisión semanal para activar el análisis.",
         multipleHighRisk:
-          "Prioridad alta: {count} deportistas en riesgo elevado ({names}). El equipo promedia ánimo {mood}/10 y estrés {stress}/10. Conviene revisar estos casos antes del próximo entrenamiento.",
+          "Prioridad alta: {count} deportistas en riesgo elevado ({names}). Índices EOR del equipo: mental {mental}/10, bienestar {wellbeing}/10, social {social}/10. Conviene revisar estos casos antes del próximo entrenamiento.",
         singleHighRisk:
-          "Atención: {name} está en riesgo elevado (último registro). El resto del equipo promedia ánimo {mood}/10 y estrés {stress}/10. Seguimiento recomendado.",
+          "Atención: {name} está en riesgo elevado. Índices EOR del equipo: mental {mental}/10, bienestar {wellbeing}/10, social {social}/10. Seguimiento recomendado.",
         lowCompliance:
-          "Cumplimiento bajo: {count} deportistas sin registro reciente ({names}). Solo {compliance}% ha registrado esta semana. Refuerza la rutina de autoevaluación.",
-        risingStress:
-          "El estrés del equipo está subiendo (media {stress}/10, +{delta} pts vs. días previos). Cumplimiento semanal: {compliance}%. Valora ajustar carga o hacer repaso grupal breve.",
-        decliningMood:
-          "El ánimo colectivo baja (media {mood}/10, −{delta} pts). Cumplimiento semanal: {compliance}%. Buen momento para detectar fatiga o presión acumulada.",
+          "Cumplimiento bajo: {count} deportistas sin registro reciente ({names}). Solo {compliance}% ha registrado esta semana. Índices EOR actuales: mental {mental}/10, bienestar {wellbeing}/10, social {social}/10.",
+        mentalSocialGap:
+          "El equipo mantiene buen índice mental ({mental}/10) pero el clima social es más bajo ({social}/10). Bienestar {wellbeing}/10. Cumplimiento: {compliance}%. Valora dinámicas de grupo.",
+        socialDrop:
+          "El índice social del equipo baja ({social}/10, −{delta} pts vs. semana anterior). Cumplimiento: {compliance}%. Buen momento para revisar cohesión.",
+        mentalDrop:
+          "El índice mental del equipo baja ({mental}/10, −{delta} pts vs. semana anterior). Cumplimiento: {compliance}%. Valora carga y presión.",
+        wellbeingDrop:
+          "El bienestar del equipo baja ({wellbeing}/10, −{delta} pts vs. semana anterior). Cumplimiento: {compliance}%. Revisa descanso y recuperación.",
+        coachCommunicationLow:
+          "Comunicación con entrenador/a baja ({coachCommunication}/10). Mental {mental}/10, social {social}/10. Cumplimiento: {compliance}%. Prioriza seguimiento individual.",
         healthy:
-          "Buen momento del equipo: ánimo {mood}/10, energía {energy}/10 y {compliance}% de cumplimiento semanal. Mantén la rutina de registro y refuerza lo que está funcionando.",
+          "Buen momento del equipo: mental {mental}/10, bienestar {wellbeing}/10, social {social}/10 y {compliance}% de cumplimiento semanal. Mantén la rutina de revisión EOR.",
         mixed:
-          "Estado mixto: ánimo {mood}/10, estrés {stress}/10, {compliance}% de cumplimiento semanal y {watch} deportistas en vigilancia. Sin alertas críticas, pero conviene monitorizar.",
+          "Estado mixto: mental {mental}/10, bienestar {wellbeing}/10, social {social}/10, comunicación entrenador {coachCommunication}/10, {compliance}% de cumplimiento y {watch} deportistas en vigilancia.",
         coach: {
           noAthletes:
             "Aún no hay deportistas en este equipo. Cuando empiecen a registrarse, verás aquí un resumen global del grupo.",
           noData:
-            "Todavía no hay autoevaluaciones recientes en el equipo. Anima al grupo a 1-2 registros por semana.",
+            "Todavía no hay revisiones EOR semanales en el equipo. Anima al grupo a completar la revisión semanal.",
           multipleHighRisk:
-            "Prioridad alta: {count} deportistas en riesgo elevado según las métricas agregadas. El equipo promedia ánimo {mood}/10 y estrés {stress}/10. El psicólogo/a hará el seguimiento individual.",
+            "Prioridad alta: {count} deportistas en riesgo elevado. Índices EOR agregados: mental {mental}/10, bienestar {wellbeing}/10, social {social}/10. El psicólogo/a hará el seguimiento individual.",
           singleHighRisk:
-            "Atención: {count} deportista en riesgo elevado. El equipo promedia ánimo {mood}/10 y estrés {stress}/10. El psicólogo/a hará el seguimiento individual.",
+            "Atención: {count} deportista en riesgo elevado. Índices EOR agregados: mental {mental}/10, bienestar {wellbeing}/10, social {social}/10. El psicólogo/a hará el seguimiento individual.",
           lowCompliance:
-            "Cumplimiento bajo: {count} deportistas sin registro reciente. Solo {compliance}% ha registrado esta semana. Refuerza la rutina de autoevaluación con el grupo.",
-          risingStress:
-            "El estrés medio del equipo está subiendo ({stress}/10, +{delta} pts). Cumplimiento semanal: {compliance}%. Valora ajustar carga o hacer un repaso grupal breve.",
-          decliningMood:
-            "El ánimo medio del equipo baja ({mood}/10, −{delta} pts). Cumplimiento semanal: {compliance}%. Buen momento para detectar fatiga o presión acumulada.",
+            "Cumplimiento bajo: {count} deportistas sin registro reciente. Solo {compliance}% ha registrado esta semana. Índices EOR: mental {mental}/10, bienestar {wellbeing}/10, social {social}/10.",
+          mentalSocialGap:
+            "El equipo mantiene buen índice mental ({mental}/10) pero el clima social es más bajo ({social}/10). Bienestar {wellbeing}/10. Cumplimiento: {compliance}%.",
+          socialDrop:
+            "El índice social del equipo baja ({social}/10, −{delta} pts). Cumplimiento: {compliance}%. Valora dinámicas de grupo.",
+          mentalDrop:
+            "El índice mental del equipo baja ({mental}/10, −{delta} pts). Cumplimiento: {compliance}%. Valora carga y presión.",
+          wellbeingDrop:
+            "El bienestar del equipo baja ({wellbeing}/10, −{delta} pts). Cumplimiento: {compliance}%. Revisa descanso y recuperación.",
           healthy:
-            "Buen momento del equipo: ánimo medio {mood}/10, energía {energy}/10 y {compliance}% de cumplimiento semanal. Mantén la rutina de registro.",
+            "Buen momento del equipo: mental {mental}/10, bienestar {wellbeing}/10, social {social}/10 y {compliance}% de cumplimiento semanal.",
           mixed:
-            "Estado mixto del equipo: ánimo {mood}/10, estrés {stress}/10, {compliance}% de cumplimiento semanal y {watch} deportistas en vigilancia. Sin alertas críticas agregadas.",
+            "Estado mixto del equipo: mental {mental}/10, bienestar {wellbeing}/10, social {social}/10, {compliance}% de cumplimiento y {watch} deportistas en vigilancia.",
         },
       },
       athlete: {
@@ -510,6 +569,15 @@ export const translations = {
       noData: "Sin datos aún.",
       title7d: "Tendencias de rendimiento (7 días)",
       subtitle7d: "Sigue tu ánimo, energía y estrés a lo largo del tiempo.",
+      eorTitle: "Progresión EOR",
+      eorSubtitle: "Índices de rendimiento, bienestar, social, mental y comunicación con entrenador/a.",
+      eorSubtitle_coach: "Medias del equipo: mental, bienestar y entorno social.",
+      eorSubtitle_psychologist:
+        "Medias del equipo: mental, bienestar, social y comunicación con entrenador/a.",
+      eorEmpty: "Completa la revisión semanal EOR para ver la gráfica.",
+      eorNoData: "Aún no hay revisiones EOR registradas.",
+      eorAthleteTitle: "Progresión EOR del deportista",
+      eorAthleteSubtitle: "Evolución semana a semana de los índices EOR.",
       mood: "Ánimo",
       energy: "Energía",
       stress: "Estrés",
@@ -535,6 +603,40 @@ export const translations = {
       summaryInactive: "Sin registro reciente",
       privacyNote:
         "No tienes acceso a notas privadas ni a las respuestas concretas de cada deportista. Para casos individuales, contacta con el/la psicólogo/a.",
+      historyChartTitle: "Evolución EOR del equipo (desde el inicio)",
+      historyChartSubtitle: "Medias agregadas: mental, bienestar y social.",
+      eorTeamTitle: "Índices EOR del equipo",
+      eorTeamSubtitle: "Resumen agregado de la última revisión semanal — sin datos individuales.",
+      weeklySectionTitle: "Revisión semanal EOR",
+      weeklySectionSubtitle:
+        "Índices agregados del entorno deportivo y del rendimiento — sin respuestas individuales.",
+      weeklyInsightTitle: "Resumen inteligente semanal",
+      weeklyInsightFooter:
+        "Generado a partir de las medias agregadas de la última revisión EOR del equipo.",
+      weeklyChartTitle: "Progresión semanal EOR",
+      weeklyChartSubtitle: "Evolución de los índices agregados en cada revisión semanal.",
+      weeklyChartEmpty: "Cuando el equipo complete revisiones EOR, verás la curva aquí.",
+      weeklyChartNoData: "Aún no hay revisiones semanales EOR.",
+      weeklyResultsTitle: "Última revisión semanal",
+      weeklyResultsSubtitle: "Medias del equipo en la revisión EOR más reciente.",
+      weeklyResultsEmpty: "Todavía no hay una revisión EOR completada por el equipo.",
+      weeklyResultsMeta: "Semana del {date} · {count} respuestas agregadas",
+      weeklyResultsPrivacy:
+        "Solo ves medias del grupo. Las respuestas abiertas y el contacto con psicología son privados.",
+      weeklyInsight: {
+        noData:
+          "Todavía no hay revisiones EOR recientes. Cuando el equipo las complete, aquí verás un resumen semanal accionable.",
+        mentalSocialGap:
+          "Hay una brecha: mental alto ({mental}/10) pero entorno social bajo ({social}/10). Benestar {wellbeing}/10. Valora dinámica de grupo e integración.",
+        socialDrop:
+          "El índice social del equipo ha bajado ({value}/10, −{delta} pts). Revisa integración y clima de grupo.",
+        mentalDrop:
+          "El índice mental del equipo ha bajado ({value}/10, −{delta} pts). Revisa carga, presión y motivación grupal.",
+        healthy:
+          "Buen equilibrio semanal: mental {mental}/10, bienestar {wellbeing}/10, social {social}/10 y {compliance}% de respuestas.",
+        mixed:
+          "Estado semanal mixto: mental {mental}/10, bienestar {wellbeing}/10, social {social}/10 ({compliance}% respuestas).",
+      },
       noTeamTitle: "Equipo pendiente",
       noTeamSubtitle: "Tu acceso como entrenador/a está aprobado.",
       noTeamText:
@@ -557,7 +659,8 @@ export const translations = {
       selectAthleteText: "Elige un deportista de la lista para ver historial, notas y evaluación.",
       noTeams: "Aún no hay equipos creados.",
       athletesMonitored: "Deportistas monitorizados",
-      orgAvgMood: "Ánimo medio global",
+      orgAvgMood: "Índice mental global (EOR)",
+      orgAvgMental: "Índice mental global (EOR)",
       highEmotionalRisk: "Riesgo emocional alto",
       entriesWithNotes: "Entradas con notas",
       allAthletes: "Todos los deportistas",
@@ -567,6 +670,23 @@ export const translations = {
       emotionalRiskSubtitle: "Puntuaciones de alto riesgo o notas personales relevantes.",
       checkInLog: "Registro de autoevaluaciones",
       checkInLogSubtitleSimple: "Fechas en las que el deportista ha respondido.",
+      weeklyEorTitle: "Revisión semanal EOR",
+      weeklyEorSubtitle: "Índices automáticos y señales del entorno deportivo.",
+      noWeeklyEor: "Sin revisión EOR reciente.",
+      eorIndexMental: "Mental",
+      eorIndexWellbeing: "Bienestar",
+      eorIndexSocial: "Social",
+      eorIndexPerformance: "Rendimiento",
+      eorAlertCoachCommunication: "Comunicación entrenador: {value}/10",
+      eorAlertRoleClarity: "Claridad de rol: {value}/10",
+      eorPsychologistContact_yes: "El/la deportista ha pedido hablar contigo.",
+      eorPsychologistContact_maybe: "El/la deportista podría necesitar hablar contigo.",
+      eorContactBadge: "Contacto",
+      teamEorTitle: "Índices EOR del equipo",
+      teamEorSubtitle:
+        "Medias agregadas: mental, bienestar, social y comunicación con entrenador/a.",
+      teamEorChartTitle: "Evolución EOR del equipo",
+      teamEorChartSubtitle: "Progresión semanal de los cuatro índices agregados.",
       checkInResponded: "Registrado",
       noCheckIns: "Sin autoevaluaciones para este deportista.",
       noNotes: "Sin notas personales.",
@@ -937,8 +1057,10 @@ export const translations = {
       todaySubtitle: "Una ullada ràpida al teu registre diari.",
       todayDone: "Registre d'avui completat. Gràcies per respondre.",
       todayPending: "Encara no has registrat la teva autoavaluació d'avui.",
-      weeklyPending: "Has registrat el pols d'avui. Falta completar la reflexió setmanal.",
+      weeklyPending: "Has registrat el pols d'avui. Falta completar la revisió setmanal EOR.",
       updateResponses: "Actualitzar respostes d'avui",
+      weeklyEorTitle: "La teva darrera revisió EOR",
+      weeklyEorSubtitle: "Resum dels teus índexs setmanals (només tu i el/la psicòleg/òloga els veieu).",
     },
 
     athleteContact: {
@@ -967,18 +1089,81 @@ export const translations = {
       titleWeekly: "Autoavaluació + reflexió setmanal",
       subtitleWeekly:
         "Primer el teu pols actual; després, preguntes sobre la setmana (només ho veu el/la psicòleg/òloga).",
-      titleWeeklyOnly: "Reflexió setmanal",
+      titleWeeklyOnly: "Revisió setmanal EOR",
       subtitleWeeklyOnly:
-        "Respon les preguntes sobre la setmana. Només el/la psicòleg/òloga veurà les teves respostes.",
+        "Valora la setmana en escala 0-10. Només el/la psicòleg/òloga veurà les teves respostes.",
       dailyBadge: "Registre",
       dailyTitle: "Pols mental",
       dailyIntro: "Valora com estàs ara mateix (1 = molt baix, 10 = molt alt).",
       weeklyBadge: "Aquesta setmana",
-      weeklyTitle: "Reflexió setmanal",
+      weeklyTitle: "Revisió setmanal EOR",
       weeklyIntro:
-        "Repassa entrenaments, competició o la setmana en general. Sigues concret/a a les respostes.",
+        "Cinc blocs EOR (rendiment, cos, mental, entorn i vida) en escala 0-10, més preguntes obertes. Només el/la psicòleg/òloga veurà les teves respostes.",
       weeklyNextHint:
-        "La reflexió ampliada surt al primer registre de la setmana o cada ~7 dies. En la resta, només el pols mental.",
+        "La revisió EOR surt al primer registre de la setmana o cada ~7 dies. En la resta, només el pols mental.",
+      eorBlockPerformanceBadge: "Rendiment",
+      eorBlockPerformanceTitle: "Rendiment",
+      eorBlockBodyBadge: "Cos",
+      eorBlockBodyTitle: "Cos i recuperació",
+      eorBlockMentalBadge: "Mental",
+      eorBlockMentalTitle: "Estat mental",
+      eorBlockEnvironmentBadge: "Entorn",
+      eorBlockEnvironmentTitle: "Entorn esportiu",
+      eorBlockLifeBadge: "Vida",
+      eorBlockLifeTitle: "Vida fora de l'esport",
+      eorBlockOpenBadge: "Reflexió",
+      eorBlockOpenTitle: "Preguntes obertes",
+      eorKeyQuestionBadge: "Clau",
+      eorPerformance: "Valora el teu rendiment aquesta setmana",
+      eorPerformanceHint: "Entrenaments, partits o la setmana esportiva en conjunt.",
+      eorInvolvement: "Valora la teva implicació",
+      eorInvolvementHint: "Compromís i actitud amb l'equip o l'objectiu.",
+      eorEffort: "Valora l'esforç realitzat",
+      eorEffortHint: "Intensitat i constància del treball aquesta setmana.",
+      eorRestQuality: "Qualitat del descans",
+      eorRestQualityHint: "Com has dormit i recuperat al llarg de la setmana.",
+      eorWeeklyEnergy: "Nivell d'energia",
+      eorWeeklyEnergyHint: "Sensació general de càrrega disponible.",
+      eorPhysicalFatigue: "Fatiga física",
+      eorPhysicalFatigueHint: "0 = sense fatiga, 10 = molt fatigat/da.",
+      eorGeneralRecovery: "Recuperació general",
+      eorGeneralRecoveryHint: "Com de recuperat/da et sents en tancar la setmana.",
+      eorConfidence: "Confiança",
+      eorConfidenceHint: "Confiança en tu i en la teva capacitat de rendir.",
+      eorConcentration: "Concentració",
+      eorConcentrationHint: "Capacitat de mantenir l'atenció en el que importa.",
+      eorMotivation: "Motivació",
+      eorMotivationHint: "Ganes d'entrenar, competir i millorar.",
+      eorPressureManagement: "Gestió de la pressió",
+      eorPressureManagementHint: "0 = molt mal gestionada, 10 = molt bé gestionada.",
+      eorTeammateCommunication: "Comunicació amb els companys/es",
+      eorTeammateCommunicationHint: "Et sents escoltat/da i connectat/da amb el grup.",
+      eorCoachCommunication: "Comunicació amb l'entrenador/a",
+      eorCoachCommunicationHint: "Claredat, feedback i sensació d'ésser escoltat/da.",
+      eorGroupIntegration: "Integració dins del grup",
+      eorGroupIntegrationHint: "Et sents part de l'equip i còmode/a a l'entorn.",
+      eorRoleClarity: "Claredat del meu rol dins l'equip",
+      eorRoleClarityHint: "Entens la teva funció i el que s'espera de tu.",
+      eorSportLifeBalance: "Equilibri esport-estudis/feina",
+      eorSportLifeBalanceHint: "Balanç entre exigència esportiva i altres àrees.",
+      eorLifeOutsideSport: "Estat general fora de l'esport",
+      eorLifeOutsideSportHint: "Com et sents en família, estudis, feina o vida personal.",
+      eorPersonalTimeManagement: "Gestió del temps personal",
+      eorPersonalTimeManagementHint: "Organització i control dels teus temps aquesta setmana.",
+      eorWentWell: "Què ha anat millor aquesta setmana?",
+      eorWentWellHint: "Un assoliment, avanç o aspecte positiu concret.",
+      eorWentWellPlaceholder: "Ex: bon partit, millor comunicació amb l'entrenador/a…",
+      eorMainDifficulty: "Quina dificultat principal has tingut?",
+      eorMainDifficultyHint: "El que més t'ha costat o preocupat aquesta setmana.",
+      eorMainDifficultyPlaceholder: "Ex: no em sento escoltat/da, fatiga acumulada…",
+      eorNextGoal: "Quin és el teu objectiu per la setmana vinent?",
+      eorNextGoalHint: "Alguna cosa concreta i assolible.",
+      eorNextGoalPlaceholder: "Ex: parlar amb l'entrenador/a, dormir millor, mantenir la calma…",
+      eorPsychologistContact: "Necessites parlar amb el/la psicòleg/òloga?",
+      eorPsychologistContactHint: "Si marques «Sí» o «Potser», el/la psicòleg/òloga ho veurà al seu panell.",
+      eorPsychologistContact_no: "No",
+      eorPsychologistContact_maybe: "Potser",
+      eorPsychologistContact_yes: "Sí",
       metricMood: "Ànim",
       metricStress: "Estrès",
       metricSleep: "Son",
@@ -1003,25 +1188,8 @@ export const translations = {
       updateBtn: "Actualitzar registre",
       submitDailyBtn: "Desar autoavaluació",
       submitWeeklyBtn: "Desar autoavaluació + reflexió",
-      performanceRating: "Com valores el teu rendiment aquesta setmana?",
-      performanceHint: "En entrenaments, partits o la setmana esportiva en conjunt.",
-      involvementRating: "Com valores la teva implicació i actitud aquesta setmana?",
-      involvementHint: "Esforç, compromís i actitud amb l'equip o l'objectiu.",
-      generalMoodWords: "Amb quina(es) paraula(es) definiries el teu ànim aquesta setmana?",
-      generalMoodWordsHint: "Una o diverses paraules que resumeixin com t'has sentit.",
-      generalMoodWordsPlaceholder: "Ex: motivat/da, cansat/da, il·lusionat/da, frustrat/da…",
-      moodChangeEvent: "Ha passat alguna cosa important que hagi influït en el teu estat d'ànim?",
-      moodChangeEventHint: "Lesió, resultat, conflicte, assoliment, canvi de rol, etc.",
-      moodChangeEventPlaceholder:
-        "Descriu el fet i com t'ha afectat emocionalment aquesta setmana.",
-      nextGoal: "Quin és el teu objectiu principal per als propers dies?",
-      nextGoalHint: "Alguna cosa concreta i assolible en esport o en el teu benestar mental.",
-      nextGoalPlaceholder:
-        "Ex: dormir 8 h, mantenir la calma en competició, parlar amb l'entrenador/a…",
-      ratingLow: "Molt baix",
-      ratingHigh: "Excel·lent",
-      involvementLow: "Mínima",
-      involvementHigh: "Màxima",
+      ratingLow: "0",
+      ratingHigh: "10",
       low: "Molt baix",
       high: "Molt alt",
       calm: "Molt tranquil",
@@ -1041,9 +1209,9 @@ export const translations = {
       footerEnhanced:
         "Lectura clínica en llenguatge natural, combinada amb mètriques, notes i tendències recents.",
       footer:
-        "Generat a partir de les autoavaluacions dels últims 7 dies (objectiu: 1-2 registres/setmana per esportista).",
+        "Generat a partir de les revisions EOR setmanals i l'activitat recent de l'equip.",
       footerCoach:
-        "Resum agregat de l'equip — sense dades individuals ni respostes concretes per esportista.",
+        "Resum agregat EOR de l'equip — sense dades individuals ni comunicació amb entrenador/a.",
       namePair: "{a} i {b}",
       nameList: "{names} i {last}",
       teamTitle: "Estat general de l'equip",
@@ -1066,40 +1234,50 @@ export const translations = {
         noAthletes:
           "Encara no hi ha esportistes assignats a aquest equip. Quan es registrin, aquí veuràs un resum automàtic de l'estat del grup.",
         noData:
-          "Encara no hi ha autoavaluacions recents. Anima l'equip a fer 1-2 registres per setmana per activar l'anàlisi.",
+          "Encara no hi ha revisions EOR setmanals. Anima l'equip a completar la revisió setmanal per activar l'anàlisi.",
         multipleHighRisk:
-          "Prioritat alta: {count} esportistes en risc elevat ({names}). L'equip fa una mitjana d'ànim {mood}/10 i estrès {stress}/10. Conve revisar aquests casos abans del proper entrenament.",
+          "Prioritat alta: {count} esportistes en risc elevat ({names}). Índexs EOR de l'equip: mental {mental}/10, benestar {wellbeing}/10, social {social}/10. Conve revisar aquests casos abans del proper entrenament.",
         singleHighRisk:
-          "Atenció: {name} està en risc elevat (últim registre). La resta de l'equip fa una mitjana d'ànim {mood}/10 i estrès {stress}/10. Seguiment recomanat.",
+          "Atenció: {name} està en risc elevat. Índexs EOR de l'equip: mental {mental}/10, benestar {wellbeing}/10, social {social}/10. Seguiment recomanat.",
         lowCompliance:
-          "Compliment baix: {count} esportistes sense registre recent ({names}). Només un {compliance}% ha registrat aquesta setmana. Reforça la rutina d'autoavaluació.",
-        risingStress:
-          "L'estrès de l'equip puja (mitjana {stress}/10, +{delta} pts vs. dies previs). Compliment setmanal: {compliance}%. Valora ajustar càrrega o fer un repàs grupal breu.",
-        decliningMood:
-          "L'ànim col·lectiu baixa (mitjana {mood}/10, −{delta} pts). Compliment setmanal: {compliance}%. Bon moment per detectar fatiga o pressió acumulada.",
+          "Compliment baix: {count} esportistes sense registre recent ({names}). Només un {compliance}% ha registrat aquesta setmana. Índexs EOR actuals: mental {mental}/10, benestar {wellbeing}/10, social {social}/10.",
+        mentalSocialGap:
+          "L'equip manté bon índex mental ({mental}/10) però el clima social és més baix ({social}/10). Benestar {wellbeing}/10. Compliment: {compliance}%. Valora dinàmiques de grup.",
+        socialDrop:
+          "L'índex social de l'equip baixa ({social}/10, −{delta} pts vs. setmana anterior). Compliment: {compliance}%. Bon moment per revisar cohesió.",
+        mentalDrop:
+          "L'índex mental de l'equip baixa ({mental}/10, −{delta} pts vs. setmana anterior). Compliment: {compliance}%. Valora càrrega i pressió.",
+        wellbeingDrop:
+          "El benestar de l'equip baixa ({wellbeing}/10, −{delta} pts vs. setmana anterior). Compliment: {compliance}%. Revisa descans i recuperació.",
+        coachCommunicationLow:
+          "Comunicació amb entrenador/a baixa ({coachCommunication}/10). Mental {mental}/10, social {social}/10. Compliment: {compliance}%. Prioritza seguiment individual.",
         healthy:
-          "Bon moment de l'equip: ànim {mood}/10, energia {energy}/10 i {compliance}% de compliment setmanal. Mantén la rutina de registre i reforça el que funciona.",
+          "Bon moment de l'equip: mental {mental}/10, benestar {wellbeing}/10, social {social}/10 i {compliance}% de compliment setmanal. Mantén la rutina de revisió EOR.",
         mixed:
-          "Estat mixt: ànim {mood}/10, estrès {stress}/10, {compliance}% de compliment setmanal i {watch} esportistes en vigilància. Sense alertes crítiques, però convé monitoritzar.",
+          "Estat mixt: mental {mental}/10, benestar {wellbeing}/10, social {social}/10, comunicació entrenador {coachCommunication}/10, {compliance}% de compliment i {watch} esportistes en vigilància.",
         coach: {
           noAthletes:
             "Encara no hi ha esportistes en aquest equip. Quan comencin a registrar-se, veuràs aquí un resum global del grup.",
           noData:
-            "Encara no hi ha autoavaluacions recents a l'equip. Anima el grup a 1-2 registres per setmana.",
+            "Encara no hi ha revisions EOR setmanals a l'equip. Anima el grup a completar la revisió setmanal.",
           multipleHighRisk:
-            "Prioritat alta: {count} esportistes en risc elevat segons les mètriques agregades. L'equip fa una mitjana d'ànim {mood}/10 i estrès {stress}/10. El psicòleg/òloga farà el seguiment individual.",
+            "Prioritat alta: {count} esportistes en risc elevat. Índexs EOR agregats: mental {mental}/10, benestar {wellbeing}/10, social {social}/10. El psicòleg/òloga farà el seguiment individual.",
           singleHighRisk:
-            "Atenció: {count} esportista en risc elevat. L'equip fa una mitjana d'ànim {mood}/10 i estrès {stress}/10. El psicòleg/òloga farà el seguiment individual.",
+            "Atenció: {count} esportista en risc elevat. Índexs EOR agregats: mental {mental}/10, benestar {wellbeing}/10, social {social}/10. El psicòleg/òloga farà el seguiment individual.",
           lowCompliance:
-            "Compliment baix: {count} esportistes sense registre recent. Només un {compliance}% ha registrat aquesta setmana. Reforça la rutina d'autoavaluació amb el grup.",
-          risingStress:
-            "L'estrès mitjà de l'equip puja ({stress}/10, +{delta} pts). Compliment setmanal: {compliance}%. Valora ajustar càrrega o fer un repàs grupal breu.",
-          decliningMood:
-            "L'ànim mitjà de l'equip baixa ({mood}/10, −{delta} pts). Compliment setmanal: {compliance}%. Bon moment per detectar fatiga o pressió acumulada.",
+            "Compliment baix: {count} esportistes sense registre recent. Només un {compliance}% ha registrat aquesta setmana. Índexs EOR: mental {mental}/10, benestar {wellbeing}/10, social {social}/10.",
+          mentalSocialGap:
+            "L'equip manté bon índex mental ({mental}/10) però el clima social és més baix ({social}/10). Benestar {wellbeing}/10. Compliment: {compliance}%.",
+          socialDrop:
+            "L'índex social de l'equip baixa ({social}/10, −{delta} pts). Compliment: {compliance}%. Valora dinàmiques de grup.",
+          mentalDrop:
+            "L'índex mental de l'equip baixa ({mental}/10, −{delta} pts). Compliment: {compliance}%. Valora càrrega i pressió.",
+          wellbeingDrop:
+            "El benestar de l'equip baixa ({wellbeing}/10, −{delta} pts). Compliment: {compliance}%. Revisa descans i recuperació.",
           healthy:
-            "Bon moment de l'equip: ànim mitjà {mood}/10, energia {energy}/10 i {compliance}% de compliment setmanal. Mantén la rutina de registre.",
+            "Bon moment de l'equip: mental {mental}/10, benestar {wellbeing}/10, social {social}/10 i {compliance}% de compliment setmanal.",
           mixed:
-            "Estat mixt de l'equip: ànim {mood}/10, estrès {stress}/10, {compliance}% de compliment setmanal i {watch} esportistes en vigilància. Sense alertes crítiques agregades.",
+            "Estat mixt de l'equip: mental {mental}/10, benestar {wellbeing}/10, social {social}/10, {compliance}% de compliment i {watch} esportistes en vigilància.",
         },
       },
       athlete: {
@@ -1129,6 +1307,15 @@ export const translations = {
       noData: "Sense dades encara.",
       title7d: "Tendències de rendiment (7 dies)",
       subtitle7d: "Segueix el teu ànim, energia i estrès al llarg del temps.",
+      eorTitle: "Progressió EOR",
+      eorSubtitle: "Índexs de rendiment, benestar, social, mental i comunicació amb entrenador/a.",
+      eorSubtitle_coach: "Mitjanes de l'equip: mental, benestar i entorn social.",
+      eorSubtitle_psychologist:
+        "Mitjanes de l'equip: mental, benestar, social i comunicació amb entrenador/a.",
+      eorEmpty: "Completa la revisió setmanal EOR per veure la gràfica.",
+      eorNoData: "Encara no hi ha revisions EOR registrades.",
+      eorAthleteTitle: "Progressió EOR de l'esportista",
+      eorAthleteSubtitle: "Evolució setmana a setmana dels índexs EOR.",
       mood: "Ànim",
       energy: "Energia",
       stress: "Estrès",
@@ -1154,6 +1341,40 @@ export const translations = {
       summaryInactive: "Sense registre recent",
       privacyNote:
         "No tens accés a notes privades ni a les respostes concretes de cada esportista. Per a casos individuals, contacta amb el/la psicòleg/òloga.",
+      historyChartTitle: "Evolució EOR de l'equip (des de l'inici)",
+      historyChartSubtitle: "Mitjanes agregades: mental, benestar i social.",
+      eorTeamTitle: "Índexs EOR de l'equip",
+      eorTeamSubtitle: "Resum agregat de la darrera revisió setmanal — sense dades individuals.",
+      weeklySectionTitle: "Revisió setmanal EOR",
+      weeklySectionSubtitle:
+        "Índexs agregats de l'entorn esportiu i del rendiment — sense respostes individuals.",
+      weeklyInsightTitle: "Resum intel·ligent setmanal",
+      weeklyInsightFooter:
+        "Generat a partir de les mitjanes agregades de l'última revisió EOR de l'equip.",
+      weeklyChartTitle: "Progressió setmanal EOR",
+      weeklyChartSubtitle: "Evolució dels índexs agregats en cada revisió setmanal.",
+      weeklyChartEmpty: "Quan l'equip completi revisions EOR, veuràs la corba aquí.",
+      weeklyChartNoData: "Encara no hi ha revisions setmanals EOR.",
+      weeklyResultsTitle: "Darrera revisió setmanal",
+      weeklyResultsSubtitle: "Mitjanes de l'equip a la revisió EOR més recent.",
+      weeklyResultsEmpty: "Encara no hi ha una revisió EOR completada per l'equip.",
+      weeklyResultsMeta: "Setmana del {date} · {count} respostes agregades",
+      weeklyResultsPrivacy:
+        "Només veus mitjanes del grup. Les respostes obertes i el contacte amb psicologia són privats.",
+      weeklyInsight: {
+        noData:
+          "Encara no hi ha revisions EOR recents. Quan l'equip les completi, aquí veuràs un resum setmanal accionable.",
+        mentalSocialGap:
+          "Hi ha una bretxa: mental alt ({mental}/10) però entorn social baix ({social}/10). Benestar {wellbeing}/10. Valora dinàmica de grup i integració.",
+        socialDrop:
+          "L'índex social de l'equip ha baixat ({value}/10, −{delta} pts). Revisa integració i clima de grup.",
+        mentalDrop:
+          "L'índex mental de l'equip ha baixat ({value}/10, −{delta} pts). Revisa càrrega, pressió i motivació grupal.",
+        healthy:
+          "Bon equilibri setmanal: mental {mental}/10, benestar {wellbeing}/10, social {social}/10 i {compliance}% de respostes.",
+        mixed:
+          "Estat setmanal mixt: mental {mental}/10, benestar {wellbeing}/10, social {social}/10 ({compliance}% respostes).",
+      },
       noTeamTitle: "Equip pendent",
       noTeamSubtitle: "El teu accés com a entrenador/a està aprovat.",
       noTeamText:
@@ -1176,7 +1397,8 @@ export const translations = {
       selectAthleteText: "Tria un esportista de la llista per veure historial, notes i avaluació.",
       noTeams: "Encara no hi ha equips creats.",
       athletesMonitored: "Esportistes monitoritzats",
-      orgAvgMood: "Ànim mitjà global",
+      orgAvgMood: "Índex mental global (EOR)",
+      orgAvgMental: "Índex mental global (EOR)",
       highEmotionalRisk: "Risc emocional alt",
       entriesWithNotes: "Entrades amb notes",
       allAthletes: "Tots els esportistes",
@@ -1187,6 +1409,23 @@ export const translations = {
         "Puntuacions d'alt risc o notes personals rellevants.",
       checkInLog: "Registre d'autoavaluacions",
       checkInLogSubtitleSimple: "Dates en què l'esportista ha respost.",
+      weeklyEorTitle: "Revisió setmanal EOR",
+      weeklyEorSubtitle: "Índexs automàtics i senyals de l'entorn esportiu.",
+      noWeeklyEor: "Sense revisió EOR recent.",
+      eorIndexMental: "Mental",
+      eorIndexWellbeing: "Benestar",
+      eorIndexSocial: "Social",
+      eorIndexPerformance: "Rendiment",
+      eorAlertCoachCommunication: "Comunicació entrenador/a: {value}/10",
+      eorAlertRoleClarity: "Claredat de rol: {value}/10",
+      eorPsychologistContact_yes: "L'esportista ha demanat parlar amb tu.",
+      eorPsychologistContact_maybe: "L'esportista podria necessitar parlar amb tu.",
+      eorContactBadge: "Contacte",
+      teamEorTitle: "Índexs EOR de l'equip",
+      teamEorSubtitle:
+        "Mitjanes agregades: mental, benestar, social i comunicació amb entrenador/a.",
+      teamEorChartTitle: "Evolució EOR de l'equip",
+      teamEorChartSubtitle: "Progressió setmanal dels quatre índexs agregats.",
       checkInResponded: "Registrat",
       noCheckIns: "Sense autoavaluacions per a aquest esportista.",
       noNotes: "Sense notes personals.",

@@ -1,6 +1,9 @@
 import { Card } from "../ui/Card"
-import { CheckInChart } from "../CheckInChart"
 import { InsightCard } from "../InsightCard"
+import { WeeklyEorChart } from "../WeeklyEorTeamChart"
+import { WeeklyEorPanel } from "../WeeklyEorPanel"
+import { aggregateWeeklyEorTrend } from "../../lib/coachTeamAnalytics"
+import { getLatestWeeklyReflection } from "../../lib/weeklyEor"
 import { consentStatus, isAdultInSpain } from "../../lib/age"
 
 export function PsychologistAthleteDetail({
@@ -13,6 +16,9 @@ export function PsychologistAthleteDetail({
   insightSource,
   t,
 }) {
+  const latestWeekly = getLatestWeeklyReflection(checkIns)
+  const weeklyTrend = aggregateWeeklyEorTrend(checkIns)
+
   return (
     <>
       <Card title={athlete.name} subtitle={t("psychologist.historySubtitle")}>
@@ -30,7 +36,16 @@ export function PsychologistAthleteDetail({
             source={insightSource}
           />
         </div>
-        <CheckInChart checkIns={checkIns.slice(0, 14)} />
+        <WeeklyEorChart
+          weeklyTrend={weeklyTrend}
+          variant="psychologist"
+          title={t("chart.eorAthleteTitle")}
+          subtitle={t("chart.eorAthleteSubtitle")}
+        />
+      </Card>
+
+      <Card title={t("psychologist.weeklyEorTitle")} subtitle={t("psychologist.weeklyEorSubtitle")}>
+        <WeeklyEorPanel checkIn={latestWeekly} t={t} />
       </Card>
 
       <Card title={t("psychologist.consentTitle")} subtitle={t("psychologist.consentSubtitle")}>

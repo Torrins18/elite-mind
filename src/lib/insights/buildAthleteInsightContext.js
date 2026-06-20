@@ -1,9 +1,12 @@
 import { summarizeAthlete, sortByDateDesc } from "./metrics"
+import { computeWeeklyIndexes, getLatestWeeklyReflection } from "../weeklyEor"
 
 export function buildAthleteInsightContext({ athlete, checkIns, assessment, teamName, lang }) {
   const rows = sortByDateDesc(checkIns.filter((c) => c.athlete_id === athlete.id))
   const summary = summarizeAthlete({ athlete, checkIns: rows })
   const recentRows = rows.slice(0, 7)
+  const latestWeekly = getLatestWeeklyReflection(rows)
+  const weeklyIndexes = computeWeeklyIndexes(latestWeekly)
 
   return {
     lang,
@@ -37,20 +40,30 @@ export function buildAthleteInsightContext({ athlete, checkIns, assessment, team
       },
       weakAreas: summary.weakAreas,
       totalEntries: summary.totalEntries,
+      weeklyEor: weeklyIndexes,
     },
     qualitative: {
       personalNotes: recentRows
         .filter((row) => row.personal_notes?.trim())
         .map((row) => ({ date: row.check_in_date, text: row.personal_notes.trim() })),
+      weeklyWentWell: recentRows
+        .filter((row) => row.weekly_went_well?.trim())
+        .map((row) => ({ date: row.check_in_date, text: row.weekly_went_well.trim() })),
+      weeklyDifficulties: recentRows
+        .filter((row) => row.weekly_main_difficulty?.trim())
+        .map((row) => ({ date: row.check_in_date, text: row.weekly_main_difficulty.trim() })),
+      nextGoals: recentRows
+        .filter((row) => row.next_goal?.trim())
+        .map((row) => ({ date: row.check_in_date, text: row.next_goal.trim() })),
+      psychologistContactRequests: recentRows
+        .filter((row) => row.psychologist_contact === "yes" || row.psychologist_contact === "maybe")
+        .map((row) => ({ date: row.check_in_date, level: row.psychologist_contact })),
       moodWords: recentRows
         .filter((row) => row.general_mood_words?.trim())
         .map((row) => row.general_mood_words.trim()),
       moodEvents: recentRows
         .filter((row) => row.mood_change_event?.trim())
         .map((row) => ({ date: row.check_in_date, text: row.mood_change_event.trim() })),
-      nextGoals: recentRows
-        .filter((row) => row.next_goal?.trim())
-        .map((row) => ({ date: row.check_in_date, text: row.next_goal.trim() })),
     },
     initialAssessment: assessment
       ? {

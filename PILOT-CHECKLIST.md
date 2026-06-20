@@ -22,10 +22,18 @@ node scripts/verify-supabase.mjs
 
 Tots els checks han de sortir `"ok": true`.
 
-### Auth (producció)
+### Auth (producció) — **OBLIGATORI abans del reset de contrasenya**
 
-- **Site URL**: URL de Vercel
-- **Redirect URLs**: `https://LA-TEVA-APP.vercel.app/**`
+A [Supabase → Auth → URL Configuration](https://supabase.com/dashboard/project/wdibvfgvgmpgorzaraud/auth/url-configuration):
+
+| Camp | Valor |
+|------|--------|
+| **Site URL** | `https://elite-mind.vercel.app` |
+| **Redirect URLs** | `https://elite-mind.vercel.app/**` |
+
+Si **Site URL** és `http://localhost:3000`, l'enllaç del correu de recuperació obrirà localhost i fallarà.
+
+Després **Redeploy** a Vercel (si cal) i prova de nou «He olvidado la contraseña».
 
 ---
 

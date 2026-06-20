@@ -3,6 +3,7 @@ import { supabase } from "../supabase"
 import { useTranslation } from "../i18n/LanguageContext"
 import { CheckInForm } from "../components/CheckInForm"
 import { AthletePsychologistContact } from "../components/AthletePsychologistContact"
+import { WeeklyEorChart } from "../components/WeeklyEorTeamChart"
 import { Card } from "../components/ui/Card"
 import { Button } from "../components/ui/Button"
 import { LoadingSpinner } from "../components/ui/LoadingSpinner"
@@ -11,6 +12,9 @@ import {
   isTodayCheckInComplete,
   isWeeklyReflectionDue,
 } from "../lib/checkInSchedule"
+import { aggregateWeeklyEorTrend } from "../lib/coachTeamAnalytics"
+import { computeWeeklyIndexes, getLatestWeeklyReflection } from "../lib/weeklyEor"
+import { EorIndexSummary } from "../components/EorIndexSummary"
 
 export function AthleteDashboard({ profile, teamName }) {
   const { t } = useTranslation()
@@ -29,7 +33,7 @@ export function AthleteDashboard({ profile, teamName }) {
       .select("*")
       .eq("athlete_id", profile.id)
       .order("check_in_date", { ascending: false })
-      .limit(14)
+      .limit(100)
 
     if (!error && data) {
       setCheckIns(data)
@@ -56,6 +60,13 @@ export function AthleteDashboard({ profile, teamName }) {
   const weeklyPending = useMemo(
     () => Boolean(todayCheckIn) && isWeeklyReflectionDue(checkIns, today) && !todayComplete,
     [todayCheckIn, checkIns, today, todayComplete]
+  )
+
+  const weeklyTrend = useMemo(() => aggregateWeeklyEorTrend(checkIns), [checkIns])
+  const latestWeekly = useMemo(() => getLatestWeeklyReflection(checkIns), [checkIns])
+  const latestWeeklyIndexes = useMemo(
+    () => computeWeeklyIndexes(latestWeekly),
+    [latestWeekly]
   )
 
   const showForm = !todayComplete || editing
@@ -117,6 +128,19 @@ export function AthleteDashboard({ profile, teamName }) {
           hideDailySection={weeklyPending && !editing}
         />
       )}
+
+      {latestWeeklyIndexes && (
+        <Card title={t("athlete.weeklyEorTitle")} subtitle={t("athlete.weeklyEorSubtitle")}>
+          <EorIndexSummary indexes={latestWeeklyIndexes} variant="psychologist" t={t} />
+        </Card>
+      )}
+
+      <WeeklyEorChart
+        weeklyTrend={weeklyTrend}
+        variant="psychologist"
+        title={t("chart.eorAthleteTitle")}
+        subtitle={t("chart.eorAthleteSubtitle")}
+      />
 
       <AthletePsychologistContact userId={profile.id} />
     </div>

@@ -3,8 +3,12 @@ import { StatCard } from "../ui/StatCard"
 import { Badge } from "../ui/Badge"
 import { Button } from "../ui/Button"
 import { InsightCard } from "../InsightCard"
-import { averageMetrics, countByRisk } from "../../lib/risk"
+import { countByRisk } from "../../lib/risk"
 import { consentStatus } from "../../lib/age"
+import {
+  aggregateWeeklyEorTrend,
+  getLatestWeeklyTeamSnapshot,
+} from "../../lib/coachTeamAnalytics"
 
 export function PsychologistOverview({
   athletes,
@@ -15,7 +19,7 @@ export function PsychologistOverview({
   t,
   onOpenTeam,
 }) {
-  const orgAvg = averageMetrics(checkIns.slice(0, 80))
+  const orgEorSnapshot = getLatestWeeklyTeamSnapshot(aggregateWeeklyEorTrend(checkIns))
   const riskCounts = countByRisk(checkIns)
 
   return (
@@ -30,7 +34,10 @@ export function PsychologistOverview({
 
       <div className="stats-row stats-row--compact">
         <StatCard label={t("psychologist.athletesMonitored")} value={athletes.length} />
-        <StatCard label={t("psychologist.orgAvgMood")} value={orgAvg.mood || "—"} />
+        <StatCard
+          label={t("psychologist.orgAvgMental")}
+          value={orgEorSnapshot?.mental ?? "—"}
+        />
         <StatCard
           label={t("psychologist.highEmotionalRisk")}
           value={riskCounts.high}
@@ -50,7 +57,7 @@ export function PsychologistOverview({
           <p className="empty-state">{t("psychologist.noTeams")}</p>
         ) : (
           <ul className="team-overview-grid">
-            {teamSummaries.map(({ team, athletes: teamAthletes, summary, insight, highRiskCount }) => (
+            {teamSummaries.map(({ team, athletes: teamAthletes, summary, insight, highRiskCount, eorSnapshot }) => (
               <li key={team.id} className="team-overview-card">
                 <div className="team-overview-card__header">
                   <h3>{team.name}</h3>
@@ -67,8 +74,8 @@ export function PsychologistOverview({
                     <dd>{summary.checkedInThisWeek}</dd>
                   </div>
                   <div>
-                    <dt>{t("psychologist.orgAvgMood")}</dt>
-                    <dd>{summary.teamAvg.mood || "—"}</dd>
+                    <dt>{t("psychologist.orgAvgMental")}</dt>
+                    <dd>{eorSnapshot?.mental ?? "—"}</dd>
                   </div>
                   <div>
                     <dt>{t("psychologist.highEmotionalRisk")}</dt>
