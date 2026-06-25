@@ -1038,6 +1038,33 @@ input:focus, textarea:focus {
   gap: 6px;
 }
 
+.psych-action-center__count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.4rem;
+  height: 1.4rem;
+  margin-left: 8px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: rgba(248, 113, 113, 0.2);
+  color: var(--danger);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.psych-action-center__item--reviewed {
+  opacity: 0.72;
+}
+
+.psych-action-center__reviewed-tag {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.78rem;
+  font-style: normal;
+  color: var(--success);
+}
+
 .psych-compliance-list {
   list-style: none;
   margin: 0;
@@ -1627,6 +1654,31 @@ input:focus, textarea:focus {
 .athlete-picker__btn.active {
   border-color: var(--accent);
   background: var(--accent-dim);
+}
+
+.athlete-picker__main {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.athlete-picker__main strong {
+  font-weight: 600;
+}
+
+.athlete-picker__team {
+  display: block;
+  color: var(--text-muted);
+  font-size: 0.82rem;
+}
+
+.team-join-list__item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
 }
 
 .psych-detail {

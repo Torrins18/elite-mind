@@ -1,9 +1,10 @@
-import { useCallback, useEffect, useState } from "react"
+import { useCallback, useEffect, useMemo, useState } from "react"
 import { supabase } from "../supabase"
 import { useTranslation } from "../i18n/LanguageContext"
 import { Card } from "./ui/Card"
 import { Button } from "./ui/Button"
 import { TeamJoinLink } from "./TeamJoinLink"
+import { filterActiveTeams } from "../lib/teams"
 
 export function PsychologistCoachAdmin({ psychologistId, onPreviewCoachTeam }) {
   const { t } = useTranslation()
@@ -59,7 +60,7 @@ export function PsychologistCoachAdmin({ psychologistId, onPreviewCoachTeam }) {
 
     const { data: teamList } = await supabase
       .from("teams")
-      .select("id, name, join_token")
+      .select("id, name, join_token, deleted_at")
       .order("name")
 
     const { data: inv } = await supabase
@@ -187,6 +188,26 @@ export function PsychologistCoachAdmin({ psychologistId, onPreviewCoachTeam }) {
     }
   }
 
+  const activeTeams = useMemo(() => filterActiveTeams(teams), [teams])
+
+  const deleteTeam = async (teamId) => {
+    if (!confirm(t("teams.deleteConfirm"))) return
+
+    setMessage("")
+    const { error } = await supabase
+      .from("teams")
+      .update({ deleted_at: new Date().toISOString() })
+      .eq("id", teamId)
+
+    if (error) {
+      setMessage(error.message)
+      return
+    }
+
+    setMessage(t("teams.deleted"))
+    await load()
+  }
+
   if (loading) return null
 
   return (
@@ -200,15 +221,22 @@ export function PsychologistCoachAdmin({ psychologistId, onPreviewCoachTeam }) {
           />
           <Button type="submit">{t("teams.create")}</Button>
         </form>
-        {teams.length > 0 && (
+        {activeTeams.length > 0 && (
           <ul className="team-join-list">
-            {teams.map((team) => (
-              <li key={team.id}>
+            {activeTeams.map((team) => (
+              <li key={team.id} className="team-join-list__item">
                 <TeamJoinLink
                   joinToken={team.join_token}
                   teamName={team.name}
                   onCopied={setMessage}
                 />
+                <Button
+                  variant="ghost"
+                  className="btn--danger-text"
+                  onClick={() => deleteTeam(team.id)}
+                >
+                  {t("teams.delete")}
+                </Button>
               </li>
             ))}
           </ul>
@@ -221,7 +249,7 @@ export function PsychologistCoachAdmin({ psychologistId, onPreviewCoachTeam }) {
             <span>{t("teams.previewTeam")}</span>
             <select value={previewTeamId} onChange={(event) => setPreviewTeamId(event.target.value)}>
               <option value="">{t("teams.chooseForCoach")}</option>
-              {teams.map((team) => (
+              {activeTeams.map((team) => (
                 <option key={team.id} value={team.id}>
                   {team.name}
                 </option>
@@ -282,7 +310,7 @@ export function PsychologistCoachAdmin({ psychologistId, onPreviewCoachTeam }) {
                       }
                     >
                       <option value="">{t("teams.chooseForCoach")}</option>
-                      {teams.map((team) => (
+                      {activeTeams.map((team) => (
                         <option key={team.id} value={team.id}>
                           {team.name}
                         </option>
@@ -311,7 +339,9 @@ export function PsychologistCoachAdmin({ psychologistId, onPreviewCoachTeam }) {
               <li key={coach.id}>
                 <div>
                   <strong>{coach.name}</strong>
-                  <span>{teams.find((team) => team.id === coach.team_id)?.name || t("teams.noTeam")}</span>
+                  <span>
+                    {teams.find((team) => team.id === coach.team_id)?.name || t("teams.noTeam")}
+                  </span>
                 </div>
                 <div className="coach-actions">
                   <select
@@ -319,7 +349,7 @@ export function PsychologistCoachAdmin({ psychologistId, onPreviewCoachTeam }) {
                     onChange={(event) => updateCoachTeam(coach.id, event.target.value)}
                   >
                     <option value="">{t("teams.noTeam")}</option>
-                    {teams.map((team) => (
+                    {activeTeams.map((team) => (
                       <option key={team.id} value={team.id}>
                         {team.name}
                       </option>

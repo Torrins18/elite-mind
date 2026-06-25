@@ -11,22 +11,28 @@ import { InsightCard } from "../components/InsightCard"
 import { calculateRiskLevel } from "../lib/risk"
 import { buildTeamInsight } from "../lib/insights"
 import { summarizeTeam } from "../lib/insights/metrics"
-import { computeWeeklyIndexes, getLatestWeeklyReflection } from "../lib/weeklyEor"
+import { getLatestWeeklyReflection } from "../lib/weeklyEor"
 import {
   aggregateWeeklyEorTrend,
   getLatestWeeklyTeamSnapshot,
 } from "../lib/coachTeamAnalytics"
 import { useAthleteInsight } from "../hooks/useAthleteInsight"
 import { PsychologistCoachAdmin } from "../components/PsychologistCoachAdmin"
-import { consentStatus } from "../lib/age"
 import { CoachDashboard } from "./CoachDashboard"
 import { PsychologistActionCenter } from "../components/psychologist/PsychologistActionCenter"
 import {
   PsychologistOverview,
   buildConsentCounts,
 } from "../components/psychologist/PsychologistOverview"
-import { buildOrgAlerts } from "../lib/alerts"
 import { todayISO } from "../lib/dates"
+import {
+  countActiveAlerts,
+  dismissPsychologistAlert,
+  loadVisiblePsychologistAlerts,
+  markAlertsReviewedForAthlete,
+  syncAndLoadPsychologistAlerts,
+} from "../lib/alertPersistence"
+import { filterActiveTeams } from "../lib/teams"
 import { PsychologistAthleteDetail } from "../components/psychologist/PsychologistAthleteDetail"
 import { EorIndexSummary } from "../components/EorIndexSummary"
 import { WeeklyEorChart } from "../components/WeeklyEorTeamChart"
@@ -44,6 +50,7 @@ export function PsychologistDashboard({ profile }) {
   const [coachPreviewTeamId, setCoachPreviewTeamId] = useState("")
   const [appointmentRequests, setAppointmentRequests] = useState([])
   const [psychologistMessages, setPsychologistMessages] = useState([])
+  const [psychologistAlerts, setPsychologistAlerts] = useState([])
   const [loading, setLoading] = useState(true)
 
   const load = useCallback(async () => {
@@ -58,7 +65,7 @@ export function PsychologistDashboard({ profile }) {
       messagesRes,
     ] = await Promise.all([
       supabase.from("profiles").select("*").eq("role", "athlete").order("name"),
-      supabase.from("teams").select("id, name").order("name"),
+      supabase.from("teams").select("id, name, deleted_at").is("deleted_at", null).order("name"),
       supabase
         .from("check_ins")
         .select("*")
@@ -81,12 +88,23 @@ export function PsychologistDashboard({ profile }) {
       console.error("Athletes load error:", rosterError.message)
     }
 
-    setAthletes(roster || [])
-    setTeams(teamList || [])
-    setCheckIns(ins || [])
+    const athleteRows = roster || []
+    const checkInRows = ins || []
+
+    setAthletes(athleteRows)
+    setTeams(filterActiveTeams(teamList || []))
+    setCheckIns(checkInRows)
     setAssessments(assessmentRes.error ? [] : assessmentRes.data || [])
     setAppointmentRequests(appointmentsRes.error ? [] : appointmentsRes.data || [])
     setPsychologistMessages(messagesRes.error ? [] : messagesRes.data || [])
+
+    const alerts = await syncAndLoadPsychologistAlerts(
+      supabase,
+      athleteRows,
+      checkInRows,
+      todayISO()
+    )
+    setPsychologistAlerts(alerts)
     setLoading(false)
   }, [])
 
@@ -152,10 +170,21 @@ export function PsychologistDashboard({ profile }) {
 
   const consentCounts = useMemo(() => buildConsentCounts(athletes), [athletes])
 
-  const orgAlerts = useMemo(
-    () => buildOrgAlerts(athletes, checkIns, todayISO()),
-    [athletes, checkIns]
+  const activeAlertCount = useMemo(
+    () => countActiveAlerts(psychologistAlerts),
+    [psychologistAlerts]
   )
+
+  const teamAlertCounts = useMemo(() => {
+    const counts = {}
+    for (const alert of psychologistAlerts) {
+      if (alert.status !== "active") continue
+      const athlete = athleteMap[alert.athleteId]
+      if (!athlete?.team_id) continue
+      counts[athlete.team_id] = (counts[athlete.team_id] || 0) + 1
+    }
+    return counts
+  }, [psychologistAlerts, athleteMap])
 
   const selectedAssessment = useMemo(
     () => assessments.find((item) => item.athlete_id === selectedId) ?? null,
@@ -203,12 +232,30 @@ export function PsychologistDashboard({ profile }) {
     setSelectedId(null)
   }
 
-  const openAthlete = (athleteId) => {
+  const refreshAlerts = useCallback(async () => {
+    const alerts = await loadVisiblePsychologistAlerts(supabase, athletes)
+    setPsychologistAlerts(alerts)
+  }, [athletes])
+
+  const openAthlete = async (athleteId) => {
     const athlete = athleteMap[athleteId]
     if (athlete?.team_id) {
       setActiveTab(athlete.team_id)
     }
     setSelectedId(athleteId)
+    await markAlertsReviewedForAthlete(supabase, athleteId, profile.id)
+    await refreshAlerts()
+  }
+
+  const selectAthlete = async (athleteId) => {
+    setSelectedId(athleteId)
+    await markAlertsReviewedForAthlete(supabase, athleteId, profile.id)
+    await refreshAlerts()
+  }
+
+  const dismissAlert = async (alertId) => {
+    await dismissPsychologistAlert(supabase, alertId, profile.id)
+    setPsychologistAlerts((rows) => rows.filter((row) => row.dbId !== alertId))
   }
 
   const exportCsv = () => {
@@ -229,7 +276,8 @@ export function PsychologistDashboard({ profile }) {
 
   if (loading) return <LoadingSpinner label={t("psychologist.loading")} />
 
-  const inboxCount = appointmentRequests.length + psychologistMessages.length
+  const inboxCount =
+    appointmentRequests.length + psychologistMessages.length + activeAlertCount
 
   return (
     <div className="dashboard-grid dashboard-grid--psych">
@@ -258,8 +306,7 @@ export function PsychologistDashboard({ profile }) {
           )}
         </button>
         {teams.map((team) => {
-          const summary = teamSummaries.find((item) => item.team.id === team.id)
-          const alertCount = summary?.highRiskCount ?? 0
+          const alertCount = teamAlertCounts[team.id] ?? 0
           return (
             <button
               key={team.id}
@@ -277,14 +324,14 @@ export function PsychologistDashboard({ profile }) {
       {activeTab === OVERVIEW_TAB ? (
         <>
           <PsychologistActionCenter
-            alerts={orgAlerts}
+            alerts={psychologistAlerts}
             appointmentRequests={appointmentRequests}
             psychologistMessages={psychologistMessages}
             teamSummaries={teamSummaries}
             athleteMap={athleteMap}
-            teamMap={teamMap}
             t={t}
             onOpenAthlete={openAthlete}
+            onDismissAlert={dismissAlert}
             onMarkAppointmentHandled={markAppointmentHandled}
             onMarkMessageRead={markMessageRead}
             onOpenTeam={openTeam}
@@ -349,12 +396,11 @@ export function PsychologistDashboard({ profile }) {
                 ) : (
                   <ul className="athlete-picker">
                     {tabAthletes.map((a) => {
-                      const latest = tabCheckIns.find((c) => c.athlete_id === a.id)
-                      const latestWeekly = getLatestWeeklyReflection(
-                        tabCheckIns.filter((c) => c.athlete_id === a.id)
-                      )
-                      const weeklyIndexes = computeWeeklyIndexes(latestWeekly)
-                      const risk = calculateRiskLevel(latest)
+                      const athleteCheckInRows = tabCheckIns.filter((c) => c.athlete_id === a.id)
+                      const latestWeekly = getLatestWeeklyReflection(athleteCheckInRows)
+                      const risk = latestWeekly ? calculateRiskLevel(latestWeekly) : "noData"
+                      const teamLabel = a.team_id ? teamMap[a.team_id] : null
+
                       return (
                         <li key={a.id}>
                           <button
@@ -364,35 +410,17 @@ export function PsychologistDashboard({ profile }) {
                                 ? "athlete-picker__btn active"
                                 : "athlete-picker__btn"
                             }
-                            onClick={() => setSelectedId(a.id)}
+                            onClick={() => selectAthlete(a.id)}
                           >
-                            <span>
-                              {a.name}
-                              <small className="athlete-picker__cat">
-                                {t(`consent.${consentStatus(a)}`)}
-                              </small>
-                              {weeklyIndexes && (
-                                <span className="athlete-picker__eor">
-                                  <EorIndexSummary
-                                    indexes={weeklyIndexes}
-                                    variant="psychologist"
-                                    t={t}
-                                    compact
-                                  />
-                                </span>
+                            <span className="athlete-picker__main">
+                              <strong>{a.name}</strong>
+                              {teamLabel && (
+                                <small className="athlete-picker__team">{teamLabel}</small>
                               )}
                             </span>
-                            <span className="athlete-picker__badges">
-                              {weeklyIndexes?.wantsPsychologistTalk && (
-                                <Badge variant="high">{t("psychologist.eorContactBadge")}</Badge>
-                              )}
-                              {latest && <Badge variant={risk}>{t(`risk.${risk}`)}</Badge>}
-                              {!a.initial_assessment_completed_at && (
-                                <Badge variant="default">
-                                  {t("psychologist.assessmentMissing")}
-                                </Badge>
-                              )}
-                            </span>
+                            <Badge variant={risk === "noData" ? "default" : risk}>
+                              {t(`psychologist.riskBadge.${risk}`)}
+                            </Badge>
                           </button>
                         </li>
                       )

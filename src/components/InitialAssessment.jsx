@@ -59,6 +59,7 @@ export function InitialAssessment({ profile, onCompleted }) {
       const { data, error: teamsError } = await supabase
         .from("teams")
         .select("id, name")
+        .is("deleted_at", null)
         .order("name")
 
       if (!isMounted) return

@@ -197,6 +197,10 @@ export const translations = {
       copyJoinLink: "Copiar enlace",
       joinLinkCopied: "Enlace copiado al portapapeles.",
       joinLinkMissing: "Ejecuta supabase/team-join-links.sql en Supabase para activar los enlaces de equipo.",
+      delete: "Eliminar equipo",
+      deleteConfirm:
+        "¿Seguro que quieres eliminar este equipo? Esta acción no se puede deshacer.",
+      deleted: "Equipo eliminado.",
     },
 
     onboarding: {
@@ -766,6 +770,14 @@ export const translations = {
       markMessageRead: "Marcar como leído",
       viewAthlete: "Ver deportista",
       unknownAthlete: "Deportista desconocido",
+      dismissAlert: "Descartar",
+      alertReviewed: "Revisada",
+      riskBadge: {
+        low: "Estable",
+        medium: "Moderado",
+        high: "En riesgo",
+        noData: "Sin datos",
+      },
     },
 
     lang: {
@@ -972,6 +984,10 @@ export const translations = {
       copyJoinLink: "Copiar enllaç",
       joinLinkCopied: "Enllaç copiat al porta-retalls.",
       joinLinkMissing: "Executa supabase/team-join-links.sql a Supabase per activar els enllaços d'equip.",
+      delete: "Eliminar equip",
+      deleteConfirm:
+        "Segur que vols eliminar aquest equip? Aquesta acció no es pot desfer.",
+      deleted: "Equip eliminat.",
     },
 
     onboarding: {
@@ -1543,6 +1559,14 @@ export const translations = {
       markMessageRead: "Marcar com a llegit",
       viewAthlete: "Veure esportista",
       unknownAthlete: "Esportista desconegut",
+      dismissAlert: "Descartar",
+      alertReviewed: "Revisada",
+      riskBadge: {
+        low: "Estable",
+        medium: "Moderat",
+        high: "En risc",
+        noData: "Sense dades",
+      },
     },
 
     lang: {

@@ -15,6 +15,7 @@ export function TeamSelector({ profile, onUpdated }) {
     supabase
       .from("teams")
       .select("id, name")
+      .is("deleted_at", null)
       .order("name")
       .then(({ data }) => setTeams(data || []))
 
