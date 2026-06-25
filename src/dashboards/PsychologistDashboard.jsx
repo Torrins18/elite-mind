@@ -20,10 +20,6 @@ import { useAthleteInsight } from "../hooks/useAthleteInsight"
 import { PsychologistCoachAdmin } from "../components/PsychologistCoachAdmin"
 import { CoachDashboard } from "./CoachDashboard"
 import { PsychologistActionCenter } from "../components/psychologist/PsychologistActionCenter"
-import {
-  PsychologistOverview,
-  buildConsentCounts,
-} from "../components/psychologist/PsychologistOverview"
 import { todayISO } from "../lib/dates"
 import {
   countActiveAlerts,
@@ -153,22 +149,6 @@ export function PsychologistDashboard({ profile }) {
     () => getLatestWeeklyTeamSnapshot(teamWeeklyTrend),
     [teamWeeklyTrend]
   )
-
-  const orgLatestByAthlete = useMemo(
-    () =>
-      athletes.map((a) => {
-        const latest = checkIns.find((c) => c.athlete_id === a.id)
-        return { athlete: a, latest, risk: calculateRiskLevel(latest) }
-      }),
-    [athletes, checkIns]
-  )
-
-  const orgInsight = useMemo(
-    () => buildTeamInsight({ athletes, checkIns, latestByAthlete: orgLatestByAthlete }, t),
-    [athletes, checkIns, orgLatestByAthlete, t]
-  )
-
-  const consentCounts = useMemo(() => buildConsentCounts(athletes), [athletes])
 
   const activeAlertCount = useMemo(
     () => countActiveAlerts(psychologistAlerts),
@@ -339,17 +319,6 @@ export function PsychologistDashboard({ profile }) {
             onMarkAppointmentHandled={markAppointmentHandled}
             onMarkMessageRead={markMessageRead}
             onOpenTeam={openTeam}
-          />
-
-          <PsychologistOverview
-            athletes={athletes}
-            checkIns={checkIns}
-            teamSummaries={teamSummaries}
-            orgInsight={orgInsight}
-            consentCounts={consentCounts}
-            t={t}
-            onOpenTeam={openTeam}
-            compact
           />
 
           <PsychologistCoachAdmin
