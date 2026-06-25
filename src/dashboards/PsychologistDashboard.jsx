@@ -254,8 +254,12 @@ export function PsychologistDashboard({ profile }) {
   }
 
   const dismissAlert = async (alertId) => {
-    await dismissPsychologistAlert(supabase, alertId, profile.id)
-    setPsychologistAlerts((rows) => rows.filter((row) => row.dbId !== alertId))
+    try {
+      await dismissPsychologistAlert(supabase, alertId, profile.id)
+      setPsychologistAlerts((rows) => rows.filter((row) => row.dbId !== alertId))
+    } catch (error) {
+      console.error("Dismiss alert failed:", error.message)
+    }
   }
 
   const exportCsv = () => {

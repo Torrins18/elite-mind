@@ -41,10 +41,13 @@ export async function syncAndLoadPsychologistAlerts(supabase, athletes, checkIns
     computed.map((alert) => alertKey(alert.athlete_id, alert.alert_type))
   )
 
-  const { data: openRows, error: openError } = await supabase
-    .from("psychologist_alerts")
-    .select("*")
-    .in("status", ["active", "reviewed"])
+  const [{ data: openRows, error: openError }, { data: dismissedRows }] = await Promise.all([
+    supabase.from("psychologist_alerts").select("*").in("status", ["active", "reviewed"]),
+    supabase
+      .from("psychologist_alerts")
+      .select("athlete_id, alert_type")
+      .eq("status", "dismissed"),
+  ])
 
   if (openError) {
     return buildOrgAlerts(athletes, checkIns, today).map((alert) => ({
@@ -54,6 +57,10 @@ export async function syncAndLoadPsychologistAlerts(supabase, athletes, checkIns
       context: {},
     }))
   }
+
+  const dismissedKeys = new Set(
+    (dismissedRows || []).map((row) => alertKey(row.athlete_id, row.alert_type))
+  )
 
   const openByKey = new Map(
     (openRows || []).map((row) => [alertKey(row.athlete_id, row.alert_type), row])
@@ -66,6 +73,8 @@ export async function syncAndLoadPsychologistAlerts(supabase, athletes, checkIns
     const existing = openByKey.get(key)
 
     if (!existing) {
+      if (dismissedKeys.has(key)) continue
+
       const { data: inserted } = await supabase
         .from("psychologist_alerts")
         .insert([
@@ -82,6 +91,20 @@ export async function syncAndLoadPsychologistAlerts(supabase, athletes, checkIns
         .single()
 
       if (inserted) openByKey.set(key, inserted)
+      continue
+    }
+
+    if (dismissedKeys.has(key)) {
+      await supabase
+        .from("psychologist_alerts")
+        .update({
+          status: "dismissed",
+          dismissed_at: now,
+          context: { ...(existing.context || {}), supersededByDismiss: true },
+          updated_at: now,
+        })
+        .eq("id", existing.id)
+      openByKey.delete(key)
       continue
     }
 
