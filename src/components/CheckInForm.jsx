@@ -71,6 +71,9 @@ export function CheckInForm({
       Object.assign(payload, buildWeeklyEorPayload(form))
     }
 
+    // Weekly-only on a new day: do not send daily fields (they stay null until
+    // "Estat d'avui" is completed). Requires check-ins-nullable-daily.sql on Supabase.
+
     const query = existing
       ? supabase.from("check_ins").update(payload).eq("id", existing.id)
       : supabase.from("check_ins").insert([payload])
