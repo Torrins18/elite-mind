@@ -179,7 +179,6 @@ export function CoachDashboard({ profile, teamName }) {
         <InsightCard
           title={t("insights.teamTitle")}
           insight={teamInsight}
-          footer={t("insights.footerCoach")}
         />
       </Card>
 
@@ -223,7 +222,6 @@ export function CoachDashboard({ profile, teamName }) {
           <InsightCard
             title={t("coach.weeklyInsightTitle")}
             insight={weeklyInsight}
-            footer={t("coach.weeklyInsightFooter")}
           />
         </Card>
 

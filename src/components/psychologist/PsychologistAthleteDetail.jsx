@@ -31,7 +31,6 @@ export function PsychologistAthleteDetail({
           <InsightCard
             title={t("insights.athleteTitle")}
             insight={insight}
-            footer={t("insights.footer")}
             loading={insightLoading}
             source={insightSource}
           />

@@ -333,7 +333,6 @@ export function PsychologistDashboard({ profile }) {
               <InsightCard
                 title={t("insights.orgTitle")}
                 insight={activeTeamSummary.insight}
-                footer={t("insights.footer")}
               />
             </Card>
 
