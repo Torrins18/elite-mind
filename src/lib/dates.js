@@ -1,3 +1,6 @@
+import { hasWeeklyReflection } from "./weeklyEor"
+import { weekStartSundayISO } from "./checkInSchedule"
+
 const LOCALES = { es: "es-ES", ca: "ca-ES" }
 
 export function todayISO() {
@@ -35,11 +38,15 @@ export function isDateWithinLastDays(dateStr, days = CHECK_IN_WINDOW_DAYS) {
   return dateStr >= weekStartISO(days)
 }
 
-export function countAthletesActiveThisWeek(checkIns, athleteIds, days = CHECK_IN_WINDOW_DAYS) {
-  const since = weekStartISO(days)
+export function countAthletesActiveThisWeek(checkIns, athleteIds, today = todayISO()) {
+  const since = weekStartSundayISO(today)
   const active = new Set()
   for (const row of checkIns) {
-    if (row.check_in_date >= since && athleteIds.includes(row.athlete_id)) {
+    if (
+      row.check_in_date >= since &&
+      hasWeeklyReflection(row) &&
+      athleteIds.includes(row.athlete_id)
+    ) {
       active.add(row.athlete_id)
     }
   }

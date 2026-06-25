@@ -1,5 +1,6 @@
 import { averageMetrics, calculateRiskLevel } from "../risk"
-import { CHECK_IN_WINDOW_DAYS, isDateWithinLastDays, todayISO, weekStartISO } from "../dates"
+import { CHECK_IN_WINDOW_DAYS, todayISO, weekStartISO } from "../dates"
+import { hasWeeklyReflectionThisWeek } from "../checkInSchedule"
 
 export function groupCheckInsByAthlete(checkIns) {
   return checkIns.reduce((acc, row) => {
@@ -35,9 +36,11 @@ export function daysSinceLastCheckIn(rows, today = todayISO()) {
 
 export function summarizeTeam({ athletes, checkIns, latestByAthlete }) {
   const totalAthletes = athletes.length
-  const checkedInThisWeek = latestByAthlete.filter((row) =>
-    isDateWithinLastDays(row.latest?.check_in_date, CHECK_IN_WINDOW_DAYS)
-  ).length
+  const today = todayISO()
+  const checkedInThisWeek = athletes.filter((athlete) => {
+    const athleteRows = checkIns.filter((row) => row.athlete_id === athlete.id)
+    return hasWeeklyReflectionThisWeek(athleteRows, today)
+  }).length
 
   const latestRows = latestByAthlete.map((row) => row.latest).filter(Boolean)
   const riskBreakdown = latestByAthlete.reduce(

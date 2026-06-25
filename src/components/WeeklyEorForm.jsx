@@ -77,6 +77,8 @@ const BLOCKS = [
   },
 ]
 
+const CONTACT_OPTIONS = ["no", "maybe", "yes"]
+
 export function WeeklyEorForm({ form, onChange }) {
   const { t } = useTranslation()
 
@@ -118,9 +120,8 @@ export function WeeklyEorForm({ form, onChange }) {
 
         <label className="notes-field">
           <span>{t("checkIn.eorWentWell")}</span>
-          <p className="notes-field__hint">{t("checkIn.eorWentWellHint")}</p>
           <textarea
-            rows={3}
+            rows={2}
             placeholder={t("checkIn.eorWentWellPlaceholder")}
             value={form.weekly_went_well || ""}
             onChange={(e) => update("weekly_went_well", e.target.value)}
@@ -128,9 +129,8 @@ export function WeeklyEorForm({ form, onChange }) {
         </label>
         <label className="notes-field">
           <span>{t("checkIn.eorMainDifficulty")}</span>
-          <p className="notes-field__hint">{t("checkIn.eorMainDifficultyHint")}</p>
           <textarea
-            rows={3}
+            rows={2}
             placeholder={t("checkIn.eorMainDifficultyPlaceholder")}
             value={form.weekly_main_difficulty || ""}
             onChange={(e) => update("weekly_main_difficulty", e.target.value)}
@@ -138,14 +138,42 @@ export function WeeklyEorForm({ form, onChange }) {
         </label>
         <label className="notes-field">
           <span>{t("checkIn.eorNextGoal")}</span>
-          <p className="notes-field__hint">{t("checkIn.eorNextGoalHint")}</p>
           <textarea
-            rows={3}
+            rows={2}
             placeholder={t("checkIn.eorNextGoalPlaceholder")}
             value={form.next_goal || ""}
             onChange={(e) => update("next_goal", e.target.value)}
           />
         </label>
+      </section>
+
+      <section className="check-in-block check-in-block--weekly weekly-eor-block weekly-eor-block--key">
+        <header className="check-in-block__header">
+          <span className="check-in-block__badge check-in-block__badge--weekly">
+            {t("checkIn.eorKeyQuestionBadge")}
+          </span>
+          <h3>{t("checkIn.eorPsychologistContact")}</h3>
+          <p>{t("checkIn.eorPsychologistContactHint")}</p>
+        </header>
+
+        <div className="choice-group" role="radiogroup" aria-label={t("checkIn.eorPsychologistContact")}>
+          {CONTACT_OPTIONS.map((option) => (
+            <button
+              key={option}
+              type="button"
+              role="radio"
+              aria-checked={form.psychologist_contact === option}
+              className={
+                form.psychologist_contact === option
+                  ? "choice-group__btn choice-group__btn--active"
+                  : "choice-group__btn"
+              }
+              onClick={() => update("psychologist_contact", option)}
+            >
+              {t(`checkIn.eorPsychologistContact_${option}`)}
+            </button>
+          ))}
+        </div>
       </section>
     </div>
   )

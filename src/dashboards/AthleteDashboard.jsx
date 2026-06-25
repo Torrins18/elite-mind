@@ -6,17 +6,17 @@ import { AthletePsychologistContact } from "../components/AthletePsychologistCon
 import { LoadingSpinner } from "../components/ui/LoadingSpinner"
 import { todayISO } from "../lib/dates"
 import {
-  isDailyCheckInDone,
-  isWeeklyReflectionDue,
+  getWeeklyCheckInForEdit,
   hasWeeklyReflectionThisWeek,
+  isWeeklyReflectionDue,
 } from "../lib/checkInSchedule"
 
 export function AthleteDashboard({ profile, teamName }) {
   const { t } = useTranslation()
   const [checkIns, setCheckIns] = useState([])
-  const [todayCheckIn, setTodayCheckIn] = useState(null)
   const [loading, setLoading] = useState(true)
   const [activeForm, setActiveForm] = useState(null)
+  const [helpIntent, setHelpIntent] = useState(null)
   const [confirmation, setConfirmation] = useState(null)
 
   const today = todayISO()
@@ -33,20 +33,14 @@ export function AthleteDashboard({ profile, teamName }) {
 
     if (!error && data) {
       setCheckIns(data)
-      setTodayCheckIn(data.find((c) => c.check_in_date === today) || null)
     }
 
     setLoading(false)
-  }, [profile.id, today])
+  }, [profile.id])
 
   useEffect(() => {
     load()
   }, [load])
-
-  const dailyDoneToday = useMemo(
-    () => isDailyCheckInDone(todayCheckIn),
-    [todayCheckIn]
-  )
 
   const weeklyDue = useMemo(
     () => isWeeklyReflectionDue(checkIns, today),
@@ -58,25 +52,26 @@ export function AthleteDashboard({ profile, teamName }) {
     [checkIns, today]
   )
 
-  const handleSaved = async (kind) => {
+  const weeklyCheckIn = useMemo(
+    () => getWeeklyCheckInForEdit(checkIns, today),
+    [checkIns, today]
+  )
+
+  const handleWeeklySaved = async () => {
     await load()
     setActiveForm(null)
-    setConfirmation(
-      kind === "weekly" ? t("athlete.confirmWeekly") : t("athlete.confirmDaily")
-    )
+    setConfirmation(t("athlete.confirmWeekly"))
   }
 
   if (loading) return <LoadingSpinner label={t("athlete.loading")} />
 
-  if (activeForm === "daily" || activeForm === "weekly") {
+  if (activeForm === "weekly") {
     return (
       <div className="dashboard-grid dashboard-grid--athlete">
         <CheckInForm
           athleteId={profile.id}
-          existing={todayCheckIn}
-          checkIns={checkIns}
-          mode={activeForm}
-          onSaved={() => handleSaved(activeForm)}
+          existing={weeklyCheckIn}
+          onSaved={handleWeeklySaved}
           onCancel={() => setActiveForm(null)}
         />
       </div>
@@ -88,8 +83,12 @@ export function AthleteDashboard({ profile, teamName }) {
       <div className="dashboard-grid dashboard-grid--athlete">
         <AthletePsychologistContact
           userId={profile.id}
-          onClose={() => setActiveForm(null)}
+          onClose={() => {
+            setActiveForm(null)
+            setHelpIntent(null)
+          }}
           standalone
+          defaultForm={helpIntent}
         />
       </div>
     )
@@ -102,6 +101,7 @@ export function AthleteDashboard({ profile, teamName }) {
       <header className="athlete-home__hero">
         <h1>{t("athlete.homeGreeting", { name: firstName })}</h1>
         {teamName && <p className="athlete-home__team">{teamName}</p>}
+        <p className="athlete-home__tagline">{t("athlete.homeTagline")}</p>
       </header>
 
       {confirmation && (
@@ -118,29 +118,18 @@ export function AthleteDashboard({ profile, teamName }) {
         <div className="athlete-home__actions">
           <button
             type="button"
-            className={`athlete-home__action${!dailyDoneToday ? " athlete-home__action--primary" : ""}`}
-            onClick={() => setActiveForm("daily")}
+            className={`athlete-home__action${weeklyDue && !weeklyDoneThisWeek ? " athlete-home__action--primary" : ""}`}
+            onClick={() => setActiveForm("weekly")}
           >
-            <span className="athlete-home__action-label">{t("athlete.actionDaily")}</span>
+            <span className="athlete-home__action-label">{t("athlete.actionWeekly")}</span>
             <span className="athlete-home__action-hint">
-              {dailyDoneToday ? t("athlete.actionDailyDone") : t("athlete.actionDailyHint")}
+              {weeklyDoneThisWeek
+                ? t("athlete.actionWeeklyDone")
+                : weeklyDue
+                  ? t("athlete.actionWeeklyDue")
+                  : t("athlete.actionWeeklyHint")}
             </span>
           </button>
-
-          {(weeklyDue || weeklyDoneThisWeek) && (
-            <button
-              type="button"
-              className={`athlete-home__action${weeklyDue && !weeklyDoneThisWeek ? " athlete-home__action--weekly" : ""}`}
-              onClick={() => setActiveForm("weekly")}
-            >
-              <span className="athlete-home__action-label">{t("athlete.actionWeekly")}</span>
-              <span className="athlete-home__action-hint">
-                {weeklyDoneThisWeek && !weeklyDue
-                  ? t("athlete.actionWeeklyDone")
-                  : t("athlete.actionWeeklyHint")}
-              </span>
-            </button>
-          )}
         </div>
       </section>
 
@@ -150,14 +139,20 @@ export function AthleteDashboard({ profile, teamName }) {
           <button
             type="button"
             className="athlete-home__help-btn"
-            onClick={() => setActiveForm("help")}
+            onClick={() => {
+              setHelpIntent("appointment")
+              setActiveForm("help")
+            }}
           >
             {t("athlete.actionAppointment")}
           </button>
           <button
             type="button"
             className="athlete-home__help-btn athlete-home__help-btn--ghost"
-            onClick={() => setActiveForm("help")}
+            onClick={() => {
+              setHelpIntent("message")
+              setActiveForm("help")
+            }}
           >
             {t("athlete.actionMessage")}
           </button>

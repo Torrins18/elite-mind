@@ -846,6 +846,14 @@ input:focus, textarea:focus {
   font-size: 0.95rem;
 }
 
+.athlete-home__tagline {
+  margin: 10px 0 0;
+  color: var(--text-muted);
+  font-size: 0.92rem;
+  line-height: 1.5;
+  max-width: 36ch;
+}
+
 .athlete-home__section h2 {
   margin: 0 0 14px;
   font-size: 0.82rem;

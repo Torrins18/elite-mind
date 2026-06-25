@@ -1,12 +1,12 @@
-import { daysSinceLastCheckIn, sortByDateDesc } from "./insights/metrics"
+import { sortByDateDesc } from "./insights/metrics"
 import { getLatestWeeklyReflection, hasWeeklyReflection } from "./weeklyEor"
-import { isWeeklyReflectionDue } from "./checkInSchedule"
+import { daysSinceLastWeeklyReflection, isWeeklyReflectionDue } from "./checkInSchedule"
 
 export function detectAthleteAlerts(athlete, checkIns, today) {
   const rows = sortByDateDesc((checkIns || []).filter((row) => row.athlete_id === athlete.id))
   const alerts = []
 
-  if (!rows.length) {
+  if (!rows.filter(hasWeeklyReflection).length) {
     alerts.push({
       id: "no_data",
       severity: "medium",
@@ -16,18 +16,7 @@ export function detectAthleteAlerts(athlete, checkIns, today) {
     return alerts
   }
 
-  const recentDaily = rows.filter((row) => row.mood != null).slice(0, 3)
-  if (recentDaily.length >= 3 && recentDaily.every((row) => row.stress >= 8)) {
-    alerts.push({
-      id: "stress_high_3d",
-      severity: "high",
-      athleteId: athlete.id,
-      athleteName: athlete.name,
-      value: recentDaily[0].stress,
-    })
-  }
-
-  const daysSince = daysSinceLastCheckIn(rows, today)
+  const daysSince = daysSinceLastWeeklyReflection(rows, today)
   if (daysSince != null && daysSince >= 4) {
     alerts.push({
       id: "inactive",
@@ -73,6 +62,16 @@ export function detectAthleteAlerts(athlete, checkIns, today) {
     }
   }
 
+  if (latestWeekly?.pressure_management != null && latestWeekly.pressure_management >= 8) {
+    alerts.push({
+      id: "pressure_high",
+      severity: "high",
+      athleteId: athlete.id,
+      athleteName: athlete.name,
+      value: latestWeekly.pressure_management,
+    })
+  }
+
   if (latestWeekly?.coach_communication != null && latestWeekly.coach_communication < 3) {
     alerts.push({
       id: "coach_communication_low",
@@ -90,6 +89,19 @@ export function detectAthleteAlerts(athlete, checkIns, today) {
       athleteId: athlete.id,
       athleteName: athlete.name,
       value: latestWeekly.group_integration,
+    })
+  }
+
+  if (
+    (latestWeekly?.psychologist_contact === "yes" ||
+      latestWeekly?.psychologist_contact === "maybe") &&
+    latestWeekly
+  ) {
+    alerts.push({
+      id: "wants_psychologist_talk",
+      severity: "high",
+      athleteId: athlete.id,
+      athleteName: athlete.name,
     })
   }
 

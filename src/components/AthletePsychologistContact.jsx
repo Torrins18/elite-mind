@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { supabase } from "../supabase"
 import { useTranslation } from "../i18n/LanguageContext"
 import { Card } from "./ui/Card"
@@ -10,6 +10,10 @@ export function AthletePsychologistContact({ userId, onClose, standalone = false
   const [message, setMessage] = useState("")
   const [saving, setSaving] = useState(false)
   const [feedback, setFeedback] = useState("")
+
+  useEffect(() => {
+    if (defaultForm) setActiveForm(defaultForm)
+  }, [defaultForm])
 
   const reset = () => {
     setActiveForm(null)
