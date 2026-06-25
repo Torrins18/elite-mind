@@ -17,8 +17,8 @@ const BLOCKS = [
     badgeKey: "eorBlockBodyBadge",
     titleKey: "eorBlockBodyTitle",
     fields: [
-      { key: "weekly_rest_quality", labelKey: "eorRestQuality", hintKey: "eorRestQualityHint" },
       { key: "weekly_energy", labelKey: "eorWeeklyEnergy", hintKey: "eorWeeklyEnergyHint" },
+      { key: "weekly_rest_quality", labelKey: "eorRestQuality", hintKey: "eorRestQualityHint" },
       { key: "physical_fatigue", labelKey: "eorPhysicalFatigue", hintKey: "eorPhysicalFatigueHint" },
       { key: "general_recovery", labelKey: "eorGeneralRecovery", hintKey: "eorGeneralRecoveryHint" },
     ],
@@ -67,17 +67,15 @@ const BLOCKS = [
     titleKey: "eorBlockLifeTitle",
     fields: [
       { key: "sport_life_balance", labelKey: "eorSportLifeBalance", hintKey: "eorSportLifeBalanceHint" },
-      { key: "life_outside_sport", labelKey: "eorLifeOutsideSport", hintKey: "eorLifeOutsideSportHint" },
       {
         key: "personal_time_management",
         labelKey: "eorPersonalTimeManagement",
         hintKey: "eorPersonalTimeManagementHint",
       },
+      { key: "life_outside_sport", labelKey: "eorGeneralWellbeing", hintKey: "eorGeneralWellbeingHint" },
     ],
   },
 ]
-
-const CONTACT_OPTIONS = ["no", "maybe", "yes"]
 
 export function WeeklyEorForm({ form, onChange }) {
   const { t } = useTranslation()
@@ -148,35 +146,6 @@ export function WeeklyEorForm({ form, onChange }) {
             onChange={(e) => update("next_goal", e.target.value)}
           />
         </label>
-      </section>
-
-      <section className="check-in-block check-in-block--weekly weekly-eor-block weekly-eor-block--key">
-        <header className="check-in-block__header">
-          <span className="check-in-block__badge check-in-block__badge--weekly">
-            {t("checkIn.eorKeyQuestionBadge")}
-          </span>
-          <h3>{t("checkIn.eorPsychologistContact")}</h3>
-          <p>{t("checkIn.eorPsychologistContactHint")}</p>
-        </header>
-
-        <div className="choice-group" role="radiogroup" aria-label={t("checkIn.eorPsychologistContact")}>
-          {CONTACT_OPTIONS.map((option) => (
-            <button
-              key={option}
-              type="button"
-              role="radio"
-              aria-checked={form.psychologist_contact === option}
-              className={
-                form.psychologist_contact === option
-                  ? "choice-group__btn choice-group__btn--active"
-                  : "choice-group__btn"
-              }
-              onClick={() => update("psychologist_contact", option)}
-            >
-              {t(`checkIn.eorPsychologistContact_${option}`)}
-            </button>
-          ))}
-        </div>
       </section>
     </div>
   )

@@ -3,25 +3,21 @@ import { supabase } from "../supabase"
 import { useTranslation } from "../i18n/LanguageContext"
 import { CheckInForm } from "../components/CheckInForm"
 import { AthletePsychologistContact } from "../components/AthletePsychologistContact"
-import { WeeklyEorChart } from "../components/WeeklyEorTeamChart"
-import { Card } from "../components/ui/Card"
-import { Button } from "../components/ui/Button"
 import { LoadingSpinner } from "../components/ui/LoadingSpinner"
 import { todayISO } from "../lib/dates"
 import {
-  isTodayCheckInComplete,
+  isDailyCheckInDone,
   isWeeklyReflectionDue,
+  hasWeeklyReflectionThisWeek,
 } from "../lib/checkInSchedule"
-import { aggregateWeeklyEorTrend } from "../lib/coachTeamAnalytics"
-import { computeWeeklyIndexes, getLatestWeeklyReflection } from "../lib/weeklyEor"
-import { EorIndexSummary } from "../components/EorIndexSummary"
 
 export function AthleteDashboard({ profile, teamName }) {
   const { t } = useTranslation()
   const [checkIns, setCheckIns] = useState([])
   const [todayCheckIn, setTodayCheckIn] = useState(null)
   const [loading, setLoading] = useState(true)
-  const [editing, setEditing] = useState(false)
+  const [activeForm, setActiveForm] = useState(null)
+  const [confirmation, setConfirmation] = useState(null)
 
   const today = todayISO()
 
@@ -37,12 +33,7 @@ export function AthleteDashboard({ profile, teamName }) {
 
     if (!error && data) {
       setCheckIns(data)
-      const todayRow = data.find((c) => c.check_in_date === today) || null
-      setTodayCheckIn(todayRow)
-
-      if (todayRow && isTodayCheckInComplete(todayRow, data, today)) {
-        setEditing(false)
-      }
+      setTodayCheckIn(data.find((c) => c.check_in_date === today) || null)
     }
 
     setLoading(false)
@@ -52,97 +43,126 @@ export function AthleteDashboard({ profile, teamName }) {
     load()
   }, [load])
 
-  const todayComplete = useMemo(
-    () => isTodayCheckInComplete(todayCheckIn, checkIns, today),
-    [todayCheckIn, checkIns, today]
+  const dailyDoneToday = useMemo(
+    () => isDailyCheckInDone(todayCheckIn),
+    [todayCheckIn]
   )
 
-  const weeklyPending = useMemo(
-    () => Boolean(todayCheckIn) && isWeeklyReflectionDue(checkIns, today) && !todayComplete,
-    [todayCheckIn, checkIns, today, todayComplete]
+  const weeklyDue = useMemo(
+    () => isWeeklyReflectionDue(checkIns, today),
+    [checkIns, today]
   )
 
-  const weeklyTrend = useMemo(() => aggregateWeeklyEorTrend(checkIns), [checkIns])
-  const latestWeekly = useMemo(() => getLatestWeeklyReflection(checkIns), [checkIns])
-  const latestWeeklyIndexes = useMemo(
-    () => computeWeeklyIndexes(latestWeekly),
-    [latestWeekly]
+  const weeklyDoneThisWeek = useMemo(
+    () => hasWeeklyReflectionThisWeek(checkIns, today),
+    [checkIns, today]
   )
 
-  const showForm = !todayComplete || editing
-
-  const handleSaved = async () => {
+  const handleSaved = async (kind) => {
     await load()
-    setEditing(false)
+    setActiveForm(null)
+    setConfirmation(
+      kind === "weekly" ? t("athlete.confirmWeekly") : t("athlete.confirmDaily")
+    )
   }
 
   if (loading) return <LoadingSpinner label={t("athlete.loading")} />
 
-  return (
-    <div className="dashboard-grid dashboard-grid--athlete">
-      <section className="hero-strip">
-        <div>
-          <h2>
-            {t("athlete.greeting")}, {profile.name}
-          </h2>
-          <p>
-            {teamName && (
-              <>
-                <strong>{teamName}</strong>
-                {" · "}
-              </>
-            )}
-            {t("athlete.subtitle")}
-          </p>
-        </div>
-      </section>
-
-      <Card title={t("athlete.todayTitle")} subtitle={t("athlete.todaySubtitle")}>
-        <p
-          className={`today-status ${
-            todayComplete ? "today-status--done" : "today-status--pending"
-          }`}
-        >
-          {todayComplete
-            ? t("athlete.todayDone")
-            : weeklyPending
-              ? t("athlete.weeklyPending")
-              : t("athlete.todayPending")}
-        </p>
-        {todayComplete && !showForm && (
-          <div className="today-status__actions">
-            <Button variant="ghost" onClick={() => setEditing(true)}>
-              {t("athlete.updateResponses")}
-            </Button>
-          </div>
-        )}
-      </Card>
-
-      {showForm && (
+  if (activeForm === "daily" || activeForm === "weekly") {
+    return (
+      <div className="dashboard-grid dashboard-grid--athlete">
         <CheckInForm
           athleteId={profile.id}
           existing={todayCheckIn}
           checkIns={checkIns}
-          onSaved={handleSaved}
-          onCancel={todayComplete ? () => setEditing(false) : undefined}
-          hideDailySection={weeklyPending && !editing}
+          mode={activeForm}
+          onSaved={() => handleSaved(activeForm)}
+          onCancel={() => setActiveForm(null)}
         />
+      </div>
+    )
+  }
+
+  if (activeForm === "help") {
+    return (
+      <div className="dashboard-grid dashboard-grid--athlete">
+        <AthletePsychologistContact
+          userId={profile.id}
+          onClose={() => setActiveForm(null)}
+          standalone
+        />
+      </div>
+    )
+  }
+
+  const firstName = profile.name?.split(" ")[0] || profile.name
+
+  return (
+    <div className="dashboard-grid dashboard-grid--athlete athlete-home">
+      <header className="athlete-home__hero">
+        <h1>{t("athlete.homeGreeting", { name: firstName })}</h1>
+        {teamName && <p className="athlete-home__team">{teamName}</p>}
+      </header>
+
+      {confirmation && (
+        <div className="athlete-home__confirmation" role="status">
+          <p>{confirmation}</p>
+          <button type="button" onClick={() => setConfirmation(null)}>
+            {t("common.close")}
+          </button>
+        </div>
       )}
 
-      {latestWeeklyIndexes && (
-        <Card title={t("athlete.weeklyEorTitle")} subtitle={t("athlete.weeklyEorSubtitle")}>
-          <EorIndexSummary indexes={latestWeeklyIndexes} variant="psychologist" t={t} />
-        </Card>
-      )}
+      <section className="athlete-home__section">
+        <h2>{t("athlete.homeAvailable")}</h2>
+        <div className="athlete-home__actions">
+          <button
+            type="button"
+            className={`athlete-home__action${!dailyDoneToday ? " athlete-home__action--primary" : ""}`}
+            onClick={() => setActiveForm("daily")}
+          >
+            <span className="athlete-home__action-label">{t("athlete.actionDaily")}</span>
+            <span className="athlete-home__action-hint">
+              {dailyDoneToday ? t("athlete.actionDailyDone") : t("athlete.actionDailyHint")}
+            </span>
+          </button>
 
-      <WeeklyEorChart
-        weeklyTrend={weeklyTrend}
-        variant="psychologist"
-        title={t("chart.eorAthleteTitle")}
-        subtitle={t("chart.eorAthleteSubtitle")}
-      />
+          {(weeklyDue || weeklyDoneThisWeek) && (
+            <button
+              type="button"
+              className={`athlete-home__action${weeklyDue && !weeklyDoneThisWeek ? " athlete-home__action--weekly" : ""}`}
+              onClick={() => setActiveForm("weekly")}
+            >
+              <span className="athlete-home__action-label">{t("athlete.actionWeekly")}</span>
+              <span className="athlete-home__action-hint">
+                {weeklyDoneThisWeek && !weeklyDue
+                  ? t("athlete.actionWeeklyDone")
+                  : t("athlete.actionWeeklyHint")}
+              </span>
+            </button>
+          )}
+        </div>
+      </section>
 
-      <AthletePsychologistContact userId={profile.id} />
+      <section className="athlete-home__section athlete-home__section--help">
+        <h2>{t("athlete.homeNeedHelp")}</h2>
+        <div className="athlete-home__help-actions">
+          <button
+            type="button"
+            className="athlete-home__help-btn"
+            onClick={() => setActiveForm("help")}
+          >
+            {t("athlete.actionAppointment")}
+          </button>
+          <button
+            type="button"
+            className="athlete-home__help-btn athlete-home__help-btn--ghost"
+            onClick={() => setActiveForm("help")}
+          >
+            {t("athlete.actionMessage")}
+          </button>
+        </div>
+      </section>
     </div>
   )
 }

@@ -4,9 +4,9 @@ import { useTranslation } from "../i18n/LanguageContext"
 import { Card } from "./ui/Card"
 import { Button } from "./ui/Button"
 
-export function AthletePsychologistContact({ userId }) {
+export function AthletePsychologistContact({ userId, onClose, standalone = false, defaultForm = null }) {
   const { t } = useTranslation()
-  const [activeForm, setActiveForm] = useState(null)
+  const [activeForm, setActiveForm] = useState(defaultForm)
   const [message, setMessage] = useState("")
   const [saving, setSaving] = useState(false)
   const [feedback, setFeedback] = useState("")
@@ -68,81 +68,101 @@ export function AthletePsychologistContact({ userId }) {
     setActiveForm(null)
   }
 
-  return (
-    <Card title={t("athleteContact.title")} subtitle={t("athleteContact.subtitle")}>
-      <div className="athlete-contact">
-        <div className="athlete-contact__actions">
-          <Button
-            variant={activeForm === "appointment" ? "primary" : "ghost"}
-            onClick={() => {
-              setActiveForm(activeForm === "appointment" ? null : "appointment")
-              setMessage("")
-              setFeedback("")
-            }}
-          >
-            {t("athleteContact.requestAppointment")}
-          </Button>
-          <Button
-            variant={activeForm === "message" ? "primary" : "ghost"}
-            onClick={() => {
-              setActiveForm(activeForm === "message" ? null : "message")
-              setMessage("")
-              setFeedback("")
-            }}
-          >
-            {t("athleteContact.sendMessage")}
+  const content = (
+    <div className="athlete-contact">
+      <div className="athlete-contact__actions">
+        <Button
+          variant={activeForm === "appointment" ? "primary" : "ghost"}
+          onClick={() => {
+            setActiveForm(activeForm === "appointment" ? null : "appointment")
+            setMessage("")
+            setFeedback("")
+          }}
+        >
+          {t("athleteContact.requestAppointment")}
+        </Button>
+        <Button
+          variant={activeForm === "message" ? "primary" : "ghost"}
+          onClick={() => {
+            setActiveForm(activeForm === "message" ? null : "message")
+            setMessage("")
+            setFeedback("")
+          }}
+        >
+          {t("athleteContact.sendMessage")}
+        </Button>
+      </div>
+
+      {activeForm === "appointment" && (
+        <form className="athlete-contact__form" onSubmit={submitAppointment}>
+          <p className="athlete-contact__hint">{t("athleteContact.appointmentHint")}</p>
+          <label className="notes-field notes-field--optional">
+            <span>{t("athleteContact.optionalNote")}</span>
+            <textarea
+              rows={3}
+              placeholder={t("athleteContact.appointmentPlaceholder")}
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+            />
+          </label>
+          <div className="athlete-contact__form-actions">
+            <Button type="button" variant="ghost" onClick={reset}>
+              {t("common.close")}
+            </Button>
+            <Button type="submit" disabled={saving}>
+              {saving ? t("athleteContact.sending") : t("athleteContact.confirmAppointment")}
+            </Button>
+          </div>
+        </form>
+      )}
+
+      {activeForm === "message" && (
+        <form className="athlete-contact__form" onSubmit={submitMessage}>
+          <p className="athlete-contact__hint">{t("athleteContact.messageHint")}</p>
+          <label className="notes-field">
+            <span>{t("athleteContact.messageLabel")}</span>
+            <textarea
+              rows={4}
+              required
+              placeholder={t("athleteContact.messagePlaceholder")}
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+            />
+          </label>
+          <div className="athlete-contact__form-actions">
+            <Button type="button" variant="ghost" onClick={reset}>
+              {t("common.close")}
+            </Button>
+            <Button type="submit" disabled={saving || !message.trim()}>
+              {saving ? t("athleteContact.sending") : t("athleteContact.confirmMessage")}
+            </Button>
+          </div>
+        </form>
+      )}
+
+      {feedback && <p className="form-message">{feedback}</p>}
+
+      {standalone && onClose && (
+        <div className="athlete-contact__form-actions" style={{ marginTop: 16 }}>
+          <Button type="button" variant="ghost" onClick={onClose}>
+            {t("common.back")}
           </Button>
         </div>
+      )}
+    </div>
+  )
 
-        {activeForm === "appointment" && (
-          <form className="athlete-contact__form" onSubmit={submitAppointment}>
-            <p className="athlete-contact__hint">{t("athleteContact.appointmentHint")}</p>
-            <label className="notes-field notes-field--optional">
-              <span>{t("athleteContact.optionalNote")}</span>
-              <textarea
-                rows={3}
-                placeholder={t("athleteContact.appointmentPlaceholder")}
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-              />
-            </label>
-            <div className="athlete-contact__form-actions">
-              <Button type="button" variant="ghost" onClick={reset}>
-                {t("common.close")}
-              </Button>
-              <Button type="submit" disabled={saving}>
-                {saving ? t("athleteContact.sending") : t("athleteContact.confirmAppointment")}
-              </Button>
-            </div>
-          </form>
-        )}
+  if (standalone) {
+    return (
+      <Card title={t("athlete.homeNeedHelp")} subtitle={t("athleteContact.subtitle")}>
+        {content}
+      </Card>
+    )
+  }
 
-        {activeForm === "message" && (
-          <form className="athlete-contact__form" onSubmit={submitMessage}>
-            <p className="athlete-contact__hint">{t("athleteContact.messageHint")}</p>
-            <label className="notes-field">
-              <span>{t("athleteContact.messageLabel")}</span>
-              <textarea
-                rows={4}
-                required
-                placeholder={t("athleteContact.messagePlaceholder")}
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-              />
-            </label>
-            <div className="athlete-contact__form-actions">
-              <Button type="button" variant="ghost" onClick={reset}>
-                {t("common.close")}
-              </Button>
-              <Button type="submit" disabled={saving || !message.trim()}>
-                {saving ? t("athleteContact.sending") : t("athleteContact.confirmMessage")}
-              </Button>
-            </div>
-          </form>
-        )}
-
-        {feedback && <p className="form-message">{feedback}</p>}
-      </div>
+  return (
+    <Card title={t("athleteContact.title")} subtitle={t("athleteContact.subtitle")}>
+      {content}
     </Card>
   )
 }

@@ -18,21 +18,25 @@ export function PsychologistOverview({
   consentCounts,
   t,
   onOpenTeam,
+  compact = false,
 }) {
   const orgEorSnapshot = getLatestWeeklyTeamSnapshot(aggregateWeeklyEorTrend(checkIns))
   const riskCounts = countByRisk(checkIns)
 
   return (
     <>
-      <Card>
-        <InsightCard
-          title={t("psychologist.overviewInsightTitle")}
-          insight={orgInsight}
-          footer={t("insights.footer")}
-        />
-      </Card>
+      {!compact && (
+        <Card>
+          <InsightCard
+            title={t("psychologist.overviewInsightTitle")}
+            insight={orgInsight}
+            footer={t("insights.footer")}
+          />
+        </Card>
+      )}
 
-      <div className="stats-row stats-row--compact">
+      {!compact && (
+        <div className="stats-row stats-row--compact">
         <StatCard label={t("psychologist.athletesMonitored")} value={athletes.length} />
         <StatCard
           label={t("psychologist.orgAvgMental")}
@@ -51,6 +55,7 @@ export function PsychologistOverview({
           })}
         />
       </div>
+      )}
 
       <Card title={t("psychologist.teamCardsTitle")} subtitle={t("psychologist.teamCardsSubtitle")}>
         {teamSummaries.length === 0 ? (

@@ -826,6 +826,230 @@ input:focus, textarea:focus {
   max-width: 720px;
 }
 
+.athlete-home {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  padding: 8px 0 32px;
+}
+
+.athlete-home__hero h1 {
+  margin: 0 0 6px;
+  font-size: 1.75rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.athlete-home__team {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+}
+
+.athlete-home__section h2 {
+  margin: 0 0 14px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.athlete-home__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.athlete-home__action {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  width: 100%;
+  padding: 18px 20px;
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  background: rgba(15, 23, 42, 0.45);
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.athlete-home__action:hover {
+  border-color: rgba(34, 211, 238, 0.35);
+  background: rgba(34, 211, 238, 0.06);
+}
+
+.athlete-home__action--primary {
+  border-color: rgba(34, 211, 238, 0.45);
+  background: rgba(34, 211, 238, 0.08);
+}
+
+.athlete-home__action--weekly {
+  border-color: rgba(251, 191, 36, 0.45);
+  background: rgba(251, 191, 36, 0.08);
+}
+
+.athlete-home__action-label {
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+.athlete-home__action-hint {
+  font-size: 0.88rem;
+  color: var(--text-muted);
+}
+
+.athlete-home__help-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.athlete-home__help-btn {
+  flex: 1;
+  min-width: 140px;
+  padding: 14px 18px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: inherit;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+
+.athlete-home__help-btn--ghost {
+  color: var(--text-muted);
+}
+
+.athlete-home__confirmation {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: rgba(52, 211, 153, 0.1);
+  border: 1px solid rgba(52, 211, 153, 0.25);
+}
+
+.athlete-home__confirmation p {
+  margin: 0;
+  color: var(--success, #34d399);
+}
+
+.athlete-home__confirmation button {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.psych-action-center {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.psych-action-center__block {
+  padding: 20px 22px;
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  background: rgba(15, 23, 42, 0.5);
+}
+
+.psych-action-center__block header {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  margin-bottom: 14px;
+}
+
+.psych-action-center__block h2 {
+  margin: 0 0 4px;
+  font-size: 1.05rem;
+}
+
+.psych-action-center__block header p {
+  margin: 0;
+  font-size: 0.88rem;
+  color: var(--text-muted);
+}
+
+.psych-action-center__icon {
+  font-size: 1.25rem;
+  line-height: 1;
+}
+
+.psych-action-center__empty {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.92rem;
+}
+
+.psych-action-center__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.psych-action-center__list li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 12px 0;
+  border-top: 1px solid rgba(148, 163, 184, 0.12);
+}
+
+.psych-action-center__list li:first-child {
+  border-top: none;
+  padding-top: 0;
+}
+
+.psych-action-center__list strong {
+  display: block;
+}
+
+.psych-action-center__list span {
+  display: block;
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.psych-action-center__row-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.psych-compliance-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.psych-compliance-list__item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 0;
+  border-top: 1px solid rgba(148, 163, 184, 0.12);
+}
+
+.psych-compliance-list__item:first-child {
+  border-top: none;
+  padding-top: 0;
+}
+
 .today-status {
   margin: 0;
   padding: 14px 16px;

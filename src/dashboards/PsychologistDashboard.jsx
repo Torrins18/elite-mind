@@ -20,11 +20,13 @@ import { useAthleteInsight } from "../hooks/useAthleteInsight"
 import { PsychologistCoachAdmin } from "../components/PsychologistCoachAdmin"
 import { consentStatus } from "../lib/age"
 import { CoachDashboard } from "./CoachDashboard"
-import { PsychologistInbox } from "../components/psychologist/PsychologistInbox"
+import { PsychologistActionCenter } from "../components/psychologist/PsychologistActionCenter"
 import {
   PsychologistOverview,
   buildConsentCounts,
 } from "../components/psychologist/PsychologistOverview"
+import { buildOrgAlerts } from "../lib/alerts"
+import { todayISO } from "../lib/dates"
 import { PsychologistAthleteDetail } from "../components/psychologist/PsychologistAthleteDetail"
 import { EorIndexSummary } from "../components/EorIndexSummary"
 import { WeeklyEorChart } from "../components/WeeklyEorTeamChart"
@@ -150,6 +152,11 @@ export function PsychologistDashboard({ profile }) {
 
   const consentCounts = useMemo(() => buildConsentCounts(athletes), [athletes])
 
+  const orgAlerts = useMemo(
+    () => buildOrgAlerts(athletes, checkIns, todayISO()),
+    [athletes, checkIns]
+  )
+
   const selectedAssessment = useMemo(
     () => assessments.find((item) => item.athlete_id === selectedId) ?? null,
     [assessments, selectedId]
@@ -269,15 +276,18 @@ export function PsychologistDashboard({ profile }) {
 
       {activeTab === OVERVIEW_TAB ? (
         <>
-          <PsychologistInbox
+          <PsychologistActionCenter
+            alerts={orgAlerts}
             appointmentRequests={appointmentRequests}
             psychologistMessages={psychologistMessages}
+            teamSummaries={teamSummaries}
             athleteMap={athleteMap}
             teamMap={teamMap}
             t={t}
+            onOpenAthlete={openAthlete}
             onMarkAppointmentHandled={markAppointmentHandled}
             onMarkMessageRead={markMessageRead}
-            onOpenAthlete={openAthlete}
+            onOpenTeam={openTeam}
           />
 
           <PsychologistOverview
@@ -288,6 +298,7 @@ export function PsychologistDashboard({ profile }) {
             consentCounts={consentCounts}
             t={t}
             onOpenTeam={openTeam}
+            compact
           />
 
           <PsychologistCoachAdmin
