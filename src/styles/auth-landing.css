@@ -33,14 +33,14 @@
   z-index: 2;
   display: grid;
   grid-template-columns: minmax(0, 1.65fr) minmax(320px, 1fr);
-  align-items: start;
-  gap: clamp(16px, 3vw, 40px);
+  align-items: center;
+  gap: clamp(24px, 4vw, 48px);
   width: 100%;
   max-width: 1440px;
   min-height: 100vh;
   min-height: 100dvh;
   margin: 0 auto;
-  padding: clamp(56px, 7vh, 68px) clamp(20px, 4vw, 48px) clamp(24px, 4vh, 40px);
+  padding: clamp(72px, 10vh, 84px) clamp(24px, 4vw, 48px) clamp(36px, 5vh, 52px);
   box-sizing: border-box;
 }
 
@@ -121,10 +121,10 @@
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  align-self: start;
+  align-self: center;
   width: 100%;
   max-width: 680px;
-  padding: 0 clamp(8px, 2vw, 32px) 0;
+  padding: 8px clamp(12px, 2vw, 36px) 12px;
   animation: auth-fade-up 0.9s ease both;
 }
 
@@ -140,7 +140,7 @@
 }
 
 .auth-landing__hero-logo {
-  margin-bottom: 12px;
+  margin-bottom: 18px;
 }
 
 .brand-logo--hero-dark {
@@ -152,12 +152,12 @@
 .brand-logo__hero-image {
   display: block;
   width: auto;
-  height: clamp(72px, 11vh, 96px);
-  max-width: min(200px, 52vw);
+  height: clamp(88px, 13vh, 118px);
+  max-width: min(220px, 58vw);
   object-fit: contain;
   object-position: left center;
   mix-blend-mode: lighten;
-  filter: drop-shadow(0 4px 20px rgba(0, 0, 0, 0.4));
+  filter: drop-shadow(0 5px 24px rgba(0, 0, 0, 0.42));
 }
 
 .brand-logo--light .brand-logo__zona {
@@ -178,13 +178,13 @@
 }
 
 .auth-landing__headline {
-  margin: 0 0 14px;
+  margin: 0 0 20px;
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  font-size: clamp(2.15rem, 5.2vw, 3.35rem);
+  gap: 6px;
+  font-size: clamp(2.35rem, 5.6vw, 3.65rem);
   font-weight: 700;
-  line-height: 1.04;
+  line-height: 1.05;
   letter-spacing: -0.045em;
   color: #fff;
   text-shadow: 0 4px 24px rgba(0, 0, 0, 0.35);
@@ -195,20 +195,20 @@
 }
 
 .auth-landing__supporting {
-  margin: 0 0 16px;
+  margin: 0 0 22px;
   max-width: 46ch;
-  font-size: clamp(0.9rem, 1.6vw, 1rem);
-  line-height: 1.55;
+  font-size: clamp(0.92rem, 1.7vw, 1.04rem);
+  line-height: 1.62;
   color: rgba(255, 255, 255, 0.8);
 }
 
 .auth-landing__values {
   list-style: none;
-  margin: 18px 0 0;
+  margin: 26px 0 0;
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
 }
 
 .auth-landing__values li {
@@ -286,9 +286,9 @@
   position: relative;
   z-index: 2;
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: center;
-  align-self: start;
+  align-self: center;
   padding: 0;
   background: transparent;
   animation: auth-fade-up 0.9s ease 0.15s both;
@@ -754,33 +754,28 @@
   }
 }
 
-@media (max-height: 780px) and (min-width: 961px) {
+@media (max-height: 720px) and (min-width: 961px) {
   .auth-landing__intro-grid {
-    padding-top: 52px;
-    padding-bottom: 20px;
+    padding-top: 60px;
+    padding-bottom: 28px;
   }
 
   .brand-logo__hero-image {
-    height: 68px;
+    height: 80px;
   }
 
   .auth-landing__headline {
-    font-size: clamp(1.95rem, 4.5vw, 2.65rem);
-    margin-bottom: 10px;
+    font-size: clamp(2rem, 4.8vw, 2.85rem);
+    margin-bottom: 16px;
   }
 
   .auth-landing__supporting {
-    margin-bottom: 12px;
-    font-size: 0.875rem;
+    margin-bottom: 18px;
   }
 
   .auth-landing__values {
-    margin-top: 14px;
-    gap: 6px;
-  }
-
-  .auth-landing__values li {
-    font-size: 0.8125rem;
+    margin-top: 20px;
+    gap: 8px;
   }
 }
 

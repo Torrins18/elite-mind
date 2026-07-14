@@ -34,8 +34,8 @@ export function BrandLogo({ variant = "bar", className = "", tone = "default" })
           className="brand-logo__hero-image"
           src="/images/zona-mental-logo-hero.png"
           alt=""
-          width={200}
-          height={96}
+          width={220}
+          height={118}
           decoding="async"
           fetchPriority="high"
         />
