@@ -22,7 +22,18 @@ function Wordmark({ showSubtitle = true, showTagline = false, compact = false })
 }
 
 export function BrandLogo({ variant = "bar", className = "", tone = "default" }) {
-  const rootClass = `brand-logo brand-logo--${variant}${tone === "light" ? " brand-logo--light" : ""} ${className}`.trim()
+  const rootClass = `brand-logo brand-logo--${variant}${tone === "light" ? " brand-logo--light" : ""}${variant === "hero-dark" ? " brand-logo--hero-dark" : ""} ${className}`.trim()
+
+  if (variant === "hero-dark") {
+    return (
+      <div className={rootClass} role="img" aria-label="Zona Mental+ — Psicología deportiva">
+        <div className="brand-logo__hero-plate">
+          <LogoMark size={52} palette="hero" className="brand-logo__mark" title="" />
+          <Wordmark showSubtitle={false} compact />
+        </div>
+      </div>
+    )
+  }
 
   if (variant === "bar") {
     return (

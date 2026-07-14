@@ -105,13 +105,16 @@ export const translations = {
     },
 
     authLanding: {
-      eyebrow: "PSICOLOGÍA DEPORTIVA",
+      eyebrow: "PLATAFORMA DE PSICOLOGÍA DEPORTIVA",
       headlineLine1: "Entrena la mente.",
       headlineLine2: "Compite mejor.",
       supporting:
         "La plataforma profesional de seguimiento psicológico deportivo para clubs, psicólogos, entrenadores y deportistas.",
-      ctaLogin: "Iniciar sesión",
-      ctaDiscover: "Descubre la plataforma",
+      ctaDiscoverBrand: "Descubre Zona Mental+",
+      value1: "Seguimiento psicológico continuo",
+      value2: "Alertas inteligentes",
+      value3: "Pensado para clubs deportivos",
+      value4: "Diseñado por psicólogos deportivos",
       whyTitle: "Por qué Zona Mental+",
       why1Title: "Seguimiento psicológico",
       why1Text: "Detecta cambios antes de que se conviertan en problemas.",
@@ -1293,13 +1296,16 @@ export const translations = {
     },
 
     authLanding: {
-      eyebrow: "PSICOLOGIA ESPORTIVA",
+      eyebrow: "PLATAFORMA DE PSICOLOGIA ESPORTIVA",
       headlineLine1: "Entrena la ment.",
       headlineLine2: "Competeix millor.",
       supporting:
         "La plataforma professional de seguiment psicològic esportiu per a clubs, psicòlegs, entrenadors i esportistes.",
-      ctaLogin: "Iniciar sessió",
-      ctaDiscover: "Descobreix la plataforma",
+      ctaDiscoverBrand: "Descobreix Zona Mental+",
+      value1: "Seguiment psicològic continu",
+      value2: "Alertes intel·ligents",
+      value3: "Pensat per clubs esportius",
+      value4: "Dissenyat per psicòlegs esportius",
       whyTitle: "Per què Zona Mental+",
       why1Title: "Seguiment psicològic",
       why1Text: "Detecta canvis abans que es converteixin en problemes.",

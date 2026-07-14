@@ -9,7 +9,7 @@
 
 const BASE_IMAGE = {
   src: "/images/auth-hero.jpg",
-  position: "center 30%",
+  position: "center 42%",
 }
 
 const BASE_VIDEO = {

@@ -264,7 +264,7 @@ export function LoginPage() {
         <div className="auth-landing__visual">
           <AuthHeroMedia />
           <div className="auth-landing__overlay" aria-hidden />
-          <AuthHeroContent onLoginClick={() => scrollToId("auth-form")} />
+          <AuthHeroContent />
         </div>
 
         <aside className="auth-landing__panel" id="auth-form">

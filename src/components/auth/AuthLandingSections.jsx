@@ -1,4 +1,5 @@
 import { BrandLogo } from "../BrandLogo"
+import { HeroCheckIcon } from "./HeroCheckIcon"
 import { LandingIcon } from "./LandingIcon"
 import { useTranslation } from "../../i18n/LanguageContext"
 
@@ -101,28 +102,40 @@ function scrollToId(id) {
   document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" })
 }
 
-export function AuthHeroContent({ onLoginClick }) {
+export function AuthHeroContent() {
   const { t } = useTranslation()
+
+  const valueProps = [
+    t("authLanding.value1"),
+    t("authLanding.value2"),
+    t("authLanding.value3"),
+    t("authLanding.value4"),
+  ]
 
   return (
     <div className="auth-landing__hero-content">
-      <BrandLogo variant="compact" tone="light" className="auth-landing__hero-logo" />
+      <BrandLogo variant="hero-dark" className="auth-landing__hero-logo" />
       <p className="auth-landing__eyebrow">{t("authLanding.eyebrow")}</p>
       <h1 className="auth-landing__headline">
         <span>{t("authLanding.headlineLine1")}</span>
         <span className="auth-landing__headline-accent">{t("authLanding.headlineLine2")}</span>
       </h1>
       <p className="auth-landing__supporting">{t("authLanding.supporting")}</p>
+      <ul className="auth-landing__values">
+        {valueProps.map((item) => (
+          <li key={item}>
+            <HeroCheckIcon size={15} />
+            <span>{item}</span>
+          </li>
+        ))}
+      </ul>
       <div className="auth-landing__hero-actions">
-        <button type="button" className="auth-landing__cta auth-landing__cta--primary" onClick={onLoginClick}>
-          {t("authLanding.ctaLogin")}
-        </button>
         <button
           type="button"
-          className="auth-landing__cta auth-landing__cta--ghost"
+          className="auth-landing__cta auth-landing__cta--discover"
           onClick={() => scrollToId("landing-why")}
         >
-          {t("authLanding.ctaDiscover")}
+          {t("authLanding.ctaDiscoverBrand")}
         </button>
       </div>
     </div>
