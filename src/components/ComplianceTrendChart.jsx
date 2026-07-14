@@ -56,7 +56,7 @@ export function ComplianceTrendChart({ trend, title, subtitle }) {
             <Line
               type="monotone"
               dataKey="compliance"
-              stroke={CHART_COLORS.nav}
+              stroke={CHART_COLORS.healthy}
               strokeWidth={2}
               dot={{ r: 3 }}
             />

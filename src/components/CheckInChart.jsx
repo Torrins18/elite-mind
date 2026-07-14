@@ -16,6 +16,7 @@ import {
 import { useTranslation } from "../i18n/LanguageContext"
 import { formatDate } from "../lib/dates"
 import { Card } from "./ui/Card"
+import { ChartLegendIcon } from "./ui/ChartLegendIcon"
 
 export function CheckInChart({
   checkIns,
@@ -55,7 +56,7 @@ export function CheckInChart({
             <XAxis dataKey="date" tick={CHART_AXIS_TICK} />
             <YAxis domain={domain} tick={CHART_AXIS_TICK} />
             <Tooltip contentStyle={CHART_TOOLTIP_STYLE} />
-            <Line type="monotone" dataKey="mood" stroke={CHART_COLORS.nav} strokeWidth={2} dot={false} />
+            <Line type="monotone" dataKey="mood" stroke="#64748B" strokeWidth={2} dot={false} />
             <Line type="monotone" dataKey="energy" stroke={CHART_COLORS.followup} strokeWidth={2} dot={false} />
             {showStress && (
               <Line type="monotone" dataKey="stress" stroke={CHART_COLORS.risk} strokeWidth={2} dot={false} />
@@ -64,9 +65,17 @@ export function CheckInChart({
         </ResponsiveContainer>
       </div>
       <div className="chart-legend">
-        <span><i className="dot dot--cyan" /> {t("chart.mood")}</span>
-        <span><i className="dot dot--gold" /> {t("chart.energy")}</span>
-        {showStress && <span><i className="dot dot--red" /> {t("chart.stress")}</span>}
+        <span className="chart-legend__item">
+          <ChartLegendIcon name="mood" /> {t("chart.mood")}
+        </span>
+        <span className="chart-legend__item">
+          <ChartLegendIcon name="energy" /> {t("chart.energy")}
+        </span>
+        {showStress && (
+          <span className="chart-legend__item">
+            <ChartLegendIcon name="stress" /> {t("chart.stress")}
+          </span>
+        )}
       </div>
     </Card>
   )

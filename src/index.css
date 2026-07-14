@@ -1,38 +1,40 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@500;600;700&display=swap");
 
 :root {
-  /* Premium light design system */
-  --bg-app: #f7f9fc;
-  --bg-surface: #ffffff;
-  --bg-subtle: #f1f5f9;
-  --bg-hover: #f8fafc;
+  /* Clinical premium palette — no pure white/black */
+  --bg-app: #f3f5f7;
+  --bg-subtle: #eef2f6;
+  --bg-sidebar: #e8edf3;
+  --bg-surface: #fafbfc;
+  --bg-hover: #eef2f6;
+  --bg-highlight: #ffffff;
 
-  --text-primary: #0f172a;
-  --text-secondary: #475569;
+  --text-primary: #1e293b;
+  --text-secondary: #64748b;
   --text-muted: #64748b;
 
-  --border: #e2e8f0;
-  --border-strong: #cbd5e1;
+  --border: transparent;
+  --border-subtle: rgba(30, 41, 59, 0.06);
+  --border-strong: rgba(30, 41, 59, 0.1);
 
-  /* Accent palette — navigation / healthy / follow-up / risk */
   --color-nav: #2563eb;
   --color-nav-hover: #1d4ed8;
-  --color-nav-soft: rgba(37, 99, 235, 0.08);
-  --color-nav-border: rgba(37, 99, 235, 0.18);
+  --color-nav-soft: rgba(37, 99, 235, 0.1);
+  --color-nav-border: rgba(37, 99, 235, 0.22);
 
-  --color-healthy: #059669;
-  --color-healthy-soft: rgba(5, 150, 105, 0.08);
-  --color-healthy-border: rgba(5, 150, 105, 0.2);
+  --color-healthy: #16a34a;
+  --color-healthy-soft: rgba(22, 163, 74, 0.08);
+  --color-healthy-border: rgba(22, 163, 74, 0.18);
 
-  --color-followup: #ea580c;
-  --color-followup-soft: rgba(234, 88, 12, 0.08);
-  --color-followup-border: rgba(234, 88, 12, 0.2);
+  --color-followup: #f59e0b;
+  --color-followup-soft: rgba(245, 158, 11, 0.08);
+  --color-followup-border: rgba(245, 158, 11, 0.18);
 
   --color-risk: #dc2626;
   --color-risk-soft: rgba(220, 38, 38, 0.08);
-  --color-risk-border: rgba(220, 38, 38, 0.2);
+  --color-risk-border: rgba(220, 38, 38, 0.16);
 
-  /* Legacy aliases (used across the app) */
+  /* Legacy aliases */
   --bg-deep: var(--bg-app);
   --bg-panel: var(--bg-surface);
   --bg-elevated: var(--bg-surface);
@@ -44,14 +46,14 @@
   --warning: var(--color-followup);
   --danger: var(--color-risk);
 
-  --radius: 12px;
+  --radius: 16px;
   --radius-lg: 16px;
-  --radius-sm: 8px;
-  --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.04);
-  --shadow: 0 1px 3px rgba(15, 23, 42, 0.06), 0 8px 24px rgba(15, 23, 42, 0.05);
-  --shadow-lg: 0 4px 6px rgba(15, 23, 42, 0.04), 0 16px 40px rgba(15, 23, 42, 0.08);
-  --transition: 0.18s ease;
-  --transition-fast: 0.12s ease;
+  --radius-sm: 10px;
+  --shadow-sm: 0 1px 2px rgba(30, 41, 59, 0.03);
+  --shadow: 0 1px 3px rgba(30, 41, 59, 0.04), 0 4px 16px rgba(30, 41, 59, 0.03);
+  --shadow-lg: 0 2px 8px rgba(30, 41, 59, 0.04), 0 12px 32px rgba(30, 41, 59, 0.05);
+  --transition: 0.2s ease;
+  --transition-fast: 0.14s ease;
 
   font-family: "Inter", "Manrope", system-ui, -apple-system, sans-serif;
   color: var(--text-primary);
@@ -103,7 +105,7 @@ select {
   width: 100%;
   padding: 11px 14px;
   border-radius: var(--radius-sm);
-  border: 1px solid var(--border);
+  border: 1px solid var(--border-subtle);
   background: var(--bg-surface);
   color: var(--text-primary);
   font: inherit;
@@ -232,10 +234,9 @@ select:focus {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 14px 28px;
-  border-bottom: 1px solid var(--border);
-  background: rgba(255, 255, 255, 0.92);
-  backdrop-filter: blur(12px);
+  padding: 16px 32px;
+  border-bottom: none;
+  background: var(--bg-sidebar);
   position: sticky;
   top: 0;
   z-index: 10;
@@ -276,7 +277,7 @@ select:focus {
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--accent);
+  color: var(--text-secondary);
 }
 
 .auth-form__brand {
@@ -326,16 +327,16 @@ select:focus {
 
 .topbar__role {
   font-size: 0.78rem;
-  color: var(--color-nav);
+  color: var(--text-muted);
   text-transform: uppercase;
-  letter-spacing: 0.06em;
-  font-weight: 600;
+  letter-spacing: 0.05em;
+  font-weight: 500;
 }
 
 .main-content {
   max-width: 1280px;
   margin: 0 auto;
-  padding: 32px 28px 64px;
+  padding: 36px 32px 72px;
 }
 
 /* Buttons */
@@ -360,45 +361,29 @@ select:focus {
 
 .btn--primary {
   background: var(--color-nav);
-  color: #ffffff;
+  color: var(--bg-highlight);
   box-shadow: var(--shadow-sm);
 }
 
 .btn--ghost {
-  background: var(--bg-surface);
-  border: 1px solid var(--border);
+  background: transparent;
+  border: 1px solid transparent;
   color: var(--text-secondary);
   padding: 9px 16px;
 }
 
 .btn--ghost:hover:not(:disabled) {
-  background: var(--bg-hover);
-  border-color: var(--border-strong);
+  background: var(--bg-subtle);
   color: var(--text-primary);
-}
-
-.btn--primary:hover:not(:disabled) {
-  background: var(--color-nav-hover);
-  box-shadow: var(--shadow);
-  transform: translateY(-1px);
-}
-
-.btn--danger-text {
-  color: var(--color-risk) !important;
-}
-
-.btn--danger-text:hover:not(:disabled) {
-  background: var(--color-risk-soft) !important;
-  border-color: var(--color-risk-border) !important;
 }
 
 /* Cards */
 .card {
   background: var(--bg-surface);
-  border: 1px solid var(--border);
+  border: none;
   border-radius: var(--radius-lg);
-  padding: 28px;
-  box-shadow: var(--shadow);
+  padding: 28px 32px;
+  box-shadow: var(--shadow-sm);
 }
 
 .card__header {
@@ -422,6 +407,19 @@ select:focus {
   line-height: 1.5;
 }
 
+.btn--primary:hover:not(:disabled) {
+  background: var(--color-nav-hover);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn--danger-text {
+  color: var(--color-risk) !important;
+}
+
+.btn--danger-text:hover:not(:disabled) {
+  background: var(--color-risk-soft) !important;
+}
+
 /* Stats */
 .stats-row {
   display: grid;
@@ -435,18 +433,13 @@ select:focus {
 
 .stat-card {
   background: var(--bg-surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 20px 22px;
+  border: none;
+  border-radius: var(--radius-lg);
+  padding: 22px 24px;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
   box-shadow: var(--shadow-sm);
-  transition: box-shadow var(--transition), transform var(--transition-fast);
-}
-
-.stat-card:hover {
-  box-shadow: var(--shadow);
 }
 
 .stat-card__label {
@@ -489,54 +482,48 @@ select:focus {
   align-items: center;
   padding: 4px 10px;
   border-radius: 999px;
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.02em;
+  text-transform: none;
+  border: none;
 }
 
 .badge--low {
   background: var(--color-healthy-soft);
   color: var(--color-healthy);
-  border: 1px solid var(--color-healthy-border);
 }
 .badge--medium {
   background: var(--color-followup-soft);
   color: var(--color-followup);
-  border: 1px solid var(--color-followup-border);
 }
 .badge--high {
   background: var(--color-risk-soft);
   color: var(--color-risk);
-  border: 1px solid var(--color-risk-border);
 }
 .badge--default {
   background: var(--bg-subtle);
   color: var(--text-muted);
-  border: 1px solid var(--border);
 }
 
 /* Check-in form */
 .insight-card {
-  padding: 20px 22px;
-  border-radius: var(--radius);
-  border: 1px solid var(--border);
+  padding: 22px 24px;
+  border-radius: var(--radius-lg);
+  border: none;
   background: var(--bg-surface);
   box-shadow: var(--shadow-sm);
 }
 
 .insight-card--positive {
-  border-color: var(--color-healthy-border);
   background: var(--color-healthy-soft);
 }
 
 .insight-card--warning {
-  border-color: var(--color-followup-border);
   background: var(--color-followup-soft);
 }
 
 .insight-card--danger {
-  border-color: var(--color-risk-border);
   background: var(--color-risk-soft);
 }
 
@@ -712,15 +699,16 @@ select:focus {
   display: flex;
   flex-direction: column;
   gap: 18px;
-  padding: 16px;
-  border: 1px solid var(--border);
-  border-radius: 14px;
+  padding: 20px;
+  border: none;
+  border-radius: var(--radius-lg);
   background: var(--bg-surface);
+  box-shadow: var(--shadow-sm);
 }
 
 .check-in-block--weekly {
-  border-color: rgba(34, 211, 238, 0.22);
-  background: rgba(34, 211, 238, 0.05);
+  background: var(--bg-subtle);
+  box-shadow: none;
 }
 
 .check-in-block__header h3 {
@@ -748,17 +736,17 @@ select:focus {
 }
 
 .check-in-block__badge--weekly {
-  background: var(--accent-dim);
-  color: var(--accent);
+  background: var(--bg-hover);
+  color: var(--text-secondary);
 }
 
 .check-in-weekly-next {
   padding: 12px 14px;
-  border-radius: 10px;
+  border-radius: var(--radius-sm);
   font-size: 0.86rem;
   color: var(--text-muted);
-  background: rgba(148, 163, 184, 0.08);
-  border: 1px dashed var(--border);
+  background: var(--bg-subtle);
+  border: none;
 }
 
 .weekly-eor-wrap {
@@ -1196,15 +1184,15 @@ select:focus {
 }
 
 .today-status--done {
-  color: var(--success, #34d399);
-  background: rgba(52, 211, 153, 0.1);
-  border: 1px solid rgba(52, 211, 153, 0.2);
+  color: var(--color-healthy);
+  background: var(--color-healthy-soft);
+  border: none;
 }
 
 .today-status--pending {
   color: var(--text-muted);
-  background: rgba(148, 163, 184, 0.08);
-  border: 1px dashed var(--border);
+  background: var(--bg-subtle);
+  border: none;
 }
 
 .today-status__actions {
@@ -1247,47 +1235,7 @@ select:focus {
   justify-content: flex-end;
 }
 
-.psych-tabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  padding: 4px;
-  border-radius: 14px;
-  background: rgba(148, 163, 184, 0.06);
-  border: 1px solid var(--border);
-}
-
-.psych-tabs__btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 14px;
-  border: 1px solid transparent;
-  border-radius: 10px;
-  background: transparent;
-  color: var(--text-muted);
-  font-size: 0.9rem;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.psych-tabs__btn.active {
-  color: var(--text);
-  background: rgba(34, 211, 238, 0.1);
-  border-color: rgba(34, 211, 238, 0.25);
-}
-
-.psych-tabs__badge {
-  min-width: 20px;
-  height: 20px;
-  padding: 0 6px;
-  border-radius: 999px;
-  background: var(--danger);
-  color: #fff;
-  font-size: 0.72rem;
-  line-height: 20px;
-  text-align: center;
-}
+/* psych-tabs — see premium-ui.css */
 
 .athlete-clinical-file__team {
   margin: -8px 0 16px;
@@ -1295,48 +1243,7 @@ select:focus {
   font-size: 0.9rem;
 }
 
-.athlete-file-tabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin-bottom: 20px;
-  padding: 4px;
-  border-radius: 12px;
-  background: rgba(148, 163, 184, 0.06);
-  border: 1px solid var(--border);
-}
-
-.athlete-file-tabs__btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 8px 12px;
-  border: 1px solid transparent;
-  border-radius: 8px;
-  background: transparent;
-  color: var(--text-muted);
-  font-size: 0.82rem;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.athlete-file-tabs__btn.active {
-  color: var(--text);
-  background: rgba(34, 211, 238, 0.1);
-  border-color: rgba(34, 211, 238, 0.2);
-}
-
-.athlete-file-tabs__badge {
-  min-width: 1.2rem;
-  height: 1.2rem;
-  padding: 0 5px;
-  border-radius: 999px;
-  background: rgba(248, 113, 113, 0.2);
-  color: var(--danger);
-  font-size: 0.7rem;
-  line-height: 1.2rem;
-  text-align: center;
-}
+/* athlete-file-tabs — see premium-ui.css */
 
 .athlete-file-panel {
   display: flex;
@@ -2357,11 +2264,20 @@ select:focus {
 .eor-index-summary__item {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  padding: 14px 16px;
-  border-radius: 14px;
-  border: 1px solid var(--border);
-  background: var(--bg-surface);
+  gap: 8px;
+  padding: 16px 18px;
+  border-radius: var(--radius-lg);
+  border: none;
+  background: var(--bg-subtle);
+  box-shadow: none;
+}
+
+.eor-index-summary__label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8125rem;
+  color: var(--text-muted);
 }
 
 .eor-index-summary--compact .eor-index-summary__item {
@@ -2370,24 +2286,15 @@ select:focus {
 }
 
 .eor-index-summary__item--good {
-  border-color: rgba(52, 211, 153, 0.25);
+  background: var(--color-healthy-soft);
 }
 
 .eor-index-summary__item--warning {
-  border-color: rgba(251, 191, 36, 0.28);
+  background: var(--color-followup-soft);
 }
 
 .eor-index-summary__item--danger {
-  border-color: rgba(248, 113, 113, 0.35);
-  background: rgba(248, 113, 113, 0.08);
-}
-
-.eor-index-summary__label {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 0.82rem;
-  color: var(--text-muted);
+  background: var(--color-risk-soft);
 }
 
 .eor-index-summary--compact .eor-index-summary__label {
@@ -2441,18 +2348,19 @@ select:focus {
   align-items: center;
   gap: 8px;
   padding: 12px 14px;
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  background: var(--bg-elevated);
-  color: var(--text);
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-primary);
   cursor: pointer;
   font: inherit;
   text-align: left;
+  transition: background var(--transition), box-shadow var(--transition);
 }
 
 .athlete-picker__btn.active {
-  border-color: var(--accent);
-  background: var(--accent-dim);
+  background: var(--bg-surface);
+  box-shadow: var(--shadow-sm);
 }
 
 .athlete-picker__main {
@@ -2541,14 +2449,14 @@ select:focus {
 }
 
 .role-picker {
-  border: 1px solid var(--border);
-  border-radius: 16px;
+  border: none;
+  border-radius: var(--radius-lg);
   padding: 14px;
   margin: 0 0 12px;
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 10px;
-  background: var(--bg-surface);
+  background: var(--bg-subtle);
 }
 
 .role-picker legend {
@@ -2567,16 +2475,17 @@ select:focus {
   gap: 12px;
   min-height: 92px;
   padding: 14px;
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  background: var(--bg-elevated);
+  border: none;
+  border-radius: var(--radius-lg);
+  background: var(--bg-surface);
+  box-shadow: var(--shadow-sm);
   cursor: pointer;
   color: var(--text-muted);
-  transition: border-color 0.15s, background 0.15s, transform 0.15s;
+  transition: box-shadow var(--transition), background var(--transition), transform var(--transition-fast);
 }
 
 .role-picker__option:hover {
-  border-color: rgba(34, 211, 238, 0.35);
+  box-shadow: var(--shadow);
   transform: translateY(-1px);
 }
 
@@ -2605,22 +2514,21 @@ select:focus {
 }
 
 .role-picker__option:has(input:checked) {
-  border-color: rgba(34, 211, 238, 0.75);
-  background: var(--accent-dim);
-  box-shadow: 0 0 0 1px rgba(34, 211, 238, 0.18);
+  background: var(--bg-highlight);
+  box-shadow: var(--shadow);
 }
 
 .role-picker__option:has(input:checked) strong {
-  color: var(--accent);
+  color: var(--text-primary);
 }
 
 .role-picker .role-hint {
   grid-column: 1 / -1;
   padding: 10px 12px;
-  border: 1px solid rgba(251, 191, 36, 0.25);
-  border-radius: 10px;
-  background: rgba(251, 191, 36, 0.08);
-  color: var(--warning);
+  border: none;
+  border-radius: var(--radius-sm);
+  background: var(--color-followup-soft);
+  color: var(--color-followup);
   font-size: 0.82rem;
 }
 
@@ -2636,7 +2544,7 @@ select:focus {
 }
 
 .team-selector__current strong {
-  color: var(--accent);
+  color: var(--text-primary);
 }
 
 .team-selector__label {
@@ -3040,12 +2948,12 @@ select:focus {
 
 .invite-banner {
   padding: 12px 14px;
-  border-radius: 10px;
-  background: var(--accent-dim);
-  border: 1px solid rgba(34, 211, 238, 0.35);
-  color: var(--accent);
+  border-radius: var(--radius-sm);
+  background: var(--bg-subtle);
+  border: none;
+  color: var(--text-secondary);
   font-size: 0.9rem;
-  font-weight: 600;
+  font-weight: 500;
 }
 
 .role-hint {
@@ -3070,10 +2978,11 @@ select:focus {
   display: flex;
   flex-direction: column;
   gap: 18px;
-  padding: 18px;
-  border: 1px solid rgba(34, 211, 238, 0.28);
-  border-radius: 16px;
-  background: rgba(8, 145, 178, 0.08);
+  padding: 24px;
+  border: none;
+  border-radius: var(--radius-lg);
+  background: var(--bg-subtle);
+  box-shadow: var(--shadow-sm);
 }
 
 .coach-preview-panel__bar {

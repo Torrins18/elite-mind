@@ -1,14 +1,20 @@
+import { ChartLegendIcon } from "./ui/ChartLegendIcon"
+
 const VARIANTS = {
   coach: [
-    { key: "mental", labelKey: "psychologist.eorIndexMental", dot: "cyan" },
-    { key: "wellbeing", labelKey: "psychologist.eorIndexWellbeing", dot: "green" },
-    { key: "social", labelKey: "psychologist.eorIndexSocial", dot: "gold" },
+    { key: "mental", labelKey: "psychologist.eorIndexMental", icon: "mental" },
+    { key: "wellbeing", labelKey: "psychologist.eorIndexWellbeing", icon: "wellbeing" },
+    { key: "social", labelKey: "psychologist.eorIndexSocial", icon: "social" },
   ],
   psychologist: [
-    { key: "mental", labelKey: "psychologist.eorIndexMental", dot: "cyan" },
-    { key: "wellbeing", labelKey: "psychologist.eorIndexWellbeing", dot: "green" },
-    { key: "social", labelKey: "psychologist.eorIndexSocial", dot: "gold" },
-    { key: "coachCommunication", labelKey: "checkIn.eorCoachCommunication", dot: "red" },
+    { key: "mental", labelKey: "psychologist.eorIndexMental", icon: "mental" },
+    { key: "wellbeing", labelKey: "psychologist.eorIndexWellbeing", icon: "wellbeing" },
+    { key: "social", labelKey: "psychologist.eorIndexSocial", icon: "social" },
+    {
+      key: "coachCommunication",
+      labelKey: "checkIn.eorCoachCommunication",
+      icon: "coachCommunication",
+    },
   ],
 }
 
@@ -34,7 +40,7 @@ export function EorIndexSummary({ indexes, variant = "coach", t, compact = false
         return (
           <div key={item.key} className={`eor-index-summary__item eor-index-summary__item--${tone}`}>
             <span className="eor-index-summary__label">
-              <i className={`dot dot--${item.dot}`} />
+              <ChartLegendIcon name={item.icon} size={14} />
               {t(item.labelKey)}
             </span>
             <strong className="eor-index-summary__value">{value ?? "—"}</strong>

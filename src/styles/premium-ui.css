@@ -1,11 +1,11 @@
-/* Premium SaaS UI layer — Zona Mental+ */
+/* Clinical premium UI — Zona Mental+ */
 
 .hero-strip {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  gap: 20px;
-  margin-bottom: 4px;
+  gap: 24px;
+  margin-bottom: 8px;
 }
 
 /* Auth */
@@ -15,20 +15,20 @@
 
 .auth-panel {
   background: var(--bg-surface);
-  border: 1px solid var(--border);
-  border-radius: 20px;
+  border: none;
+  border-radius: var(--radius-lg);
   box-shadow: var(--shadow-lg);
 }
 
 .auth-panel__hero {
   padding: 48px 40px;
-  background: linear-gradient(160deg, var(--color-nav-soft) 0%, var(--bg-subtle) 100%);
-  border-right: 1px solid var(--border);
+  background: var(--bg-subtle);
+  border-right: 1px solid var(--border-subtle);
 }
 
 .auth-panel__badge,
 .auth-panel__tagline {
-  color: var(--color-nav);
+  color: var(--text-secondary);
 }
 
 .link-btn {
@@ -39,68 +39,85 @@
   color: var(--color-nav-hover);
 }
 
-/* Psychologist platform */
+/* Psychologist layout & sidebar */
 .psych-layout {
-  grid-template-columns: minmax(260px, 300px) 1fr;
-  gap: 24px;
+  grid-template-columns: minmax(268px, 300px) 1fr;
+  gap: 28px;
+  align-items: start;
+}
+
+.psych-sidebar.card {
+  background: var(--bg-sidebar);
+  box-shadow: none;
+  padding: 24px;
+}
+
+.psych-sidebar .card__header {
+  margin-bottom: 20px;
 }
 
 .psych-detail .card {
-  box-shadow: var(--shadow);
+  box-shadow: var(--shadow-sm);
 }
 
+/* Linear-style minimal tabs */
 .psych-tabs {
-  padding: 6px;
-  border-radius: var(--radius);
-  background: var(--bg-subtle);
-  border: 1px solid var(--border);
-  gap: 4px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0;
+  padding: 0;
+  margin-bottom: 28px;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--border-subtle);
+  border-radius: 0;
 }
 
 .psych-tabs__btn {
-  padding: 9px 14px;
-  border-radius: var(--radius-sm);
+  padding: 12px 18px;
+  margin-bottom: -1px;
+  border: none;
+  border-bottom: 2px solid transparent;
+  border-radius: 0;
+  background: transparent;
   color: var(--text-muted);
   font-weight: 500;
-  transition: background var(--transition), color var(--transition), box-shadow var(--transition);
+  font-size: 0.875rem;
+  transition: color var(--transition), border-color var(--transition);
 }
 
 .psych-tabs__btn:hover {
   color: var(--text-primary);
-  background: var(--bg-hover);
+  background: transparent;
 }
 
 .psych-tabs__btn.active {
-  color: var(--color-nav);
-  background: var(--bg-surface);
-  border-color: transparent;
-  box-shadow: var(--shadow-sm);
+  color: var(--text-primary);
+  background: transparent;
+  border-bottom-color: var(--text-primary);
+  box-shadow: none;
   font-weight: 600;
 }
 
 .psych-tabs__badge {
-  background: var(--color-risk);
-  color: #fff;
-  font-weight: 700;
+  background: var(--color-risk-soft);
+  color: var(--color-risk);
+  font-weight: 600;
+  font-size: 0.68rem;
 }
 
+/* Action center */
 .psych-action-center__block {
-  padding: 24px;
+  padding: 24px 28px;
   border-radius: var(--radius-lg);
-  border: 1px solid var(--border);
+  border: none;
   background: var(--bg-surface);
   box-shadow: var(--shadow-sm);
-  transition: box-shadow var(--transition);
-}
-
-.psych-action-center__block:hover {
-  box-shadow: var(--shadow);
 }
 
 .psych-action-center__list li {
-  border-top-color: var(--border);
-  padding: 14px 0;
-  transition: background var(--transition-fast);
+  border-top: 1px solid var(--border-subtle);
+  padding: 16px 0;
 }
 
 .psych-action-center__count {
@@ -109,32 +126,29 @@
 }
 
 .psych-compliance-list__item {
-  border-top-color: var(--border);
+  border-top-color: var(--border-subtle);
 }
 
-/* Athlete list — ultra clean */
+/* Athlete list */
 .athlete-picker {
-  gap: 6px;
+  gap: 4px;
 }
 
 .athlete-picker__btn {
-  padding: 14px 16px;
-  border: 1px solid transparent;
+  padding: 12px 14px;
+  border: none;
   border-radius: var(--radius-sm);
   background: transparent;
   color: var(--text-primary);
-  transition: background var(--transition), border-color var(--transition), box-shadow var(--transition),
-    transform var(--transition-fast);
+  transition: background var(--transition);
 }
 
 .athlete-picker__btn:hover {
-  background: var(--bg-hover);
-  border-color: var(--border);
+  background: rgba(30, 41, 59, 0.04);
 }
 
 .athlete-picker__btn.active {
-  border-color: var(--color-nav-border);
-  background: var(--color-nav-soft);
+  background: var(--bg-surface);
   box-shadow: var(--shadow-sm);
 }
 
@@ -148,61 +162,65 @@
   font-size: 0.9375rem;
 }
 
-/* Lists & roster */
+/* Lists */
 .check-in-list li,
 .roster-list li,
 .alert-list__item,
 .notes-list li {
   background: var(--bg-surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
+  border: none;
+  border-radius: var(--radius-lg);
   box-shadow: var(--shadow-sm);
-  transition: box-shadow var(--transition), border-color var(--transition);
-}
-
-.check-in-list li:hover,
-.roster-list li:hover,
-.alert-list__item:hover {
-  box-shadow: var(--shadow);
-  border-color: var(--border-strong);
+  padding: 16px 20px;
 }
 
 .alert-list__item--high {
-  border-color: var(--color-risk-border);
   background: var(--color-risk-soft);
 }
 
 .notes-list blockquote {
-  border-left-color: var(--color-nav);
-  background: var(--color-nav-soft);
+  border-left: 3px solid var(--border-strong);
+  background: var(--bg-subtle);
   color: var(--text-secondary);
 }
 
-/* Clinical file tabs */
+/* Clinical file tabs — minimal underline */
 .athlete-file-tabs {
-  background: var(--bg-subtle);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 5px;
-  gap: 4px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0;
+  margin-bottom: 28px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--border-subtle);
+  border-radius: 0;
 }
 
 .athlete-file-tabs__btn {
-  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  margin-bottom: -1px;
+  border: none;
+  border-bottom: 2px solid transparent;
+  border-radius: 0;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 0.8125rem;
   font-weight: 500;
-  transition: background var(--transition), color var(--transition), box-shadow var(--transition);
+  transition: color var(--transition), border-color var(--transition);
 }
 
 .athlete-file-tabs__btn:hover {
-  background: var(--bg-hover);
   color: var(--text-primary);
+  background: transparent;
 }
 
 .athlete-file-tabs__btn.active {
-  color: var(--color-nav);
-  background: var(--bg-surface);
-  box-shadow: var(--shadow-sm);
-  border-color: transparent;
+  color: var(--text-primary);
+  background: transparent;
+  border-bottom-color: var(--text-primary);
+  box-shadow: none;
+  font-weight: 600;
 }
 
 .athlete-file-tabs__badge {
@@ -211,10 +229,11 @@
 }
 
 .athlete-file-reviews__toggle {
-  border: 1px solid var(--border);
+  border: none;
   border-radius: var(--radius-sm);
-  background: var(--bg-surface);
-  transition: background var(--transition), border-color var(--transition);
+  background: var(--bg-subtle);
+  padding: 14px 16px;
+  transition: background var(--transition);
 }
 
 .athlete-file-reviews__toggle:hover {
@@ -222,21 +241,24 @@
 }
 
 .athlete-file-timeline__item {
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  background: var(--bg-surface);
-  box-shadow: var(--shadow-sm);
+  border: none;
+  border-radius: var(--radius-lg);
+  background: var(--bg-subtle);
+  box-shadow: none;
+  padding: 18px 20px;
 }
 
 .assessment-review__section {
-  background: var(--bg-surface);
-  border-color: var(--border);
-  box-shadow: var(--shadow-sm);
+  background: var(--bg-subtle);
+  border: none;
+  box-shadow: none;
+  border-radius: var(--radius-lg);
 }
 
 .baseline-summary {
-  background: var(--color-nav-soft);
-  border-color: var(--color-nav-border);
+  background: var(--bg-subtle);
+  border: none;
+  border-radius: var(--radius-lg);
 }
 
 .baseline-comparison__row--alert td {
@@ -250,190 +272,229 @@
 }
 
 .athlete-home__action {
-  border: 1px solid var(--border);
+  border: none;
   border-radius: var(--radius-lg);
   background: var(--bg-surface);
   box-shadow: var(--shadow-sm);
-  transition: box-shadow var(--transition), transform var(--transition-fast), border-color var(--transition);
+  transition: box-shadow var(--transition), transform var(--transition-fast);
 }
 
 .athlete-home__action:hover {
   box-shadow: var(--shadow);
-  transform: translateY(-2px);
-  border-color: var(--border-strong);
+  transform: translateY(-1px);
 }
 
 .athlete-home__action--primary {
-  border-color: var(--color-nav-border);
-  background: linear-gradient(180deg, #ffffff 0%, var(--color-nav-soft) 100%);
+  background: var(--bg-surface);
+  box-shadow: var(--shadow);
 }
 
 .athlete-home__confirmation {
   background: var(--color-healthy-soft);
-  border-color: var(--color-healthy-border);
+  border: none;
 }
 
 .today-status--done {
   color: var(--color-healthy);
   background: var(--color-healthy-soft);
-  border-color: var(--color-healthy-border);
+  border: none;
 }
 
 .today-status--pending {
   background: var(--bg-subtle);
-  border-color: var(--border);
+  border: none;
 }
 
-/* EOR & weekly panels */
+/* EOR panels */
 .weekly-eor-index {
-  background: var(--bg-surface);
-  border-color: var(--border);
-  box-shadow: var(--shadow-sm);
+  background: var(--bg-subtle);
+  border: none;
+  box-shadow: none;
 }
 
 .weekly-eor-index--good {
-  border-color: var(--color-healthy-border);
   background: var(--color-healthy-soft);
 }
 
 .weekly-eor-index--warning {
-  border-color: var(--color-followup-border);
   background: var(--color-followup-soft);
 }
 
 .weekly-eor-index--danger,
 .weekly-eor-index--highlight {
-  border-color: var(--color-risk-border);
   background: var(--color-risk-soft);
 }
 
-/* Charts */
-.dot--cyan {
-  background: var(--color-nav);
-}
-.dot--gold {
-  background: var(--color-followup);
-}
-.dot--red {
-  background: var(--color-risk);
-}
-.dot--green {
-  background: var(--color-healthy);
+/* Chart legend icons */
+.chart-legend__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--text-secondary);
+  font-size: 0.8125rem;
 }
 
-/* Role picker & onboarding */
+.chart-legend-icon {
+  flex-shrink: 0;
+  color: var(--text-muted);
+}
+
+.chart-legend-icon--wellbeing {
+  color: var(--color-healthy);
+}
+
+.chart-legend-icon--social {
+  color: var(--color-followup);
+}
+
+.chart-legend-icon--stress {
+  color: var(--color-risk);
+}
+
+.chart-legend-icon--energy {
+  color: var(--color-followup);
+}
+
+/* Role picker */
 .role-picker {
   background: var(--bg-subtle);
-  border: 1px solid var(--border);
+  border: none;
   border-radius: var(--radius-lg);
 }
 
 .role-picker__option {
   background: var(--bg-surface);
-  border: 1px solid var(--border);
-  transition: border-color var(--transition), box-shadow var(--transition), transform var(--transition-fast);
+  border: none;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow var(--transition);
 }
 
 .role-picker__option:hover {
-  border-color: var(--color-nav-border);
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow);
 }
 
-.role-picker__option.selected {
-  border-color: var(--color-nav);
-  background: var(--color-nav-soft);
-  box-shadow: var(--shadow-sm);
+.role-picker__option:has(input:checked) {
+  box-shadow: var(--shadow);
+  background: var(--bg-highlight);
 }
 
-.onboarding-form,
-.assessment-form {
-  gap: 16px;
-}
-
+/* Assessment wizard */
 .assessment-card {
   box-shadow: var(--shadow-lg);
 }
 
 .assessment-progress {
   background: var(--bg-subtle);
-  border-radius: 999px;
 }
 
 .assessment-progress span {
-  background: var(--color-nav);
+  background: var(--text-primary);
 }
 
 .assessment-step {
-  border: 1px solid var(--border);
-  background: var(--bg-surface);
+  border: none;
+  background: var(--bg-subtle);
   color: var(--text-muted);
-  transition: all var(--transition);
 }
 
 .assessment-step.active {
-  border-color: var(--color-nav);
-  background: var(--color-nav-soft);
-  color: var(--color-nav);
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  box-shadow: var(--shadow-sm);
 }
 
-/* Language switcher */
+/* Language switcher — blue only when active */
 .lang-switcher__btn {
-  border: 1px solid var(--border);
-  background: var(--bg-surface);
+  border: none;
+  background: transparent;
   color: var(--text-muted);
-  transition: all var(--transition);
 }
 
 .lang-switcher__btn.active {
-  border-color: var(--color-nav-border);
   color: var(--color-nav);
   background: var(--color-nav-soft);
 }
 
 .lang-switcher__btn:hover {
-  border-color: var(--color-nav-border);
-  color: var(--color-nav);
-  background: var(--bg-hover);
+  color: var(--text-primary);
+  background: var(--bg-subtle);
 }
 
-/* Empty states */
 .empty-state {
   color: var(--text-muted);
   font-size: 0.9375rem;
-  line-height: 1.6;
-  padding: 8px 0;
+  line-height: 1.65;
 }
 
-/* Focus visible — accessibility */
+/* Focus — interaction blue */
 .btn:focus-visible,
 .psych-tabs__btn:focus-visible,
 .athlete-picker__btn:focus-visible,
 .athlete-file-tabs__btn:focus-visible,
-.athlete-file-reviews__toggle:focus-visible {
+.athlete-file-reviews__toggle:focus-visible,
+.lang-switcher__btn:focus-visible {
   outline: none;
   box-shadow: 0 0 0 3px var(--color-nav-soft);
 }
 
-/* Responsive polish */
+.btn--primary:focus-visible {
+  box-shadow: 0 0 0 3px var(--color-nav-soft);
+}
+
+.weekly-eor-panel__alert--high {
+  background: var(--color-risk-soft);
+  border: none;
+  color: var(--color-risk);
+}
+
+.weekly-eor-panel__alert--medium {
+  background: var(--color-followup-soft);
+  border: none;
+  color: var(--color-followup);
+}
+
+.invite-banner {
+  background: var(--bg-subtle);
+  border: none;
+  color: var(--text-secondary);
+}
+
+.insight-card__badge {
+  color: var(--text-secondary);
+  background: var(--bg-subtle);
+}
+
+.insight-card__text {
+  color: var(--text-secondary);
+}
+
+.recharts-default-tooltip {
+  background: var(--bg-surface) !important;
+  border: 1px solid var(--border-subtle) !important;
+  border-radius: var(--radius-sm) !important;
+  box-shadow: var(--shadow-sm) !important;
+  color: var(--text-primary) !important;
+}
+
+.recharts-cartesian-grid line {
+  stroke: var(--bg-sidebar) !important;
+}
+
+.recharts-text {
+  fill: var(--text-muted) !important;
+}
+
 @media (max-width: 768px) {
   .main-content {
-    padding: 20px 16px 48px;
+    padding: 24px 16px 56px;
   }
 
   .topbar {
-    padding: 12px 16px;
-    flex-wrap: wrap;
-    gap: 12px;
-  }
-
-  .topbar__user {
-    width: 100%;
-    justify-content: space-between;
+    padding: 14px 16px;
   }
 
   .card {
-    padding: 20px 18px;
-    border-radius: var(--radius);
+    padding: 22px 20px;
   }
 
   .psych-tabs,
@@ -448,6 +509,10 @@
   .athlete-file-tabs::-webkit-scrollbar {
     display: none;
   }
+
+  .psych-sidebar.card {
+    padding: 20px 16px;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -458,66 +523,4 @@
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
-}
-
-/* Dark rgba leftovers — force light surfaces */
-[class*="insight"],
-[class*="eor-"],
-.psych-inbox-grid .card,
-.team-overview-grid .card {
-  --local-bg: var(--bg-surface);
-}
-
-.weekly-eor-panel__alert--high {
-  background: var(--color-risk-soft);
-  border: 1px solid var(--color-risk-border);
-  color: var(--color-risk);
-}
-
-.weekly-eor-panel__alert--medium {
-  background: var(--color-followup-soft);
-  border: 1px solid var(--color-followup-border);
-  color: var(--color-followup);
-}
-
-.invite-banner {
-  background: var(--color-nav-soft);
-  border: 1px solid var(--color-nav-border);
-  color: var(--text-secondary);
-}
-
-.form-error {
-  color: var(--color-risk);
-}
-
-.stat-card__hint,
-.insight-card__text--muted,
-.insight-card__footer {
-  color: var(--text-muted);
-}
-
-.insight-card__badge {
-  color: var(--color-nav);
-  background: var(--color-nav-soft);
-}
-
-.insight-card__text {
-  color: var(--text-secondary);
-}
-
-/* Recharts tooltip (inline styles overridden via parent) */
-.recharts-default-tooltip {
-  background: var(--bg-surface) !important;
-  border: 1px solid var(--border) !important;
-  border-radius: var(--radius-sm) !important;
-  box-shadow: var(--shadow) !important;
-  color: var(--text-primary) !important;
-}
-
-.recharts-cartesian-grid line {
-  stroke: var(--border) !important;
-}
-
-.recharts-text {
-  fill: var(--text-muted) !important;
 }

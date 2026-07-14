@@ -16,32 +16,33 @@ import {
 import { useTranslation } from "../i18n/LanguageContext"
 import { formatDate } from "../lib/dates"
 import { Card } from "./ui/Card"
+import { ChartLegendIcon } from "./ui/ChartLegendIcon"
 
 const CHART_LINES = {
   coach: [
-    { key: "mental", stroke: CHART_COLORS.nav, labelKey: "psychologist.eorIndexMental", dot: "cyan" },
+    { key: "mental", stroke: "#64748B", labelKey: "psychologist.eorIndexMental", icon: "mental" },
     {
       key: "wellbeing",
       stroke: CHART_COLORS.healthy,
       labelKey: "psychologist.eorIndexWellbeing",
-      dot: "green",
+      icon: "wellbeing",
     },
-    { key: "social", stroke: CHART_COLORS.followup, labelKey: "psychologist.eorIndexSocial", dot: "gold" },
+    { key: "social", stroke: CHART_COLORS.followup, labelKey: "psychologist.eorIndexSocial", icon: "social" },
   ],
   psychologist: [
-    { key: "mental", stroke: CHART_COLORS.nav, labelKey: "psychologist.eorIndexMental", dot: "cyan" },
+    { key: "mental", stroke: "#64748B", labelKey: "psychologist.eorIndexMental", icon: "mental" },
     {
       key: "wellbeing",
       stroke: CHART_COLORS.healthy,
       labelKey: "psychologist.eorIndexWellbeing",
-      dot: "green",
+      icon: "wellbeing",
     },
-    { key: "social", stroke: CHART_COLORS.followup, labelKey: "psychologist.eorIndexSocial", dot: "gold" },
+    { key: "social", stroke: CHART_COLORS.followup, labelKey: "psychologist.eorIndexSocial", icon: "social" },
     {
       key: "coachCommunication",
-      stroke: CHART_COLORS.risk,
+      stroke: "#64748B",
       labelKey: "checkIn.eorCoachCommunication",
-      dot: "red",
+      icon: "coachCommunication",
     },
   ],
 }
@@ -102,8 +103,9 @@ export function WeeklyEorChart({
       </div>
       <div className="chart-legend chart-legend--wrap">
         {lines.map((line) => (
-          <span key={line.key}>
-            <i className={`dot dot--${line.dot}`} /> {t(line.labelKey)}
+          <span key={line.key} className="chart-legend__item">
+            <ChartLegendIcon name={line.icon} />
+            {t(line.labelKey)}
           </span>
         ))}
       </div>

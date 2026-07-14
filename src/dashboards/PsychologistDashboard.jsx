@@ -441,6 +441,7 @@ export function PsychologistDashboard({ profile }) {
 
             <div className="psych-layout">
               <Card
+                className="psych-sidebar"
                 title={t("psychologist.allAthletes")}
                 subtitle={t("psychologist.allAthletesSubtitle")}
               >

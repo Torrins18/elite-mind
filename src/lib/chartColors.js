@@ -1,21 +1,21 @@
-/** Chart & data visualization palette — aligned with premium UI accents */
+/** Chart palette — clinical SaaS accents */
 export const CHART_COLORS = {
   nav: "#2563EB",
-  healthy: "#059669",
-  followup: "#EA580C",
+  healthy: "#16A34A",
+  followup: "#F59E0B",
   risk: "#DC2626",
-  grid: "#E2E8F0",
+  grid: "#E8EDF3",
   axis: "#94A3B8",
-  tooltipBg: "#FFFFFF",
-  tooltipBorder: "#E2E8F0",
+  tooltipBg: "#FAFBFC",
+  tooltipBorder: "#E8EDF3",
 }
 
 export const CHART_TOOLTIP_STYLE = {
   background: CHART_COLORS.tooltipBg,
   border: `1px solid ${CHART_COLORS.tooltipBorder}`,
-  borderRadius: 10,
-  boxShadow: "0 4px 12px rgba(15, 23, 42, 0.08)",
-  color: "#0f172a",
+  borderRadius: 12,
+  boxShadow: "0 2px 8px rgba(30, 41, 59, 0.04)",
+  color: "#1E293B",
   fontSize: 13,
 }
 
