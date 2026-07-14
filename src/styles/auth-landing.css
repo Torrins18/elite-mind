@@ -133,77 +133,24 @@
 }
 
 .auth-landing__hero-logo {
-  margin-bottom: 28px;
-  filter: drop-shadow(0 8px 32px rgba(0, 0, 0, 0.55));
+  margin-bottom: 24px;
 }
 
 .brand-logo--hero-dark {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 10px;
+  display: block;
+  line-height: 0;
+  position: relative;
 }
 
-.brand-logo--hero-dark .brand-logo__mark--hero {
-  width: 82px;
-  height: 82px;
-  margin-bottom: 4px;
-}
-
-.brand-logo--hero-dark .brand-logo__text--hero {
-  align-items: flex-start;
-  gap: 10px;
-}
-
-.brand-logo--hero-dark .brand-logo__zona {
-  color: #ffffff;
-  text-shadow: 0 2px 18px rgba(0, 0, 0, 0.5);
-}
-
-.brand-logo--hero-dark .brand-logo__accent {
-  color: #84cc16;
-  text-shadow: 0 2px 18px rgba(0, 0, 0, 0.4);
-}
-
-.brand-logo--hero-dark .brand-logo__title {
-  font-size: clamp(1.4rem, 2.8vw, 1.85rem);
-  letter-spacing: 0.05em;
-}
-
-.brand-logo--hero-dark .brand-logo__subtitle-row {
+.brand-logo__hero-image {
+  display: block;
+  width: min(300px, 82vw);
   max-width: 100%;
-}
-
-.brand-logo--hero-dark .brand-logo__subtitle {
-  color: #ffffff;
-  font-size: 0.58rem;
-  letter-spacing: 0.24em;
-  text-transform: uppercase;
-  text-shadow: 0 1px 12px rgba(0, 0, 0, 0.45);
-}
-
-.brand-logo--hero-dark .brand-logo__rule--blue {
-  background: #22d3ee;
-  opacity: 1;
-  flex: 0 1 48px;
-  height: 1px;
-}
-
-.brand-logo--hero-dark .brand-logo__rule--green {
-  background: #84cc16;
-  opacity: 1;
-  flex: 0 1 48px;
-  height: 1px;
-}
-
-.brand-logo--hero-dark .brand-logo__tagline {
-  margin: 0;
-  color: #22d3ee;
-  font-size: 0.58rem;
-  font-weight: 500;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  text-shadow: 0 1px 12px rgba(0, 0, 0, 0.4);
+  height: auto;
+  object-fit: contain;
+  /* Elimina el fons fosc del PNG i deixa visible el logo original */
+  mix-blend-mode: screen;
+  filter: drop-shadow(0 6px 28px rgba(0, 0, 0, 0.45));
 }
 
 .brand-logo--light .brand-logo__zona {

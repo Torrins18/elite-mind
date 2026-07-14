@@ -26,17 +26,18 @@ function Wordmark({ showSubtitle = true, showTagline = false, compact = false, s
 
 export function BrandLogo({ variant = "bar", className = "", tone = "default" }) {
   const rootClass = `brand-logo brand-logo--${variant}${tone === "light" ? " brand-logo--light" : ""}${variant === "hero-dark" ? " brand-logo--hero-dark" : ""} ${className}`.trim()
-  const { t } = useTranslation()
 
   if (variant === "hero-dark") {
     return (
       <div className={rootClass} role="img" aria-label="Zona Mental+ — Psicología deportiva">
-        <LogoMark size={82} palette="hero" className="brand-logo__mark brand-logo__mark--hero" title="" />
-        <Wordmark
-          hero
-          showSubtitle
-          showTagline
-          subtitleText={t("authLanding.logoSubtitle")}
+        <img
+          className="brand-logo__hero-image"
+          src="/images/zona-mental-logo-hero.png"
+          alt=""
+          width={320}
+          height={320}
+          decoding="async"
+          fetchPriority="high"
         />
       </div>
     )
