@@ -2874,6 +2874,67 @@ input:focus, textarea:focus {
   word-break: break-word;
 }
 
+.baseline-summary {
+  padding: 16px;
+  margin-bottom: 16px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--accent) 8%, var(--bg-elevated));
+}
+
+.baseline-summary h4,
+.baseline-comparison h4 {
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: 0.95rem;
+  margin: 0 0 8px;
+}
+
+.baseline-summary__note {
+  margin: 8px 0 0;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.baseline-comparison {
+  margin-bottom: 16px;
+}
+
+.baseline-comparison__hint {
+  margin: 0 0 12px;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+.baseline-comparison__table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.baseline-comparison__table th,
+.baseline-comparison__table td {
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+}
+
+.baseline-comparison__row--alert td {
+  color: var(--danger, #c0392b);
+  font-weight: 600;
+}
+
+.athlete-file-section__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.athlete-file-section__header h3 {
+  margin: 0;
+}
+
 .invite-banner {
   padding: 12px 14px;
   border-radius: 10px;

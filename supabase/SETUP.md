@@ -22,7 +22,8 @@ Si la pàgina no carrega o falten funcions, executa **tot** això al **SQL Edito
 | 16 | `clubs-management.sql` (clubs, director de club, informes agregats) |
 | 17 | `clinical-sessions-documents.sql` (sessions clíniques + documents privats) |
 | 18 | `communication-compliance.sql` (missatgeria bidireccional + cites programades) |
-| 19 | `seed-demo.sql` (opcional) |
+| 19 | `baseline-assessment-v2.sql` (perfil mental, objectius, resum línia base) |
+| 20 | `seed-demo.sql` (opcional) |
 
 Després de cada fitxer ha de sortir **Success**.
 

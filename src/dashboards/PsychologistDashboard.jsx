@@ -106,7 +106,8 @@ export function PsychologistDashboard({ profile }) {
       supabase,
       athleteRows,
       checkInRows,
-      todayISO()
+      todayISO(),
+      assessmentRes.error ? [] : assessmentRes.data || []
     )
     setPsychologistAlerts(alerts)
     setLoading(false)
@@ -494,6 +495,7 @@ export function PsychologistDashboard({ profile }) {
                     psychologistId={profile.id}
                     athleteAlerts={selectedAthleteAlerts}
                     onAlertsChange={refreshAlerts}
+                    onAssessmentUpdated={load}
                     t={t}
                   />
                 ) : (

@@ -1,5 +1,6 @@
 import { summarizeAthlete, sortByDateDesc } from "./metrics"
 import { computeWeeklyIndexes, getLatestWeeklyReflection } from "../weeklyEor"
+import { compareWeeklyToBaseline } from "../baseline"
 
 export function buildAthleteInsightContext({ athlete, checkIns, assessment, teamName, lang }) {
   const rows = sortByDateDesc(checkIns.filter((c) => c.athlete_id === athlete.id))
@@ -7,6 +8,7 @@ export function buildAthleteInsightContext({ athlete, checkIns, assessment, team
   const recentRows = rows.slice(0, 7)
   const latestWeekly = getLatestWeeklyReflection(rows)
   const weeklyIndexes = computeWeeklyIndexes(latestWeekly)
+  const baselineComparison = compareWeeklyToBaseline(assessment, latestWeekly)
 
   return {
     lang,
@@ -72,7 +74,11 @@ export function buildAthleteInsightContext({ athlete, checkIns, assessment, team
           nutrition: assessment.nutrition_habits || {},
           sports: assessment.sports_background || {},
           support: assessment.family_social_support || {},
+          mental: assessment.mental_profile || {},
+          objectives: assessment.objectives || {},
+          summary: assessment.baseline_summary || "",
         }
       : null,
+    baselineComparison: baselineComparison.filter((row) => row.significant),
   }
 }

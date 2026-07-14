@@ -1,8 +1,9 @@
 import { sortByDateDesc } from "./insights/metrics"
 import { getLatestWeeklyReflection, hasWeeklyReflection } from "./weeklyEor"
 import { daysSinceLastWeeklyReflection, isWeeklyReflectionDue } from "./checkInSchedule"
+import { detectBaselineAlerts } from "./baseline"
 
-export function detectAthleteAlerts(athlete, checkIns, today) {
+export function detectAthleteAlerts(athlete, checkIns, today, assessment = null) {
   const rows = sortByDateDesc((checkIns || []).filter((row) => row.athlete_id === athlete.id))
   const alerts = []
 
@@ -28,25 +29,40 @@ export function detectAthleteAlerts(athlete, checkIns, today) {
   }
 
   const latestWeekly = getLatestWeeklyReflection(rows)
+  const hasBaseline = Boolean(assessment)
 
-  if (latestWeekly?.confidence_rating != null && latestWeekly.confidence_rating < 4) {
-    alerts.push({
-      id: "confidence_low",
-      severity: "high",
-      athleteId: athlete.id,
-      athleteName: athlete.name,
-      value: latestWeekly.confidence_rating,
-    })
-  }
+  if (hasBaseline && latestWeekly) {
+    alerts.push(...detectBaselineAlerts(athlete, assessment, latestWeekly))
+  } else if (latestWeekly) {
+    if (latestWeekly.confidence_rating != null && latestWeekly.confidence_rating < 4) {
+      alerts.push({
+        id: "confidence_low",
+        severity: "high",
+        athleteId: athlete.id,
+        athleteName: athlete.name,
+        value: latestWeekly.confidence_rating,
+      })
+    }
 
-  if (latestWeekly?.physical_fatigue != null && latestWeekly.physical_fatigue >= 8) {
-    alerts.push({
-      id: "fatigue_high",
-      severity: "high",
-      athleteId: athlete.id,
-      athleteName: athlete.name,
-      value: latestWeekly.physical_fatigue,
-    })
+    if (latestWeekly.physical_fatigue != null && latestWeekly.physical_fatigue >= 8) {
+      alerts.push({
+        id: "fatigue_high",
+        severity: "high",
+        athleteId: athlete.id,
+        athleteName: athlete.name,
+        value: latestWeekly.physical_fatigue,
+      })
+    }
+
+    if (latestWeekly.coach_communication != null && latestWeekly.coach_communication < 3) {
+      alerts.push({
+        id: "coach_communication_low",
+        severity: "high",
+        athleteId: athlete.id,
+        athleteName: athlete.name,
+        value: latestWeekly.coach_communication,
+      })
+    }
   }
 
   const motivationRows = rows.filter(hasWeeklyReflection).slice(0, 3)
@@ -69,16 +85,6 @@ export function detectAthleteAlerts(athlete, checkIns, today) {
       athleteId: athlete.id,
       athleteName: athlete.name,
       value: latestWeekly.pressure_management,
-    })
-  }
-
-  if (latestWeekly?.coach_communication != null && latestWeekly.coach_communication < 3) {
-    alerts.push({
-      id: "coach_communication_low",
-      severity: "high",
-      athleteId: athlete.id,
-      athleteName: athlete.name,
-      value: latestWeekly.coach_communication,
     })
   }
 
@@ -117,8 +123,10 @@ export function detectAthleteAlerts(athlete, checkIns, today) {
   return alerts
 }
 
-export function buildOrgAlerts(athletes, checkIns, today) {
-  return athletes.flatMap((athlete) => detectAthleteAlerts(athlete, checkIns, today))
+export function buildOrgAlerts(athletes, checkIns, today, assessmentByAthlete = {}) {
+  return athletes.flatMap((athlete) =>
+    detectAthleteAlerts(athlete, checkIns, today, assessmentByAthlete[athlete.id] || null)
+  )
 }
 
 export function groupAlertsBySeverity(alerts) {

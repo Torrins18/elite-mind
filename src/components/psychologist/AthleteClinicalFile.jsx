@@ -14,9 +14,10 @@ import { AthleteFilePlan } from "./AthleteFilePlan"
 import { aggregateWeeklyEorTrend } from "../../lib/coachTeamAnalytics"
 import { getLatestWeeklyReflection, hasWeeklyReflection } from "../../lib/weeklyEor"
 import { calculateRiskLevel } from "../../lib/risk"
-import { consentStatus, isAdultInSpain } from "../../lib/age"
+import { consentStatus } from "../../lib/age"
 import { dismissPsychologistAlert } from "../../lib/alertPersistence"
 import { useTranslation } from "../../i18n/LanguageContext"
+import { AthleteFileBaseline } from "./AthleteFileBaseline"
 import {
   buildAthleteReportSections,
   downloadPrintReport,
@@ -24,7 +25,7 @@ import {
 
 const TABS = [
   "profile",
-  "onboarding",
+  "baseline",
   "reviews",
   "charts",
   "notes",
@@ -47,6 +48,7 @@ export function AthleteClinicalFile({
   psychologistId,
   athleteAlerts = [],
   onAlertsChange,
+  onAssessmentUpdated,
   t,
 }) {
   const { lang } = useTranslation()
@@ -218,8 +220,15 @@ export function AthleteClinicalFile({
           />
         )}
 
-        {activeTab === "onboarding" && (
-          <OnboardingTab athlete={athlete} assessment={assessment} t={t} />
+        {activeTab === "baseline" && (
+          <AthleteFileBaseline
+            athlete={athlete}
+            assessment={assessment}
+            latestWeekly={latestWeekly}
+            lang={lang}
+            t={t}
+            onAssessmentUpdated={onAssessmentUpdated}
+          />
         )}
 
         {activeTab === "reviews" && (
@@ -364,7 +373,7 @@ function ProfileTab({ athlete, teamName, risk, t, onExportReport }) {
         </dd>
       </div>
       <div>
-        <dt>{t("psychologist.initialAssessment")}</dt>
+        <dt>{t("baseline.title")}</dt>
         <dd>
           {athlete.initial_assessment_completed_at
             ? new Date(athlete.initial_assessment_completed_at).toLocaleDateString()
@@ -376,84 +385,6 @@ function ProfileTab({ athlete, teamName, risk, t, onExportReport }) {
         <dd>{new Date(athlete.created_at).toLocaleDateString()}</dd>
       </div>
       </dl>
-    </>
-  )
-}
-
-function OnboardingTab({ athlete, assessment, t }) {
-  return (
-    <>
-      <section className="athlete-file-section">
-        <h3>{t("psychologist.consentTitle")}</h3>
-        <div className="consent-detail">
-          <p>
-            <strong>{t("psychologist.birthDate")}:</strong>{" "}
-            {athlete.date_of_birth || t("risk.noData")}
-          </p>
-          <p>
-            <strong>{t("psychologist.consentStatus")}:</strong>{" "}
-            {t(`consent.${consentStatus(athlete)}`)}
-          </p>
-          {athlete.date_of_birth && !isAdultInSpain(athlete.date_of_birth) && (
-            <>
-              <p>
-                <strong>{t("psychologist.guardianName")}:</strong>{" "}
-                {athlete.guardian_full_name || t("risk.noData")}
-              </p>
-              <p>
-                <strong>{t("psychologist.guardianRelationship")}:</strong>{" "}
-                {athlete.guardian_relationship || t("risk.noData")}
-              </p>
-              <p>
-                <strong>{t("psychologist.guardianContact")}:</strong>{" "}
-                {[athlete.guardian_email, athlete.guardian_phone].filter(Boolean).join(" · ") ||
-                  t("risk.noData")}
-              </p>
-              <p>
-                <strong>{t("psychologist.consentSignedAt")}:</strong>{" "}
-                {athlete.guardian_consent_signed_at
-                  ? new Date(athlete.guardian_consent_signed_at).toLocaleString()
-                  : t("risk.noData")}
-              </p>
-            </>
-          )}
-        </div>
-      </section>
-
-      <section className="athlete-file-section">
-        <h3>{t("psychologist.initialAssessment")}</h3>
-        {assessment ? (
-          <div className="assessment-review">
-            <AssessmentSection
-              title={t("initialAssessment.personal")}
-              data={assessment.personal_info}
-              t={t}
-            />
-            <AssessmentSection
-              title={t("initialAssessment.sleep")}
-              data={assessment.sleep_habits}
-              t={t}
-            />
-            <AssessmentSection
-              title={t("initialAssessment.nutrition")}
-              data={assessment.nutrition_habits}
-              t={t}
-            />
-            <AssessmentSection
-              title={t("initialAssessment.sports")}
-              data={assessment.sports_background}
-              t={t}
-            />
-            <AssessmentSection
-              title={t("initialAssessment.support")}
-              data={assessment.family_social_support}
-              t={t}
-            />
-          </div>
-        ) : (
-          <p className="empty-state">{t("psychologist.noInitialAssessment")}</p>
-        )}
-      </section>
     </>
   )
 }
@@ -657,6 +588,7 @@ function AlertsTab({ alerts, loading, onDismiss, t }) {
           <p>{t(`psychologist.alert.${alert.alert_type || alert.id}`, {
             value: alert.context?.value ?? alert.value,
             days: alert.context?.days ?? alert.days,
+            baseline: alert.context?.baseline ?? alert.baseline,
           })}</p>
           {alert.status === "active" && (alert.id || alert.dbId) && (
             <Button variant="ghost" className="btn--danger-text" onClick={() => onDismiss(alert.id || alert.dbId)}>
@@ -674,26 +606,4 @@ function appointmentVariant(status) {
   if (status === "scheduled") return "low"
   if (status === "completed") return "default"
   return "high"
-}
-
-function AssessmentSection({ title, data = {}, t }) {
-  return (
-    <section className="assessment-review__section">
-      <h3>{title}</h3>
-      <dl>
-        {Object.entries(data).map(([key, value]) => (
-          <div key={key}>
-            <dt>{t(`initialAssessment.fields.${key}`)}</dt>
-            <dd>{formatAssessmentValue(value, t)}</dd>
-          </div>
-        ))}
-      </dl>
-    </section>
-  )
-}
-
-function formatAssessmentValue(value, t) {
-  if (!value) return "—"
-  const translated = t(`initialAssessment.options.${value}`)
-  return translated === `initialAssessment.options.${value}` ? value : translated
 }

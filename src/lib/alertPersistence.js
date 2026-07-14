@@ -16,6 +16,8 @@ function mapDbRow(row, athleteMap) {
     context: row.context || {},
     value: row.context?.value,
     days: row.context?.days,
+    baseline: row.context?.baseline,
+    delta: row.context?.delta,
     reviewedAt: row.reviewed_at,
     dismissedAt: row.dismissed_at,
   }
@@ -25,15 +27,26 @@ export function countActiveAlerts(alerts) {
   return (alerts || []).filter((alert) => alert.status === "active").length
 }
 
-export async function syncAndLoadPsychologistAlerts(supabase, athletes, checkIns, today) {
+export async function syncAndLoadPsychologistAlerts(
+  supabase,
+  athletes,
+  checkIns,
+  today,
+  assessments = []
+) {
   const athleteMap = Object.fromEntries(athletes.map((a) => [a.id, a]))
-  const computed = buildOrgAlerts(athletes, checkIns, today).map((alert) => ({
+  const assessmentByAthlete = Object.fromEntries(
+    (assessments || []).map((item) => [item.athlete_id, item])
+  )
+  const computed = buildOrgAlerts(athletes, checkIns, today, assessmentByAthlete).map((alert) => ({
     athlete_id: alert.athleteId,
     alert_type: alert.id,
     severity: alert.severity,
     context: {
       value: alert.value ?? null,
       days: alert.days ?? null,
+      baseline: alert.baseline ?? null,
+      delta: alert.delta ?? null,
     },
   }))
 
@@ -50,7 +63,7 @@ export async function syncAndLoadPsychologistAlerts(supabase, athletes, checkIns
   ])
 
   if (openError) {
-    return buildOrgAlerts(athletes, checkIns, today).map((alert) => ({
+    return buildOrgAlerts(athletes, checkIns, today, assessmentByAthlete).map((alert) => ({
       ...alert,
       dbId: null,
       status: "active",

@@ -80,6 +80,13 @@ function extractInsightSignals(context) {
     sportGoal: truncate(assessment.sports?.currentGoal || "", 80),
     familySupportLow: /^(never|little)$/i.test(assessment.support?.familySupport || ""),
     coachTension: Number(assessment.sports?.coachRelationship) <= 4,
+    baselineDeviations: (context.baselineComparison || []).map((row) => row.key),
+    baselineConfidenceDrop: (context.baselineComparison || []).some((row) => row.key === "confidence"),
+    baselineCoachDrop: (context.baselineComparison || []).some(
+      (row) => row.key === "coachCommunication"
+    ),
+    baselineMotivationDrop: (context.baselineComparison || []).some((row) => row.key === "motivation"),
+    baselineSleepDrop: (context.baselineComparison || []).some((row) => row.key === "sleep"),
   }
 }
 
@@ -475,6 +482,18 @@ function buildQualitativeDetailEs(signals) {
 }
 
 function buildAssessmentHintCa(signals) {
+  if (signals.baselineConfidenceDrop && signals.baselineCoachDrop) {
+    return "Respecte la línia base inicial, la confiança i la comunicació amb l'entrenador/a han baixat; convé explorar expectatives o experiències recents"
+  }
+  if (signals.baselineConfidenceDrop) {
+    return "La confiança està per sota del que reportava a la valoració inicial; val la pena revisar el context competitiu recent"
+  }
+  if (signals.baselineMotivationDrop) {
+    return "La motivació ha baixat respecte la seva línia base inicial"
+  }
+  if (signals.baselineSleepDrop) {
+    return "El descans actual està per sota del patró que va descriure a la valoració inicial"
+  }
   if (signals.highBaselinePressure && signals.stressUp) {
     return "Té pressió percebuda alta des de l'inici; val la pena revisar càrrega i expectatives"
   }
@@ -494,6 +513,18 @@ function buildAssessmentHintCa(signals) {
 }
 
 function buildAssessmentHintEs(signals) {
+  if (signals.baselineConfidenceDrop && signals.baselineCoachDrop) {
+    return "Respecto a su línea base inicial, la confianza y la comunicación con el/la entrenador/a han bajado; conviene explorar expectativas o experiencias recientes"
+  }
+  if (signals.baselineConfidenceDrop) {
+    return "La confianza está por debajo de lo que reportaba en la valoración inicial; vale la pena revisar el contexto competitivo reciente"
+  }
+  if (signals.baselineMotivationDrop) {
+    return "La motivación ha bajado respecto a su línea base inicial"
+  }
+  if (signals.baselineSleepDrop) {
+    return "El descanso actual está por debajo del patrón que describió en la valoración inicial"
+  }
   if (signals.highBaselinePressure && signals.stressUp) {
     return "Tiene presión percibida alta desde el inicio; vale la pena revisar carga y expectativas"
   }

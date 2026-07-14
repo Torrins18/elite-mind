@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react"
 import { supabase } from "../supabase"
 import { useTranslation } from "../i18n/LanguageContext"
 import { calculateAge } from "../lib/age"
+import { buildBaselineSummary, formToAssessmentPayload } from "../lib/baseline"
 import { Button } from "./ui/Button"
 import { Card } from "./ui/Card"
 
@@ -10,10 +11,14 @@ const initialForm = {
   sportPosition: "",
   yearsCompeting: "",
   categoryLevel: "",
+  gender: "",
+  weeklyTrainingSessions: "",
+  weeklyCompetitions: "",
   livingWith: "",
   familySupport: "",
   studiesWork: "",
   balanceDifficulty: "",
+  travelTimeToTraining: "",
   sleepHoursTypical: "",
   preEventSleep: "",
   troubleSleepingImportant: "",
@@ -23,12 +28,31 @@ const initialForm = {
   hydration: "",
   dailyEnergy: "5",
   caffeineUse: "",
+  nutritionRating: "5",
+  eatsBeforeTraining: "",
+  recoversNutritionally: "",
+  followsNutritionPlan: "",
   importantInjuries: "",
   hardestSportMoment: "",
+  majorSetbacks: "",
+  clubChanges: "",
+  bestAchievement: "",
   currentGoal: "",
   perceivedPressure: "5",
   currentConfidence: "5",
   coachRelationship: "5",
+  greatestStrength: "",
+  aspectToImprove: "",
+  preCompetitionWorry: "",
+  performanceHelps: "",
+  mistakeReaction: "",
+  poorPerformanceThoughts: "",
+  mostConfidentWhen: "",
+  leastConfidentWhen: "",
+  seasonObjective: "",
+  personalObjective: "",
+  teamObjective: "",
+  seasonSuccess: "",
 }
 
 const frequencyOptions = ["never", "little", "quite", "very"]
@@ -44,7 +68,7 @@ const balanceOptions = [
 ]
 
 export function InitialAssessment({ profile, onCompleted }) {
-  const { t } = useTranslation()
+  const { t, lang } = useTranslation()
   const [step, setStep] = useState(0)
   const [form, setForm] = useState({ ...initialForm, teamId: profile?.team_id || "" })
   const [teams, setTeams] = useState([])
@@ -86,12 +110,12 @@ export function InitialAssessment({ profile, onCompleted }) {
       {
         key: "personal",
         title: t("initialAssessment.personal"),
-        fields: ["calculatedAge", "teamId", "sportPosition", "yearsCompeting", "categoryLevel"],
+        fields: ["calculatedAge", "teamId", "gender", "sportPosition", "yearsCompeting", "categoryLevel", "weeklyTrainingSessions", "weeklyCompetitions"],
       },
       {
         key: "context",
         title: t("initialAssessment.context"),
-        fields: ["livingWith", "familySupport", "studiesWork", "balanceDifficulty"],
+        fields: ["livingWith", "familySupport", "studiesWork", "balanceDifficulty", "travelTimeToTraining"],
       },
       {
         key: "sleep",
@@ -107,19 +131,40 @@ export function InitialAssessment({ profile, onCompleted }) {
       {
         key: "nutrition",
         title: t("initialAssessment.nutrition"),
-        fields: ["mealsPerDay", "hydration", "dailyEnergy", "caffeineUse"],
+        fields: ["mealsPerDay", "hydration", "dailyEnergy", "caffeineUse", "nutritionRating", "eatsBeforeTraining", "recoversNutritionally", "followsNutritionPlan"],
       },
       {
         key: "sports",
         title: t("initialAssessment.sports"),
         fields: [
           "importantInjuries",
+          "majorSetbacks",
+          "clubChanges",
+          "bestAchievement",
           "hardestSportMoment",
-          "currentGoal",
           "perceivedPressure",
           "currentConfidence",
           "coachRelationship",
         ],
+      },
+      {
+        key: "mental",
+        title: t("initialAssessment.mental"),
+        fields: [
+          "greatestStrength",
+          "aspectToImprove",
+          "preCompetitionWorry",
+          "performanceHelps",
+          "mistakeReaction",
+          "poorPerformanceThoughts",
+          "mostConfidentWhen",
+          "leastConfidentWhen",
+        ],
+      },
+      {
+        key: "objectives",
+        title: t("initialAssessment.objectives"),
+        fields: ["seasonObjective", "personalObjective", "teamObjective", "seasonSuccess"],
       },
     ],
     [t]
@@ -154,30 +199,25 @@ export function InitialAssessment({ profile, onCompleted }) {
     setSaving(true)
 
     const submittedAt = new Date().toISOString()
+    const payload = formToAssessmentPayload(form, calculatedAge)
+    const baselineSummary = buildBaselineSummary(
+      {
+        personal_info: payload.personal_info,
+        family_social_support: payload.family_social_support,
+        sleep_habits: payload.sleep_habits,
+        nutrition_habits: payload.nutrition_habits,
+        sports_background: payload.sports_background,
+        mental_profile: payload.mental_profile,
+        objectives: payload.objectives,
+      },
+      lang
+    )
+
     const { error: insertError } = await supabase.from("athlete_initial_assessments").insert([
       {
         athlete_id: profile.id,
-        personal_info: {
-          calculatedAge,
-          ...pick(form, ["sportPosition", "yearsCompeting", "categoryLevel"]),
-        },
-        sleep_habits: pick(form, [
-          "sleepHoursTypical",
-          "preEventSleep",
-          "troubleSleepingImportant",
-          "wakeRecovered",
-          "restPerformanceImpact",
-        ]),
-        nutrition_habits: pick(form, ["mealsPerDay", "hydration", "dailyEnergy", "caffeineUse"]),
-        sports_background: pick(form, [
-          "importantInjuries",
-          "hardestSportMoment",
-          "currentGoal",
-          "perceivedPressure",
-          "currentConfidence",
-          "coachRelationship",
-        ]),
-        family_social_support: pick(form, ["livingWith", "familySupport", "studiesWork", "balanceDifficulty"]),
+        ...payload,
+        baseline_summary: baselineSummary,
         submitted_at: submittedAt,
       },
     ])
@@ -267,9 +307,12 @@ function Fields({ stepKey, form, update, t, teams, calculatedAge, teamLocked }) 
       <div className="assessment-grid">
         <ReadOnlyField label={t("initialAssessment.fields.calculatedAge")} value={calculatedAge ?? "-"} />
         <TeamField teams={teams} form={form} update={update} t={t} locked={teamLocked} />
+        <TextField id="gender" form={form} update={update} t={t} optional />
         <TextField id="sportPosition" form={form} update={update} t={t} />
         <TextField id="yearsCompeting" type="number" form={form} update={update} t={t} />
         <TextField id="categoryLevel" form={form} update={update} t={t} />
+        <TextField id="weeklyTrainingSessions" type="number" form={form} update={update} t={t} />
+        <TextField id="weeklyCompetitions" type="number" form={form} update={update} t={t} />
       </div>
     )
   }
@@ -293,6 +336,7 @@ function Fields({ stepKey, form, update, t, teams, calculatedAge, teamLocked }) 
           update={update}
           t={t}
         />
+        <TextField id="travelTimeToTraining" form={form} update={update} t={t} />
       </div>
     )
   }
@@ -352,6 +396,28 @@ function Fields({ stepKey, form, update, t, teams, calculatedAge, teamLocked }) 
           update={update}
           t={t}
         />
+        <SliderField id="nutritionRating" form={form} update={update} t={t} />
+        <SelectField
+          id="eatsBeforeTraining"
+          options={frequencyOptions}
+          form={form}
+          update={update}
+          t={t}
+        />
+        <SelectField
+          id="recoversNutritionally"
+          options={frequencyOptions}
+          form={form}
+          update={update}
+          t={t}
+        />
+        <SelectField
+          id="followsNutritionPlan"
+          options={["yes", "no", "sometimes"]}
+          form={form}
+          update={update}
+          t={t}
+        />
       </div>
     )
   }
@@ -360,11 +426,39 @@ function Fields({ stepKey, form, update, t, teams, calculatedAge, teamLocked }) 
     return (
       <div className="assessment-grid">
         <TextArea id="importantInjuries" form={form} update={update} t={t} />
+        <TextArea id="majorSetbacks" form={form} update={update} t={t} />
+        <TextArea id="clubChanges" form={form} update={update} t={t} />
+        <TextArea id="bestAchievement" form={form} update={update} t={t} />
         <TextArea id="hardestSportMoment" form={form} update={update} t={t} />
-        <TextArea id="currentGoal" form={form} update={update} t={t} />
         <SliderField id="perceivedPressure" form={form} update={update} t={t} />
         <SliderField id="currentConfidence" form={form} update={update} t={t} />
         <SliderField id="coachRelationship" form={form} update={update} t={t} />
+      </div>
+    )
+  }
+
+  if (stepKey === "mental") {
+    return (
+      <div className="assessment-grid">
+        <TextArea id="greatestStrength" form={form} update={update} t={t} />
+        <TextArea id="aspectToImprove" form={form} update={update} t={t} />
+        <TextArea id="preCompetitionWorry" form={form} update={update} t={t} />
+        <TextArea id="performanceHelps" form={form} update={update} t={t} />
+        <TextArea id="mistakeReaction" form={form} update={update} t={t} />
+        <TextArea id="poorPerformanceThoughts" form={form} update={update} t={t} />
+        <TextArea id="mostConfidentWhen" form={form} update={update} t={t} />
+        <TextArea id="leastConfidentWhen" form={form} update={update} t={t} />
+      </div>
+    )
+  }
+
+  if (stepKey === "objectives") {
+    return (
+      <div className="assessment-grid">
+        <TextArea id="seasonObjective" form={form} update={update} t={t} />
+        <TextArea id="personalObjective" form={form} update={update} t={t} />
+        <TextArea id="teamObjective" form={form} update={update} t={t} />
+        <TextArea id="seasonSuccess" form={form} update={update} t={t} />
       </div>
     )
   }
@@ -408,10 +502,13 @@ function TeamField({ teams, form, update, t, locked }) {
   )
 }
 
-function TextField({ id, form, update, t, type = "text" }) {
+function TextField({ id, form, update, t, type = "text", optional = false }) {
   return (
     <label className="assessment-field">
-      <span>{t(`initialAssessment.fields.${id}`)}</span>
+      <span>
+        {t(`initialAssessment.fields.${id}`)}
+        {optional ? ` (${t("initialAssessment.optional")})` : ""}
+      </span>
       <input type={type} value={form[id]} onChange={(event) => update(id, event.target.value)} />
     </label>
   )
@@ -479,8 +576,4 @@ function SliderField({ id, form, update, t }) {
       />
     </label>
   )
-}
-
-function pick(source, keys) {
-  return Object.fromEntries(keys.map((key) => [key, source[key]]))
 }
