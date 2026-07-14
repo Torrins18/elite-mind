@@ -1,8 +1,9 @@
 import { useId } from "react"
 
 const PALETTES = {
-  default: { left: "#2563EB", right: "#16A34A", athlete: "#16A34A" },
-  hero: { left: "#ffffff", right: "#ffffff", athlete: "#84CC16" },
+  default: { left: "#2563EB", right: "#16A34A", athlete: "#16A34A", strokeWidth: 2.4 },
+  /** Original brand — cyan brain + lime athlete (legible on dark hero) */
+  hero: { left: "#22D3EE", right: "#84CC16", athlete: "#84CC16", strokeWidth: 2.6 },
 }
 
 /** Zona Mental+ emblem — brain + athlete */
@@ -11,6 +12,7 @@ export function LogoMark({ size = 48, className = "", title = "Zona Mental+", pa
   const leftClip = `zm-left-${uid}`
   const rightClip = `zm-right-${uid}`
   const colors = PALETTES[palette] || PALETTES.default
+  const strokeW = colors.strokeWidth ?? 2.4
 
   return (
     <svg

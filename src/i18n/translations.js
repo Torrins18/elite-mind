@@ -106,7 +106,7 @@ export const translations = {
 
     authLanding: {
       eyebrow: "PLATAFORMA DE PSICOLOGÍA DEPORTIVA",
-      logoSubtitle: "Psicología deportiva",
+      logoSubtitle: "PSICOLOGÍA DEPORTIVA",
       welcomeTitle: "Bienvenido/a de nuevo",
       welcomeSubtitle: "Accede a tu espacio de seguimiento.",
       headlineLine1: "Entrena la mente.",
@@ -1300,7 +1300,7 @@ export const translations = {
 
     authLanding: {
       eyebrow: "PLATAFORMA DE PSICOLOGIA ESPORTIVA",
-      logoSubtitle: "Psicologia esportiva",
+      logoSubtitle: "PSICOLOGIA ESPORTIVA",
       welcomeTitle: "Benvingut de nou",
       welcomeSubtitle: "Accedeix al teu espai de seguiment.",
       headlineLine1: "Entrena la ment.",

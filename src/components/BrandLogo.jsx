@@ -1,12 +1,13 @@
 import { LogoMark } from "./brand/LogoMark"
 import { useTranslation } from "../i18n/LanguageContext"
 
-function Wordmark({ showSubtitle = true, showTagline = false, compact = false, subtitleText }) {
+function Wordmark({ showSubtitle = true, showTagline = false, compact = false, subtitleText, taglineText, hero = false }) {
   const { t } = useTranslation()
   const subtitle = subtitleText ?? t("appEyebrow")
+  const tagline = taglineText ?? t("login.tagline")
 
   return (
-    <div className={`brand-logo__text${compact ? " brand-logo__text--compact" : ""}`}>
+    <div className={`brand-logo__text${compact ? " brand-logo__text--compact" : ""}${hero ? " brand-logo__text--hero" : ""}`}>
       <p className="brand-logo__title" aria-hidden="true">
         <span className="brand-logo__zona">ZONA </span>
         <span className="brand-logo__accent">MENTAL+</span>
@@ -18,9 +19,7 @@ function Wordmark({ showSubtitle = true, showTagline = false, compact = false, s
           <span className="brand-logo__rule brand-logo__rule--green" aria-hidden="true" />
         </div>
       )}
-      {showTagline && (
-        <p className="brand-logo__tagline">Mide · Entiende · Potencia</p>
-      )}
+      {showTagline && <p className="brand-logo__tagline">{tagline}</p>}
     </div>
   )
 }
@@ -32,8 +31,13 @@ export function BrandLogo({ variant = "bar", className = "", tone = "default" })
   if (variant === "hero-dark") {
     return (
       <div className={rootClass} role="img" aria-label="Zona Mental+ — Psicología deportiva">
-        <LogoMark size={56} palette="hero" className="brand-logo__mark" title="" />
-        <Wordmark showSubtitle subtitleText={t("authLanding.logoSubtitle")} compact />
+        <LogoMark size={82} palette="hero" className="brand-logo__mark brand-logo__mark--hero" title="" />
+        <Wordmark
+          hero
+          showSubtitle
+          showTagline
+          subtitleText={t("authLanding.logoSubtitle")}
+        />
       </div>
     )
   }
