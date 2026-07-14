@@ -697,6 +697,23 @@ input:focus, textarea:focus {
   background: rgba(251, 191, 36, 0.06);
 }
 
+.weekly-eor-block__contact {
+  margin-top: 8px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+
+.weekly-eor-block__contact-label {
+  margin: 0 0 4px;
+  font-weight: 600;
+}
+
+.weekly-eor-block__contact-hint {
+  margin: 0 0 10px;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
 .choice-group {
   display: flex;
   flex-wrap: wrap;
@@ -2371,10 +2388,36 @@ input:focus, textarea:focus {
 
 .team-join-list__item {
   display: flex;
-  flex-wrap: wrap;
-  align-items: flex-start;
-  justify-content: space-between;
+  flex-direction: column;
+  align-items: stretch;
   gap: 10px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.team-join-list__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.team-edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
+.team-edit-form input {
+  width: 100%;
+}
+
+.team-edit-form__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
 .psych-detail {

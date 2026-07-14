@@ -13,9 +13,9 @@ const BLOCKS = [
     ],
   },
   {
-    id: "body",
-    badgeKey: "eorBlockBodyBadge",
-    titleKey: "eorBlockBodyTitle",
+    id: "recovery",
+    badgeKey: "eorBlockRecoveryBadge",
+    titleKey: "eorBlockRecoveryTitle",
     fields: [
       { key: "weekly_energy", labelKey: "eorWeeklyEnergy", hintKey: "eorWeeklyEnergyHint" },
       { key: "weekly_rest_quality", labelKey: "eorRestQuality", hintKey: "eorRestQualityHint" },
@@ -145,34 +145,28 @@ export function WeeklyEorForm({ form, onChange }) {
             onChange={(e) => update("next_goal", e.target.value)}
           />
         </label>
-      </section>
 
-      <section className="check-in-block check-in-block--weekly weekly-eor-block weekly-eor-block--key">
-        <header className="check-in-block__header">
-          <span className="check-in-block__badge check-in-block__badge--weekly">
-            {t("checkIn.eorKeyQuestionBadge")}
-          </span>
-          <h3>{t("checkIn.eorPsychologistContact")}</h3>
-          <p>{t("checkIn.eorPsychologistContactHint")}</p>
-        </header>
-
-        <div className="choice-group" role="radiogroup" aria-label={t("checkIn.eorPsychologistContact")}>
-          {CONTACT_OPTIONS.map((option) => (
-            <button
-              key={option}
-              type="button"
-              role="radio"
-              aria-checked={form.psychologist_contact === option}
-              className={
-                form.psychologist_contact === option
-                  ? "choice-group__btn choice-group__btn--active"
-                  : "choice-group__btn"
-              }
-              onClick={() => update("psychologist_contact", option)}
-            >
-              {t(`checkIn.eorPsychologistContact_${option}`)}
-            </button>
-          ))}
+        <div className="weekly-eor-block__contact">
+          <p className="weekly-eor-block__contact-label">{t("checkIn.eorPsychologistContact")}</p>
+          <p className="weekly-eor-block__contact-hint">{t("checkIn.eorPsychologistContactHint")}</p>
+          <div className="choice-group" role="radiogroup" aria-label={t("checkIn.eorPsychologistContact")}>
+            {CONTACT_OPTIONS.map((option) => (
+              <button
+                key={option}
+                type="button"
+                role="radio"
+                aria-checked={form.psychologist_contact === option}
+                className={
+                  form.psychologist_contact === option
+                    ? "choice-group__btn choice-group__btn--active"
+                    : "choice-group__btn"
+                }
+                onClick={() => update("psychologist_contact", option)}
+              >
+                {t(`checkIn.eorPsychologistContact_${option}`)}
+              </button>
+            ))}
+          </div>
         </div>
       </section>
     </div>

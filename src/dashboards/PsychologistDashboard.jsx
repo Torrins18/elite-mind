@@ -13,7 +13,7 @@ import { Badge } from "../components/ui/Badge"
 import { Button } from "../components/ui/Button"
 import { InsightCard } from "../components/InsightCard"
 import { calculateRiskLevel } from "../lib/risk"
-import { buildTeamInsight } from "../lib/insights"
+import { buildTeamInsight, buildTeamEvolutionInsight } from "../lib/insights"
 import { summarizeTeam } from "../lib/insights/metrics"
 import { getLatestWeeklyReflection } from "../lib/weeklyEor"
 import {
@@ -159,6 +159,15 @@ export function PsychologistDashboard({ profile }) {
   const teamComplianceNow = useMemo(
     () => currentWeekCompliance(tabCheckIns, tabAthletes.map((a) => a.id)),
     [tabCheckIns, tabAthletes]
+  )
+  const teamEvolutionInsight = useMemo(
+    () =>
+      buildTeamEvolutionInsight({
+        weeklyTrend: teamWeeklyTrend,
+        complianceTrend: teamComplianceTrend,
+        t,
+      }),
+    [teamWeeklyTrend, teamComplianceTrend, t]
   )
   const teamWeeklySnapshot = useMemo(
     () => getLatestWeeklyTeamSnapshot(teamWeeklyTrend),
@@ -397,6 +406,10 @@ export function PsychologistDashboard({ profile }) {
             </div>
 
             <ComplianceTrendChart trend={teamComplianceTrend} />
+
+            <Card title={t("insights.evolutionTitle")} subtitle={t("insights.evolutionSubtitle")}>
+              <InsightCard title={t("insights.evolutionCardTitle")} insight={teamEvolutionInsight} />
+            </Card>
 
             <Card title={t("psychologist.teamEorTitle")} subtitle={t("psychologist.teamEorSubtitle")}>
               <EorIndexSummary indexes={teamWeeklySnapshot} variant="psychologist" t={t} />

@@ -10,7 +10,7 @@ import { TeamJoinLink } from "../components/TeamJoinLink"
 import { CoachWeeklySnapshot } from "../components/CoachWeeklySnapshot"
 import { EorIndexSummary } from "../components/EorIndexSummary"
 import { calculateRiskLevel } from "../lib/risk"
-import { buildTeamInsight } from "../lib/insights"
+import { buildTeamInsight, buildTeamEvolutionInsight } from "../lib/insights"
 import { buildCoachWeeklyInsight } from "../lib/insights/buildCoachWeeklyInsight"
 import {
   aggregateWeeklyEorTrend,
@@ -129,6 +129,15 @@ export function CoachDashboard({ profile, teamName }) {
     () => buildWeeklyComplianceTrend(checkIns, athleteIds),
     [checkIns, athleteIds]
   )
+  const evolutionInsight = useMemo(
+    () =>
+      buildTeamEvolutionInsight({
+        weeklyTrend,
+        complianceTrend,
+        t,
+      }),
+    [weeklyTrend, complianceTrend, t]
+  )
 
   const athleteRiskCounts = useMemo(
     () =>
@@ -178,6 +187,10 @@ export function CoachDashboard({ profile, teamName }) {
       </div>
 
       <ComplianceTrendChart trend={complianceTrend} />
+
+      <Card title={t("insights.evolutionTitle")} subtitle={t("insights.evolutionSubtitle")}>
+        <InsightCard title={t("insights.evolutionCardTitle")} insight={evolutionInsight} />
+      </Card>
 
       <Card title={t("coach.eorTeamTitle")} subtitle={t("coach.eorTeamSubtitle")}>
         <EorIndexSummary indexes={latestWeeklySnapshot} variant="coach" t={t} />

@@ -17,6 +17,8 @@ export function PsychologistCoachAdmin({ psychologistId, onPreviewCoachTeam, ath
   const [coachTeams, setCoachTeams] = useState({})
   const [previewTeamId, setPreviewTeamId] = useState("")
   const [newTeamName, setNewTeamName] = useState("")
+  const [editingTeamId, setEditingTeamId] = useState(null)
+  const [editTeamName, setEditTeamName] = useState("")
   const [newLink, setNewLink] = useState("")
   const [loading, setLoading] = useState(true)
   const [message, setMessage] = useState("")
@@ -210,6 +212,25 @@ export function PsychologistCoachAdmin({ psychologistId, onPreviewCoachTeam, ath
     await load()
   }
 
+  const saveTeamName = async (event, teamId) => {
+    event.preventDefault()
+    const name = editTeamName.trim()
+    if (!name) return
+
+    setMessage("")
+    const { error } = await supabase.from("teams").update({ name }).eq("id", teamId)
+
+    if (error) {
+      setMessage(error.message)
+      return
+    }
+
+    setEditingTeamId(null)
+    setEditTeamName("")
+    setMessage(t("teams.updated"))
+    await load()
+  }
+
   if (loading) return null
 
   return (
@@ -227,18 +248,49 @@ export function PsychologistCoachAdmin({ psychologistId, onPreviewCoachTeam, ath
           <ul className="team-join-list">
             {activeTeams.map((team) => (
               <li key={team.id} className="team-join-list__item">
-                <TeamJoinLink
-                  joinToken={team.join_token}
-                  teamName={team.name}
-                  onCopied={setMessage}
-                />
-                <Button
-                  variant="ghost"
-                  className="btn--danger-text"
-                  onClick={() => deleteTeam(team.id)}
-                >
-                  {t("teams.delete")}
-                </Button>
+                {editingTeamId === team.id ? (
+                  <form className="team-edit-form" onSubmit={(event) => saveTeamName(event, team.id)}>
+                    <input
+                      value={editTeamName}
+                      onChange={(event) => setEditTeamName(event.target.value)}
+                      placeholder={t("teams.editPlaceholder")}
+                      required
+                    />
+                    <div className="team-edit-form__actions">
+                      <Button type="submit">{t("teams.save")}</Button>
+                      <Button type="button" variant="ghost" onClick={() => setEditingTeamId(null)}>
+                        {t("common.cancel")}
+                      </Button>
+                    </div>
+                  </form>
+                ) : (
+                  <>
+                    <div className="team-join-list__header">
+                      <strong>{team.name}</strong>
+                      <Button
+                        variant="ghost"
+                        onClick={() => {
+                          setEditingTeamId(team.id)
+                          setEditTeamName(team.name)
+                        }}
+                      >
+                        {t("teams.edit")}
+                      </Button>
+                    </div>
+                    <TeamJoinLink
+                      joinToken={team.join_token}
+                      teamName={team.name}
+                      onCopied={setMessage}
+                    />
+                    <Button
+                      variant="ghost"
+                      className="btn--danger-text"
+                      onClick={() => deleteTeam(team.id)}
+                    >
+                      {t("teams.delete")}
+                    </Button>
+                  </>
+                )}
               </li>
             ))}
           </ul>
