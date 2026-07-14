@@ -252,137 +252,30 @@ select:focus {
 
 .brand-logo {
   display: block;
-  height: auto;
+  width: auto;
   object-fit: contain;
-  --brand-zona: #3a3a3a;
-  --brand-accent: #e31e24;
-  --brand-muted: #707070;
-}
-
-.brand-logo--horizontal {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 14px;
+  object-position: left center;
 }
 
 .brand-logo--bar {
-  height: 46px;
-  max-width: min(280px, 52vw);
-  gap: 10px;
+  height: 54px;
+  max-width: min(280px, 62vw);
 }
 
 .brand-logo--hero {
-  width: auto;
-  max-width: min(420px, 92vw);
-  gap: clamp(14px, 2.5vw, 20px);
+  height: clamp(64px, 11vh, 88px);
+  max-width: min(400px, 90vw);
   margin-bottom: 0;
 }
 
 .brand-logo--compact {
+  height: 58px;
+  max-width: min(340px, 86vw);
+}
+
+.brand-logo--icon {
+  height: 48px;
   width: auto;
-  max-width: min(320px, 88vw);
-  gap: 12px;
-}
-
-.brand-logo--hero,
-.brand-logo--compact {
-  flex-direction: row;
-  align-items: center;
-  text-align: left;
-}
-
-.brand-logo__mark {
-  flex-shrink: 0;
-}
-
-.brand-logo__text {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 6px;
-  min-width: 0;
-}
-
-.brand-logo--bar .brand-logo__text {
-  gap: 0;
-}
-
-.brand-logo__title {
-  margin: 0;
-  font-family: "Inter", "Manrope", system-ui, sans-serif;
-  font-size: 1.05rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  line-height: 1.1;
-  white-space: nowrap;
-}
-
-.brand-logo--hero .brand-logo__title {
-  font-size: clamp(1.25rem, 2.8vw, 1.65rem);
-}
-
-.brand-logo--compact .brand-logo__title {
-  font-size: 1.2rem;
-}
-
-.brand-logo__zona {
-  color: var(--brand-zona);
-}
-
-.brand-logo__accent {
-  color: var(--brand-accent);
-}
-
-.brand-logo--light {
-  --brand-zona: rgba(255, 255, 255, 0.94);
-  --brand-muted: rgba(255, 255, 255, 0.55);
-}
-
-.brand-logo--light .brand-logo__subtitle {
-  color: rgba(255, 255, 255, 0.62);
-}
-
-.brand-logo__subtitle-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  width: 100%;
-}
-
-.brand-logo__rule {
-  flex: 1;
-  height: 1px;
-  border-radius: 1px;
-  min-width: 12px;
-}
-
-.brand-logo__rule--left,
-.brand-logo__rule--blue {
-  background: linear-gradient(90deg, transparent, var(--brand-muted));
-}
-
-.brand-logo__rule--right,
-.brand-logo__rule--green {
-  background: linear-gradient(90deg, var(--brand-muted), transparent);
-}
-
-.brand-logo__subtitle {
-  flex-shrink: 0;
-  font-size: 0.58rem;
-  font-weight: 500;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--brand-muted);
-}
-
-.brand-logo__tagline {
-  margin: 0;
-  font-size: 0.62rem;
-  font-weight: 500;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--color-nav);
 }
 
 .auth-panel__tagline {
@@ -3289,8 +3182,8 @@ select:focus {
   }
 
   .brand-logo--bar {
-    height: 40px;
-    max-width: min(200px, 70vw);
+    height: 48px;
+    max-width: min(240px, 72vw);
   }
 
   .topbar__mark {
