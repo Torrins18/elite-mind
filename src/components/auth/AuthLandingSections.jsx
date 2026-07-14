@@ -114,7 +114,7 @@ export function AuthHeroContent() {
 
   return (
     <div className="auth-landing__hero-content">
-      <BrandLogo variant="hero-dark" className="auth-landing__hero-logo" />
+      <BrandLogo variant="hero" className="auth-landing__hero-logo" />
       <h1 className="auth-landing__headline">
         <span>{t("authLanding.headlineLine1")}</span>
         <span className="auth-landing__headline-accent">{t("authLanding.headlineLine2")}</span>

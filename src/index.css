@@ -254,33 +254,42 @@ select:focus {
   display: block;
   height: auto;
   object-fit: contain;
+  --brand-zona: #3a3a3a;
+  --brand-accent: #e31e24;
+  --brand-muted: #707070;
+}
+
+.brand-logo--horizontal {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 14px;
 }
 
 .brand-logo--bar {
-  display: flex;
-  align-items: center;
-  gap: 12px;
   height: 46px;
-  max-width: min(260px, 48vw);
+  max-width: min(280px, 52vw);
+  gap: 10px;
+}
+
+.brand-logo--hero {
+  width: auto;
+  max-width: min(420px, 92vw);
+  gap: clamp(14px, 2.5vw, 20px);
+  margin-bottom: 0;
+}
+
+.brand-logo--compact {
+  width: auto;
+  max-width: min(320px, 88vw);
+  gap: 12px;
 }
 
 .brand-logo--hero,
 .brand-logo--compact {
-  display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
-  text-align: center;
-  gap: 14px;
-}
-
-.brand-logo--hero {
-  width: min(100%, 300px);
-  margin-bottom: 18px;
-}
-
-.brand-logo--compact {
-  width: min(200px, 72vw);
-  gap: 12px;
+  text-align: left;
 }
 
 .brand-logo__mark {
@@ -290,13 +299,12 @@ select:focus {
 .brand-logo__text {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 8px;
+  align-items: flex-start;
+  gap: 6px;
   min-width: 0;
 }
 
 .brand-logo--bar .brand-logo__text {
-  align-items: flex-start;
   gap: 0;
 }
 
@@ -311,50 +319,61 @@ select:focus {
 }
 
 .brand-logo--hero .brand-logo__title {
-  font-size: 1.65rem;
+  font-size: clamp(1.25rem, 2.8vw, 1.65rem);
 }
 
 .brand-logo--compact .brand-logo__title {
-  font-size: 1.35rem;
+  font-size: 1.2rem;
 }
 
 .brand-logo__zona {
-  color: var(--text-primary);
+  color: var(--brand-zona);
 }
 
 .brand-logo__accent {
-  color: var(--color-healthy);
+  color: var(--brand-accent);
+}
+
+.brand-logo--light {
+  --brand-zona: rgba(255, 255, 255, 0.94);
+  --brand-muted: rgba(255, 255, 255, 0.55);
+}
+
+.brand-logo--light .brand-logo__subtitle {
+  color: rgba(255, 255, 255, 0.62);
 }
 
 .brand-logo__subtitle-row {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   width: 100%;
-  max-width: 280px;
 }
 
 .brand-logo__rule {
   flex: 1;
   height: 1px;
   border-radius: 1px;
+  min-width: 12px;
 }
 
+.brand-logo__rule--left,
 .brand-logo__rule--blue {
-  background: linear-gradient(90deg, transparent, var(--color-nav));
+  background: linear-gradient(90deg, transparent, var(--brand-muted));
 }
 
+.brand-logo__rule--right,
 .brand-logo__rule--green {
-  background: linear-gradient(90deg, var(--color-healthy), transparent);
+  background: linear-gradient(90deg, var(--brand-muted), transparent);
 }
 
 .brand-logo__subtitle {
   flex-shrink: 0;
-  font-size: 0.62rem;
+  font-size: 0.58rem;
   font-weight: 500;
-  letter-spacing: 0.2em;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: var(--text-secondary);
+  color: var(--brand-muted);
 }
 
 .brand-logo__tagline {

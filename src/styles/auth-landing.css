@@ -143,31 +143,6 @@
   margin-bottom: 18px;
 }
 
-.brand-logo--hero-dark {
-  display: block;
-  line-height: 0;
-  position: relative;
-}
-
-.brand-logo__hero-image {
-  display: block;
-  width: auto;
-  height: clamp(88px, 13vh, 118px);
-  max-width: min(220px, 58vw);
-  object-fit: contain;
-  object-position: left center;
-  mix-blend-mode: lighten;
-  filter: drop-shadow(0 5px 24px rgba(0, 0, 0, 0.42));
-}
-
-.brand-logo--light .brand-logo__zona {
-  color: rgba(255, 255, 255, 0.96);
-}
-
-.brand-logo--light .brand-logo__accent {
-  color: var(--auth-accent-lime);
-}
-
 .auth-landing__eyebrow {
   margin: 0 0 18px;
   font-size: 0.62rem;
@@ -760,8 +735,9 @@
     padding-bottom: 28px;
   }
 
-  .brand-logo__hero-image {
-    height: 80px;
+  .brand-logo--hero .brand-logo__mark {
+    width: 60px;
+    height: 60px;
   }
 
   .auth-landing__headline {
