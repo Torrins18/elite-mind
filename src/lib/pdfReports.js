@@ -1,4 +1,5 @@
 import { formatDate } from "./dates"
+import { compareWeeklyToBaseline, formatAssessmentFieldValue } from "./baseline"
 
 export function buildReportSections({ title, subtitle, generatedAt, rows }) {
   return { title, subtitle, generatedAt, rows }
@@ -214,6 +215,7 @@ export function buildAthleteReportSections({
   latestWeekly,
   insight,
   weeklyTrend,
+  assessment,
   t,
   lang = "es",
 }) {
@@ -227,6 +229,39 @@ export function buildAthleteReportSections({
       ],
     },
   ]
+
+  if (assessment) {
+    if (assessment.baseline_summary) {
+      sections.push({
+        heading: t("reports.sectionBaselineSummary"),
+        text: assessment.baseline_summary,
+        variant: "insight",
+      })
+    }
+
+    const comparisons = compareWeeklyToBaseline(assessment, latestWeekly)
+    if (comparisons.length) {
+      sections.push({
+        heading: t("reports.sectionBaselineComparison"),
+        items: comparisons.map((row) => ({
+          label: t(`baseline.metrics.${row.labelKey}`),
+          value: t("reports.baselineComparisonValue", {
+            baseline: row.baseline,
+            current: row.current,
+            delta: row.delta > 0 ? `+${row.delta}` : row.delta,
+          }),
+        })),
+      })
+    }
+
+    const baselineItems = collectBaselineHighlightItems(assessment, t)
+    if (baselineItems.length) {
+      sections.push({
+        heading: t("reports.sectionBaselineProfile"),
+        items: baselineItems,
+      })
+    }
+  }
 
   if (insight?.text) {
     sections.push({
@@ -278,4 +313,30 @@ export function buildAthleteReportSections({
   })
 
   return sections
+}
+
+function collectBaselineHighlightItems(assessment, t) {
+  const blocks = [
+    assessment.personal_info,
+    assessment.family_social_support,
+    assessment.mental_profile,
+    assessment.objectives,
+  ]
+
+  const items = []
+  const seen = new Set()
+
+  for (const data of blocks) {
+    if (!data) continue
+    for (const [key, value] of Object.entries(data)) {
+      if (key === "calculatedAge" || value == null || value === "" || seen.has(key)) continue
+      seen.add(key)
+      items.push({
+        label: t(`initialAssessment.fields.${key}`),
+        value: formatAssessmentFieldValue(value, t),
+      })
+    }
+  }
+
+  return items.slice(0, 12)
 }

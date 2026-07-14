@@ -7,12 +7,14 @@ import {
   compareWeeklyToBaseline,
   formToAssessmentPayload,
 } from "../../lib/baseline"
-import { consentStatus, isAdultInSpain } from "../../lib/age"
+import { consentStatus, isAdultInSpain, calculateAge } from "../../lib/age"
+import { BaselineAssessmentEditForm } from "../assessment/BaselineAssessmentEditForm"
 
 export function AthleteFileBaseline({
   athlete,
   assessment,
   latestWeekly,
+  teamName,
   lang,
   t,
   onAssessmentUpdated,
@@ -34,13 +36,16 @@ export function AthleteFileBaseline({
     [assessment, latestWeekly]
   )
 
+  const calculatedAge =
+    form.calculatedAge ?? assessment?.personal_info?.calculatedAge ?? calculateAge(athlete?.date_of_birth)
+
   const saveEdit = async (event) => {
     event.preventDefault()
     if (!assessment?.id) return
     setSaving(true)
     setError("")
 
-    const payload = formToAssessmentPayload(form, form.calculatedAge)
+    const payload = formToAssessmentPayload(form, calculatedAge)
     const summary = buildBaselineSummary(
       {
         ...assessment,
@@ -117,62 +122,17 @@ export function AthleteFileBaseline({
         {!assessment ? (
           <p className="empty-state">{t("psychologist.noInitialAssessment")}</p>
         ) : editing ? (
-          <form className="assessment-form" onSubmit={saveEdit}>
-            <label className="assessment-field assessment-field--wide">
-              <span>{t("baseline.summaryTitle")}</span>
-              <textarea
-                rows={4}
-                value={form.baseline_summary || ""}
-                onChange={(e) => setForm((p) => ({ ...p, baseline_summary: e.target.value }))}
-              />
-            </label>
-            {[
-              "greatestStrength",
-              "aspectToImprove",
-              "preCompetitionWorry",
-              "performanceHelps",
-              "mistakeReaction",
-              "poorPerformanceThoughts",
-              "mostConfidentWhen",
-              "leastConfidentWhen",
-              "seasonObjective",
-              "personalObjective",
-              "teamObjective",
-              "seasonSuccess",
-            ].map((key) => (
-              <label key={key} className="assessment-field assessment-field--wide">
-                <span>{t(`initialAssessment.fields.${key}`)}</span>
-                <textarea
-                  rows={2}
-                  value={form[key] || ""}
-                  onChange={(e) => setForm((p) => ({ ...p, [key]: e.target.value }))}
-                />
-              </label>
-            ))}
-            {["currentConfidence", "coachRelationship", "perceivedPressure"].map((key) => (
-              <label key={key} className="assessment-field assessment-field--wide">
-                <span>
-                  {t(`initialAssessment.fields.${key}`)}: <strong>{form[key] || "5"}</strong>
-                </span>
-                <input
-                  type="range"
-                  min="1"
-                  max="10"
-                  value={form[key] || "5"}
-                  onChange={(e) => setForm((p) => ({ ...p, [key]: e.target.value }))}
-                />
-              </label>
-            ))}
-            {error && <p className="form-error">{error}</p>}
-            <div className="assessment-actions">
-              <Button type="button" variant="ghost" onClick={() => setEditing(false)} disabled={saving}>
-                {t("common.cancel")}
-              </Button>
-              <Button type="submit" disabled={saving}>
-                {saving ? t("initialAssessment.saving") : t("baseline.save")}
-              </Button>
-            </div>
-          </form>
+          <BaselineAssessmentEditForm
+            form={form}
+            setForm={setForm}
+            calculatedAge={calculatedAge}
+            teamName={teamName}
+            t={t}
+            saving={saving}
+            error={error}
+            onCancel={() => setEditing(false)}
+            onSubmit={saveEdit}
+          />
         ) : (
           <>
             {assessment.baseline_summary && (

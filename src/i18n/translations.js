@@ -285,6 +285,10 @@ export const translations = {
       sectionAiSummary: "Resumen inteligente",
       sectionComplianceEvolution: "Evolución del cumplimiento (8 semanas)",
       sectionEorEvolution: "Evolución EOR semanal",
+      sectionBaselineSummary: "Resumen de línea base",
+      sectionBaselineComparison: "Comparación con valoración inicial",
+      sectionBaselineProfile: "Perfil de referencia (extracto)",
+      baselineComparisonValue: "Base {baseline}/10 · Actual {current}/10 · Δ {delta}",
       eorWeekSnapshot: "Mental {mental} · Bienestar {wellbeing} · Social {social} ({responses} resp.)",
     },
 
@@ -442,6 +446,7 @@ export const translations = {
       delta: "Cambio",
       edit: "Editar valoración",
       save: "Guardar cambios",
+      editSummaryHint: "Puedes ajustar el resumen manualmente o dejarlo vacío para regenerarlo al guardar.",
       metrics: {
         confidence: "Confianza",
         coachCommunication: "Comunicación con entrenador/a",
@@ -1433,6 +1438,10 @@ export const translations = {
       sectionAiSummary: "Resum intel·ligent",
       sectionComplianceEvolution: "Evolució del compliment (8 setmanes)",
       sectionEorEvolution: "Evolució EOR setmanal",
+      sectionBaselineSummary: "Resum de línia base",
+      sectionBaselineComparison: "Comparació amb valoració inicial",
+      sectionBaselineProfile: "Perfil de referència (extracte)",
+      baselineComparisonValue: "Base {baseline}/10 · Actual {current}/10 · Δ {delta}",
       eorWeekSnapshot: "Mental {mental} · Benestar {wellbeing} · Social {social} ({responses} resp.)",
     },
 
@@ -1588,6 +1597,7 @@ export const translations = {
       delta: "Canvi",
       edit: "Editar valoració",
       save: "Desar canvis",
+      editSummaryHint: "Pots ajustar el resum manualment o deixar-lo buit per regenerar-lo en desar.",
       metrics: {
         confidence: "Confiança",
         coachCommunication: "Comunicació amb entrenador/a",

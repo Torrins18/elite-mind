@@ -170,6 +170,7 @@ export function AthleteClinicalFile({
         latestWeekly,
         insight,
         weeklyTrend,
+        assessment,
         t,
         lang,
       }),
@@ -225,6 +226,7 @@ export function AthleteClinicalFile({
             athlete={athlete}
             assessment={assessment}
             latestWeekly={latestWeekly}
+            teamName={teamName}
             lang={lang}
             t={t}
             onAssessmentUpdated={onAssessmentUpdated}

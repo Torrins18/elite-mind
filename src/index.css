@@ -2935,6 +2935,23 @@ input:focus, textarea:focus {
   margin: 0;
 }
 
+.baseline-edit-form {
+  max-height: min(72vh, 900px);
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.baseline-edit-form__section {
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.baseline-edit-form__section h4 {
+  margin: 0 0 12px;
+  font-size: 0.95rem;
+}
+
 .invite-banner {
   padding: 12px 14px;
   border-radius: 10px;

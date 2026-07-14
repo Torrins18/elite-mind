@@ -185,6 +185,12 @@ export function detectBaselineAlerts(athlete, assessment, latestWeekly) {
   return alerts
 }
 
+export function formatAssessmentFieldValue(value, t) {
+  if (value == null || value === "") return "—"
+  const translated = t(`initialAssessment.options.${value}`)
+  return translated === `initialAssessment.options.${value}` ? String(value) : translated
+}
+
 export function assessmentToForm(assessment) {
   if (!assessment) return null
   return {
