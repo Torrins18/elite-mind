@@ -7,6 +7,12 @@ import {
   ResponsiveContainer,
   CartesianGrid,
 } from "recharts"
+import {
+  CHART_AXIS_TICK,
+  CHART_COLORS,
+  CHART_GRID_STROKE,
+  CHART_TOOLTIP_STYLE,
+} from "../lib/chartColors"
 import { useTranslation } from "../i18n/LanguageContext"
 import { formatDate } from "../lib/dates"
 import { Card } from "./ui/Card"
@@ -37,15 +43,11 @@ export function ComplianceTrendChart({ trend, title, subtitle }) {
       <div className="chart-wrap chart-wrap--responsive">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={data}>
-            <CartesianGrid stroke="rgba(148,163,184,0.12)" vertical={false} />
-            <XAxis dataKey="date" tick={{ fill: "#94a3b8", fontSize: 12 }} />
-            <YAxis domain={[0, 100]} tick={{ fill: "#94a3b8", fontSize: 12 }} unit="%" />
+            <CartesianGrid stroke={CHART_GRID_STROKE} vertical={false} />
+            <XAxis dataKey="date" tick={CHART_AXIS_TICK} />
+            <YAxis domain={[0, 100]} tick={CHART_AXIS_TICK} unit="%" />
             <Tooltip
-              contentStyle={{
-                background: "#0f172a",
-                border: "1px solid #334155",
-                borderRadius: 12,
-              }}
+              contentStyle={CHART_TOOLTIP_STYLE}
               formatter={(value, _name, item) => [
                 `${value}% (${item.payload.done}/${item.payload.total})`,
                 t("compliance.tooltipLabel"),
@@ -54,7 +56,7 @@ export function ComplianceTrendChart({ trend, title, subtitle }) {
             <Line
               type="monotone"
               dataKey="compliance"
-              stroke="#22d3ee"
+              stroke={CHART_COLORS.nav}
               strokeWidth={2}
               dot={{ r: 3 }}
             />

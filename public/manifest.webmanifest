@@ -4,8 +4,8 @@
   "description": "Psicología deportiva — mide, entiende, potencia",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#060b14",
-  "theme_color": "#060b14",
+  "background_color": "#F7F9FC",
+  "theme_color": "#2563EB",
   "orientation": "portrait-primary",
   "lang": "es",
   "icons": [

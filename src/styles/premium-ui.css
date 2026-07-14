@@ -1,0 +1,523 @@
+/* Premium SaaS UI layer — Zona Mental+ */
+
+.hero-strip {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
+  margin-bottom: 4px;
+}
+
+/* Auth */
+.auth-page {
+  background: var(--bg-app);
+}
+
+.auth-panel {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  box-shadow: var(--shadow-lg);
+}
+
+.auth-panel__hero {
+  padding: 48px 40px;
+  background: linear-gradient(160deg, var(--color-nav-soft) 0%, var(--bg-subtle) 100%);
+  border-right: 1px solid var(--border);
+}
+
+.auth-panel__badge,
+.auth-panel__tagline {
+  color: var(--color-nav);
+}
+
+.link-btn {
+  color: var(--color-nav);
+}
+
+.link-btn:hover {
+  color: var(--color-nav-hover);
+}
+
+/* Psychologist platform */
+.psych-layout {
+  grid-template-columns: minmax(260px, 300px) 1fr;
+  gap: 24px;
+}
+
+.psych-detail .card {
+  box-shadow: var(--shadow);
+}
+
+.psych-tabs {
+  padding: 6px;
+  border-radius: var(--radius);
+  background: var(--bg-subtle);
+  border: 1px solid var(--border);
+  gap: 4px;
+}
+
+.psych-tabs__btn {
+  padding: 9px 14px;
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+  font-weight: 500;
+  transition: background var(--transition), color var(--transition), box-shadow var(--transition);
+}
+
+.psych-tabs__btn:hover {
+  color: var(--text-primary);
+  background: var(--bg-hover);
+}
+
+.psych-tabs__btn.active {
+  color: var(--color-nav);
+  background: var(--bg-surface);
+  border-color: transparent;
+  box-shadow: var(--shadow-sm);
+  font-weight: 600;
+}
+
+.psych-tabs__badge {
+  background: var(--color-risk);
+  color: #fff;
+  font-weight: 700;
+}
+
+.psych-action-center__block {
+  padding: 24px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  background: var(--bg-surface);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow var(--transition);
+}
+
+.psych-action-center__block:hover {
+  box-shadow: var(--shadow);
+}
+
+.psych-action-center__list li {
+  border-top-color: var(--border);
+  padding: 14px 0;
+  transition: background var(--transition-fast);
+}
+
+.psych-action-center__count {
+  background: var(--color-risk-soft);
+  color: var(--color-risk);
+}
+
+.psych-compliance-list__item {
+  border-top-color: var(--border);
+}
+
+/* Athlete list — ultra clean */
+.athlete-picker {
+  gap: 6px;
+}
+
+.athlete-picker__btn {
+  padding: 14px 16px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-primary);
+  transition: background var(--transition), border-color var(--transition), box-shadow var(--transition),
+    transform var(--transition-fast);
+}
+
+.athlete-picker__btn:hover {
+  background: var(--bg-hover);
+  border-color: var(--border);
+}
+
+.athlete-picker__btn.active {
+  border-color: var(--color-nav-border);
+  background: var(--color-nav-soft);
+  box-shadow: var(--shadow-sm);
+}
+
+.athlete-picker__team {
+  color: var(--text-muted);
+  font-size: 0.8125rem;
+}
+
+.athlete-picker__main strong {
+  font-weight: 600;
+  font-size: 0.9375rem;
+}
+
+/* Lists & roster */
+.check-in-list li,
+.roster-list li,
+.alert-list__item,
+.notes-list li {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow var(--transition), border-color var(--transition);
+}
+
+.check-in-list li:hover,
+.roster-list li:hover,
+.alert-list__item:hover {
+  box-shadow: var(--shadow);
+  border-color: var(--border-strong);
+}
+
+.alert-list__item--high {
+  border-color: var(--color-risk-border);
+  background: var(--color-risk-soft);
+}
+
+.notes-list blockquote {
+  border-left-color: var(--color-nav);
+  background: var(--color-nav-soft);
+  color: var(--text-secondary);
+}
+
+/* Clinical file tabs */
+.athlete-file-tabs {
+  background: var(--bg-subtle);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 5px;
+  gap: 4px;
+}
+
+.athlete-file-tabs__btn {
+  border-radius: var(--radius-sm);
+  font-weight: 500;
+  transition: background var(--transition), color var(--transition), box-shadow var(--transition);
+}
+
+.athlete-file-tabs__btn:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.athlete-file-tabs__btn.active {
+  color: var(--color-nav);
+  background: var(--bg-surface);
+  box-shadow: var(--shadow-sm);
+  border-color: transparent;
+}
+
+.athlete-file-tabs__badge {
+  background: var(--color-risk-soft);
+  color: var(--color-risk);
+}
+
+.athlete-file-reviews__toggle {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg-surface);
+  transition: background var(--transition), border-color var(--transition);
+}
+
+.athlete-file-reviews__toggle:hover {
+  background: var(--bg-hover);
+}
+
+.athlete-file-timeline__item {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg-surface);
+  box-shadow: var(--shadow-sm);
+}
+
+.assessment-review__section {
+  background: var(--bg-surface);
+  border-color: var(--border);
+  box-shadow: var(--shadow-sm);
+}
+
+.baseline-summary {
+  background: var(--color-nav-soft);
+  border-color: var(--color-nav-border);
+}
+
+.baseline-comparison__row--alert td {
+  color: var(--color-risk);
+}
+
+/* Athlete home */
+.athlete-home__hero h1 {
+  font-size: 1.75rem;
+  letter-spacing: -0.03em;
+}
+
+.athlete-home__action {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--bg-surface);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow var(--transition), transform var(--transition-fast), border-color var(--transition);
+}
+
+.athlete-home__action:hover {
+  box-shadow: var(--shadow);
+  transform: translateY(-2px);
+  border-color: var(--border-strong);
+}
+
+.athlete-home__action--primary {
+  border-color: var(--color-nav-border);
+  background: linear-gradient(180deg, #ffffff 0%, var(--color-nav-soft) 100%);
+}
+
+.athlete-home__confirmation {
+  background: var(--color-healthy-soft);
+  border-color: var(--color-healthy-border);
+}
+
+.today-status--done {
+  color: var(--color-healthy);
+  background: var(--color-healthy-soft);
+  border-color: var(--color-healthy-border);
+}
+
+.today-status--pending {
+  background: var(--bg-subtle);
+  border-color: var(--border);
+}
+
+/* EOR & weekly panels */
+.weekly-eor-index {
+  background: var(--bg-surface);
+  border-color: var(--border);
+  box-shadow: var(--shadow-sm);
+}
+
+.weekly-eor-index--good {
+  border-color: var(--color-healthy-border);
+  background: var(--color-healthy-soft);
+}
+
+.weekly-eor-index--warning {
+  border-color: var(--color-followup-border);
+  background: var(--color-followup-soft);
+}
+
+.weekly-eor-index--danger,
+.weekly-eor-index--highlight {
+  border-color: var(--color-risk-border);
+  background: var(--color-risk-soft);
+}
+
+/* Charts */
+.dot--cyan {
+  background: var(--color-nav);
+}
+.dot--gold {
+  background: var(--color-followup);
+}
+.dot--red {
+  background: var(--color-risk);
+}
+.dot--green {
+  background: var(--color-healthy);
+}
+
+/* Role picker & onboarding */
+.role-picker {
+  background: var(--bg-subtle);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+
+.role-picker__option {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  transition: border-color var(--transition), box-shadow var(--transition), transform var(--transition-fast);
+}
+
+.role-picker__option:hover {
+  border-color: var(--color-nav-border);
+  box-shadow: var(--shadow-sm);
+}
+
+.role-picker__option.selected {
+  border-color: var(--color-nav);
+  background: var(--color-nav-soft);
+  box-shadow: var(--shadow-sm);
+}
+
+.onboarding-form,
+.assessment-form {
+  gap: 16px;
+}
+
+.assessment-card {
+  box-shadow: var(--shadow-lg);
+}
+
+.assessment-progress {
+  background: var(--bg-subtle);
+  border-radius: 999px;
+}
+
+.assessment-progress span {
+  background: var(--color-nav);
+}
+
+.assessment-step {
+  border: 1px solid var(--border);
+  background: var(--bg-surface);
+  color: var(--text-muted);
+  transition: all var(--transition);
+}
+
+.assessment-step.active {
+  border-color: var(--color-nav);
+  background: var(--color-nav-soft);
+  color: var(--color-nav);
+}
+
+/* Language switcher */
+.lang-switcher__btn {
+  border: 1px solid var(--border);
+  background: var(--bg-surface);
+  color: var(--text-muted);
+  transition: all var(--transition);
+}
+
+.lang-switcher__btn.active {
+  border-color: var(--color-nav-border);
+  color: var(--color-nav);
+  background: var(--color-nav-soft);
+}
+
+.lang-switcher__btn:hover {
+  border-color: var(--color-nav-border);
+  color: var(--color-nav);
+  background: var(--bg-hover);
+}
+
+/* Empty states */
+.empty-state {
+  color: var(--text-muted);
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  padding: 8px 0;
+}
+
+/* Focus visible — accessibility */
+.btn:focus-visible,
+.psych-tabs__btn:focus-visible,
+.athlete-picker__btn:focus-visible,
+.athlete-file-tabs__btn:focus-visible,
+.athlete-file-reviews__toggle:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--color-nav-soft);
+}
+
+/* Responsive polish */
+@media (max-width: 768px) {
+  .main-content {
+    padding: 20px 16px 48px;
+  }
+
+  .topbar {
+    padding: 12px 16px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .topbar__user {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .card {
+    padding: 20px 18px;
+    border-radius: var(--radius);
+  }
+
+  .psych-tabs,
+  .athlete-file-tabs {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .psych-tabs::-webkit-scrollbar,
+  .athlete-file-tabs::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Dark rgba leftovers — force light surfaces */
+[class*="insight"],
+[class*="eor-"],
+.psych-inbox-grid .card,
+.team-overview-grid .card {
+  --local-bg: var(--bg-surface);
+}
+
+.weekly-eor-panel__alert--high {
+  background: var(--color-risk-soft);
+  border: 1px solid var(--color-risk-border);
+  color: var(--color-risk);
+}
+
+.weekly-eor-panel__alert--medium {
+  background: var(--color-followup-soft);
+  border: 1px solid var(--color-followup-border);
+  color: var(--color-followup);
+}
+
+.invite-banner {
+  background: var(--color-nav-soft);
+  border: 1px solid var(--color-nav-border);
+  color: var(--text-secondary);
+}
+
+.form-error {
+  color: var(--color-risk);
+}
+
+.stat-card__hint,
+.insight-card__text--muted,
+.insight-card__footer {
+  color: var(--text-muted);
+}
+
+.insight-card__badge {
+  color: var(--color-nav);
+  background: var(--color-nav-soft);
+}
+
+.insight-card__text {
+  color: var(--text-secondary);
+}
+
+/* Recharts tooltip (inline styles overridden via parent) */
+.recharts-default-tooltip {
+  background: var(--bg-surface) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: var(--radius-sm) !important;
+  box-shadow: var(--shadow) !important;
+  color: var(--text-primary) !important;
+}
+
+.recharts-cartesian-grid line {
+  stroke: var(--border) !important;
+}
+
+.recharts-text {
+  fill: var(--text-muted) !important;
+}

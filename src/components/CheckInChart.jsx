@@ -7,6 +7,12 @@ import {
   ResponsiveContainer,
   CartesianGrid,
 } from "recharts"
+import {
+  CHART_AXIS_TICK,
+  CHART_COLORS,
+  CHART_GRID_STROKE,
+  CHART_TOOLTIP_STYLE,
+} from "../lib/chartColors"
 import { useTranslation } from "../i18n/LanguageContext"
 import { formatDate } from "../lib/dates"
 import { Card } from "./ui/Card"
@@ -45,20 +51,14 @@ export function CheckInChart({
       <div className="chart-wrap chart-wrap--responsive chart-wrap--tall">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={data}>
-            <CartesianGrid stroke="rgba(148,163,184,0.12)" vertical={false} />
-            <XAxis dataKey="date" tick={{ fill: "#94a3b8", fontSize: 12 }} />
-            <YAxis domain={domain} tick={{ fill: "#94a3b8", fontSize: 12 }} />
-            <Tooltip
-              contentStyle={{
-                background: "#0f172a",
-                border: "1px solid #334155",
-                borderRadius: 12,
-              }}
-            />
-            <Line type="monotone" dataKey="mood" stroke="#22d3ee" strokeWidth={2} dot={false} />
-            <Line type="monotone" dataKey="energy" stroke="#fbbf24" strokeWidth={2} dot={false} />
+            <CartesianGrid stroke={CHART_GRID_STROKE} vertical={false} />
+            <XAxis dataKey="date" tick={CHART_AXIS_TICK} />
+            <YAxis domain={domain} tick={CHART_AXIS_TICK} />
+            <Tooltip contentStyle={CHART_TOOLTIP_STYLE} />
+            <Line type="monotone" dataKey="mood" stroke={CHART_COLORS.nav} strokeWidth={2} dot={false} />
+            <Line type="monotone" dataKey="energy" stroke={CHART_COLORS.followup} strokeWidth={2} dot={false} />
             {showStress && (
-              <Line type="monotone" dataKey="stress" stroke="#f87171" strokeWidth={2} dot={false} />
+              <Line type="monotone" dataKey="stress" stroke={CHART_COLORS.risk} strokeWidth={2} dot={false} />
             )}
           </LineChart>
         </ResponsiveContainer>

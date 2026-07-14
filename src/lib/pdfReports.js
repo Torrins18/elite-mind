@@ -24,7 +24,7 @@ export function downloadPrintReport({ title, subtitle, rows, filename = "informe
     dt { font-size: 0.78rem; color: #666; }
     dd { margin: 0; font-weight: 600; font-size: 0.95rem; }
     p { margin: 0; line-height: 1.55; font-size: 0.92rem; }
-    .insight { padding: 12px 14px; border-left: 3px solid #0891b2; background: #f8fafc; border-radius: 0 8px 8px 0; }
+    .insight { padding: 12px 14px; border-left: 3px solid #2563eb; background: #f8fafc; border-radius: 0 8px 8px 0; }
     @media print { body { padding: 16px; } }
   </style>
 </head>

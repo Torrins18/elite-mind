@@ -7,33 +7,39 @@ import {
   ResponsiveContainer,
   CartesianGrid,
 } from "recharts"
+import {
+  CHART_AXIS_TICK,
+  CHART_COLORS,
+  CHART_GRID_STROKE,
+  CHART_TOOLTIP_STYLE,
+} from "../lib/chartColors"
 import { useTranslation } from "../i18n/LanguageContext"
 import { formatDate } from "../lib/dates"
 import { Card } from "./ui/Card"
 
 const CHART_LINES = {
   coach: [
-    { key: "mental", stroke: "#22d3ee", labelKey: "psychologist.eorIndexMental", dot: "cyan" },
+    { key: "mental", stroke: CHART_COLORS.nav, labelKey: "psychologist.eorIndexMental", dot: "cyan" },
     {
       key: "wellbeing",
-      stroke: "#34d399",
+      stroke: CHART_COLORS.healthy,
       labelKey: "psychologist.eorIndexWellbeing",
       dot: "green",
     },
-    { key: "social", stroke: "#fbbf24", labelKey: "psychologist.eorIndexSocial", dot: "gold" },
+    { key: "social", stroke: CHART_COLORS.followup, labelKey: "psychologist.eorIndexSocial", dot: "gold" },
   ],
   psychologist: [
-    { key: "mental", stroke: "#22d3ee", labelKey: "psychologist.eorIndexMental", dot: "cyan" },
+    { key: "mental", stroke: CHART_COLORS.nav, labelKey: "psychologist.eorIndexMental", dot: "cyan" },
     {
       key: "wellbeing",
-      stroke: "#34d399",
+      stroke: CHART_COLORS.healthy,
       labelKey: "psychologist.eorIndexWellbeing",
       dot: "green",
     },
-    { key: "social", stroke: "#fbbf24", labelKey: "psychologist.eorIndexSocial", dot: "gold" },
+    { key: "social", stroke: CHART_COLORS.followup, labelKey: "psychologist.eorIndexSocial", dot: "gold" },
     {
       key: "coachCommunication",
-      stroke: "#f87171",
+      stroke: CHART_COLORS.risk,
       labelKey: "checkIn.eorCoachCommunication",
       dot: "red",
     },
@@ -77,16 +83,10 @@ export function WeeklyEorChart({
       <div className="chart-wrap chart-wrap--responsive chart-wrap--tall">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={data}>
-            <CartesianGrid stroke="rgba(148,163,184,0.12)" vertical={false} />
-            <XAxis dataKey="date" tick={{ fill: "#94a3b8", fontSize: 12 }} />
-            <YAxis domain={[0, 10]} tick={{ fill: "#94a3b8", fontSize: 12 }} />
-            <Tooltip
-              contentStyle={{
-                background: "#0f172a",
-                border: "1px solid #334155",
-                borderRadius: 12,
-              }}
-            />
+            <CartesianGrid stroke={CHART_GRID_STROKE} vertical={false} />
+            <XAxis dataKey="date" tick={CHART_AXIS_TICK} />
+            <YAxis domain={[0, 10]} tick={CHART_AXIS_TICK} />
+            <Tooltip contentStyle={CHART_TOOLTIP_STYLE} />
             {lines.map((line) => (
               <Line
                 key={line.key}
