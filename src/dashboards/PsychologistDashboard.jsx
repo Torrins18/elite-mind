@@ -33,6 +33,7 @@ import {
   syncAndLoadPsychologistAlerts,
 } from "../lib/alertPersistence"
 import { filterActiveTeams } from "../lib/teams"
+import { AthleteClinicalFile } from "../components/psychologist/AthleteClinicalFile"
 import { useTeamInsight } from "../hooks/useTeamInsight"
 import { EorIndexSummary } from "../components/EorIndexSummary"
 import { WeeklyEorChart } from "../components/WeeklyEorTeamChart"
