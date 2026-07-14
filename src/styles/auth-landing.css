@@ -33,9 +33,15 @@
   z-index: 2;
   display: grid;
   grid-template-columns: minmax(0, 1.65fr) minmax(320px, 1fr);
+  align-items: center;
+  gap: clamp(16px, 3vw, 40px);
+  width: 100%;
+  max-width: 1440px;
   min-height: 100vh;
   min-height: 100dvh;
-  align-items: stretch;
+  margin: 0 auto;
+  padding: 0 clamp(20px, 4vw, 48px);
+  box-sizing: border-box;
 }
 
 .auth-landing__media-wrap {
@@ -114,10 +120,11 @@
   z-index: 2;
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
+  justify-content: center;
+  align-self: center;
   width: 100%;
   max-width: 680px;
-  padding: 56px clamp(28px, 5vw, 72px) 64px;
+  padding: 88px clamp(8px, 2vw, 32px) clamp(32px, 4vw, 48px);
   animation: auth-fade-up 0.9s ease both;
 }
 
@@ -133,7 +140,7 @@
 }
 
 .auth-landing__hero-logo {
-  margin-bottom: 24px;
+  margin-bottom: 20px;
 }
 
 .brand-logo--hero-dark {
@@ -144,12 +151,11 @@
 
 .brand-logo__hero-image {
   display: block;
-  width: min(300px, 82vw);
+  width: min(240px, 68vw);
   max-width: 100%;
   height: auto;
   object-fit: contain;
-  /* Elimina el fons fosc del PNG i deixa visible el logo original */
-  mix-blend-mode: screen;
+  mix-blend-mode: lighten;
   filter: drop-shadow(0 6px 28px rgba(0, 0, 0, 0.45));
 }
 
@@ -280,7 +286,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: clamp(32px, 5vw, 56px) clamp(24px, 4vw, 48px) clamp(32px, 5vw, 56px) clamp(16px, 2vw, 32px);
+  align-self: center;
+  padding: 88px 0 clamp(32px, 4vw, 48px);
   background: transparent;
   animation: auth-fade-up 0.9s ease 0.15s both;
 }
@@ -363,20 +370,28 @@
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
+.auth-landing .lang-switcher {
+  background: rgba(15, 23, 42, 0.62);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
 .auth-landing .lang-switcher__btn {
-  color: rgba(255, 255, 255, 0.65);
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.78);
+  background: transparent;
+  border: none;
 }
 
 .auth-landing .lang-switcher__btn:hover {
   color: #ffffff;
-  background: rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.12);
 }
 
 .auth-landing .lang-switcher__btn.active {
   color: #ffffff;
-  background: rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.22);
 }
 
 .auth-landing__form {
@@ -682,11 +697,13 @@
   .auth-landing__intro-grid {
     grid-template-columns: 1fr;
     min-height: auto;
+    padding: 0;
   }
 
   .auth-landing__hero-content {
     min-height: min(68vh, 620px);
     max-width: none;
+    justify-content: flex-end;
     padding: 96px 24px 36px;
   }
 
@@ -696,6 +713,7 @@
 
   .auth-landing__panel {
     margin-top: -20px;
+    align-self: stretch;
     padding: 0 20px 52px;
   }
 
