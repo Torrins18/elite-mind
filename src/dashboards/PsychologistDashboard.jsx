@@ -29,7 +29,7 @@ import {
   syncAndLoadPsychologistAlerts,
 } from "../lib/alertPersistence"
 import { filterActiveTeams } from "../lib/teams"
-import { PsychologistAthleteDetail } from "../components/psychologist/PsychologistAthleteDetail"
+import { AthleteClinicalFile } from "../components/psychologist/AthleteClinicalFile"
 import { EorIndexSummary } from "../components/EorIndexSummary"
 import { WeeklyEorChart } from "../components/WeeklyEorTeamChart"
 
@@ -169,6 +169,11 @@ export function PsychologistDashboard({ profile }) {
   const selectedAssessment = useMemo(
     () => assessments.find((item) => item.athlete_id === selectedId) ?? null,
     [assessments, selectedId]
+  )
+
+  const selectedAthleteAlerts = useMemo(
+    () => psychologistAlerts.filter((alert) => alert.athleteId === selectedId),
+    [psychologistAlerts, selectedId]
   )
 
   const {
@@ -403,7 +408,7 @@ export function PsychologistDashboard({ profile }) {
 
               <div className="psych-detail">
                 {selected ? (
-                  <PsychologistAthleteDetail
+                  <AthleteClinicalFile
                     athlete={selected}
                     teamName={teamMap[activeTab]}
                     checkIns={athleteCheckIns}
@@ -411,6 +416,9 @@ export function PsychologistDashboard({ profile }) {
                     insight={athleteInsight}
                     insightLoading={athleteInsightLoading}
                     insightSource={athleteInsightSource}
+                    psychologistId={profile.id}
+                    athleteAlerts={selectedAthleteAlerts}
+                    onAlertsChange={refreshAlerts}
                     t={t}
                   />
                 ) : (

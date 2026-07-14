@@ -17,7 +17,8 @@ Si la pàgina no carrega o falten funcions, executa **tot** això al **SQL Edito
 | 11 | `weekly-eor-checkins.sql` (revisió setmanal EOR) |
 | 12 | `check-ins-nullable-daily.sql` (EOR setmanal sense estat diari obligatori) |
 | 13 | `psychologist-alerts-soft-delete.sql` (alertes persistents + soft delete equips) |
-| 14 | `seed-demo.sql` (opcional) |
+| 14 | `psychologist-notes.sql` (notes clíniques privades del psicòleg) |
+| 15 | `seed-demo.sql` (opcional) |
 
 Després de cada fitxer ha de sortir **Success**.
 

@@ -1187,6 +1187,255 @@ input:focus, textarea:focus {
   text-align: center;
 }
 
+.athlete-clinical-file__team {
+  margin: -8px 0 16px;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.athlete-file-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 20px;
+  padding: 4px;
+  border-radius: 12px;
+  background: rgba(148, 163, 184, 0.06);
+  border: 1px solid var(--border);
+}
+
+.athlete-file-tabs__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.athlete-file-tabs__btn.active {
+  color: var(--text);
+  background: rgba(34, 211, 238, 0.1);
+  border-color: rgba(34, 211, 238, 0.2);
+}
+
+.athlete-file-tabs__badge {
+  min-width: 1.2rem;
+  height: 1.2rem;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: rgba(248, 113, 113, 0.2);
+  color: var(--danger);
+  font-size: 0.7rem;
+  line-height: 1.2rem;
+  text-align: center;
+}
+
+.athlete-file-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.athlete-file-profile {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 16px;
+  margin: 0;
+}
+
+.athlete-file-profile div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.athlete-file-profile dt {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.athlete-file-profile dd {
+  margin: 0;
+  font-weight: 600;
+}
+
+.athlete-file-section + .athlete-file-section {
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+}
+
+.athlete-file-section h3 {
+  margin: 0 0 12px;
+  font-size: 1rem;
+}
+
+.athlete-file-reviews {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.athlete-file-reviews__toggle {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--bg-elevated);
+  color: var(--text);
+  font: inherit;
+  cursor: pointer;
+  text-align: left;
+}
+
+.athlete-file-reviews__detail {
+  padding: 12px 4px 4px;
+}
+
+.athlete-file-timeline {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.athlete-file-timeline__item {
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--bg-elevated);
+}
+
+.athlete-file-timeline__item header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.athlete-file-timeline__item time {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+.athlete-file-timeline__item p {
+  margin: 0 0 8px;
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+
+.athlete-file-timeline__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.athlete-file-notes__form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  margin-bottom: 20px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: rgba(148, 163, 184, 0.04);
+}
+
+.athlete-file-notes__form h3 {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.athlete-file-notes__form .field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.athlete-file-notes__form .field span {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.athlete-file-notes__form input,
+.athlete-file-notes__form textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg);
+  color: var(--text);
+  font: inherit;
+}
+
+.athlete-file-notes__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.athlete-file-notes__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.athlete-file-notes__item {
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--bg-elevated);
+}
+
+.athlete-file-notes__item header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.athlete-file-notes__item header time {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.athlete-file-notes__item p {
+  margin: 0 0 6px;
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
+.athlete-file-notes__item-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+}
+
 .team-overview-grid {
   list-style: none;
   margin: 0;
