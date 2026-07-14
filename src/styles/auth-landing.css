@@ -140,11 +140,7 @@
 }
 
 .auth-landing__hero-logo {
-  margin-bottom: 18px;
-  padding: 10px 16px;
-  border-radius: 14px;
-  background: rgba(255, 255, 255, 0.94);
-  box-shadow: 0 6px 28px rgba(0, 0, 0, 0.18);
+  margin-bottom: 20px;
 }
 
 .auth-landing__eyebrow {
@@ -739,8 +735,9 @@
     padding-bottom: 28px;
   }
 
-  .brand-logo--hero {
-    height: 58px;
+  .brand-logo--hero .brand-logo__mark {
+    width: 60px;
+    height: 60px;
   }
 
   .auth-landing__headline {

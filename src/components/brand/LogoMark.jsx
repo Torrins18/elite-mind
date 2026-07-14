@@ -1,35 +1,35 @@
 import { useId } from "react"
 
-export const BRAND_COLORS = {
-  grey: "#3A3A3A",
+export const BRAND = {
   red: "#E31E24",
+  grey: "#3A3A3A",
   muted: "#707070",
 }
 
 const PALETTES = {
-  brand: {
-    left: BRAND_COLORS.grey,
-    right: BRAND_COLORS.red,
-    athlete: BRAND_COLORS.red,
-    brain: BRAND_COLORS.grey,
-    strokeWidth: 2.5,
-  },
   light: {
-    left: "rgba(255,255,255,0.88)",
-    right: BRAND_COLORS.red,
-    athlete: BRAND_COLORS.red,
-    brain: "rgba(255,255,255,0.88)",
-    strokeWidth: 2.5,
+    leftArc: BRAND.grey,
+    rightArc: BRAND.red,
+    brain: BRAND.grey,
+    athlete: BRAND.red,
+    strokeWidth: 2.8,
+  },
+  dark: {
+    leftArc: "rgba(255,255,255,0.9)",
+    rightArc: BRAND.red,
+    brain: "rgba(255,255,255,0.9)",
+    athlete: BRAND.red,
+    strokeWidth: 2.8,
   },
 }
 
 /** Zona Mental+ emblem — brain + athlete */
-export function LogoMark({ size = 48, className = "", title = "Zona Mental+", palette = "brand" }) {
+export function LogoMark({ size = 48, className = "", title = "Zona Mental+", surface = "light" }) {
   const uid = useId().replace(/:/g, "")
   const leftClip = `zm-left-${uid}`
   const rightClip = `zm-right-${uid}`
-  const colors = PALETTES[palette] || PALETTES.brand
-  const strokeW = colors.strokeWidth ?? 2.5
+  const colors = PALETTES[surface] || PALETTES.light
+  const strokeW = colors.strokeWidth
 
   return (
     <svg
@@ -55,13 +55,13 @@ export function LogoMark({ size = 48, className = "", title = "Zona Mental+", pa
 
       <path
         d="M 50 6 A 44 44 0 0 0 50 94"
-        stroke={colors.left}
+        stroke={colors.leftArc}
         strokeWidth={strokeW}
         strokeLinecap="round"
       />
       <path
         d="M 50 6 A 44 44 0 0 1 50 94"
-        stroke={colors.right}
+        stroke={colors.rightArc}
         strokeWidth={strokeW}
         strokeLinecap="round"
       />
