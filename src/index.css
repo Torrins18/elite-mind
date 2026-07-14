@@ -257,9 +257,20 @@ select:focus {
 }
 
 .brand-logo--bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
   height: 46px;
-  width: auto;
-  max-width: min(220px, 42vw);
+  max-width: min(260px, 48vw);
+}
+
+.brand-logo--hero,
+.brand-logo--compact {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 14px;
 }
 
 .brand-logo--hero {
@@ -269,6 +280,90 @@ select:focus {
 
 .brand-logo--compact {
   width: min(200px, 72vw);
+  gap: 12px;
+}
+
+.brand-logo__mark {
+  flex-shrink: 0;
+}
+
+.brand-logo__text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.brand-logo--bar .brand-logo__text {
+  align-items: flex-start;
+  gap: 0;
+}
+
+.brand-logo__title {
+  margin: 0;
+  font-family: "Inter", "Manrope", system-ui, sans-serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  line-height: 1.1;
+  white-space: nowrap;
+}
+
+.brand-logo--hero .brand-logo__title {
+  font-size: 1.65rem;
+}
+
+.brand-logo--compact .brand-logo__title {
+  font-size: 1.35rem;
+}
+
+.brand-logo__zona {
+  color: var(--text-primary);
+}
+
+.brand-logo__accent {
+  color: var(--color-healthy);
+}
+
+.brand-logo__subtitle-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  max-width: 280px;
+}
+
+.brand-logo__rule {
+  flex: 1;
+  height: 1px;
+  border-radius: 1px;
+}
+
+.brand-logo__rule--blue {
+  background: linear-gradient(90deg, transparent, var(--color-nav));
+}
+
+.brand-logo__rule--green {
+  background: linear-gradient(90deg, var(--color-healthy), transparent);
+}
+
+.brand-logo__subtitle {
+  flex-shrink: 0;
+  font-size: 0.62rem;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.brand-logo__tagline {
+  margin: 0;
+  font-size: 0.62rem;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-nav);
 }
 
 .auth-panel__tagline {
