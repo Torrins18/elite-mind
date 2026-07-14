@@ -120,14 +120,6 @@ export function AuthHeroContent() {
         <span className="auth-landing__headline-accent">{t("authLanding.headlineLine2")}</span>
       </h1>
       <p className="auth-landing__supporting">{t("authLanding.supporting")}</p>
-      <ul className="auth-landing__values">
-        {valueProps.map((item) => (
-          <li key={item}>
-            <HeroCheckIcon size={15} />
-            <span>{item}</span>
-          </li>
-        ))}
-      </ul>
       <div className="auth-landing__hero-actions">
         <button
           type="button"
@@ -137,6 +129,14 @@ export function AuthHeroContent() {
           {t("authLanding.ctaDiscoverBrand")}
         </button>
       </div>
+      <ul className="auth-landing__values">
+        {valueProps.map((item) => (
+          <li key={item}>
+            <HeroCheckIcon size={15} />
+            <span>{item}</span>
+          </li>
+        ))}
+      </ul>
     </div>
   )
 }
