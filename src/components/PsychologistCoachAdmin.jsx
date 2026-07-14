@@ -6,8 +6,9 @@ import { Button } from "./ui/Button"
 import { TeamJoinLink } from "./TeamJoinLink"
 import { filterActiveTeams } from "../lib/teams"
 import { PsychologistResourceLibrary } from "./psychologist/PsychologistResourceLibrary"
+import { ClubManagement } from "./psychologist/ClubManagement"
 
-export function PsychologistCoachAdmin({ psychologistId, onPreviewCoachTeam }) {
+export function PsychologistCoachAdmin({ psychologistId, onPreviewCoachTeam, athletes = [], checkIns = [] }) {
   const { t } = useTranslation()
   const [pendingCoaches, setPendingCoaches] = useState([])
   const [approvedCoaches, setApprovedCoaches] = useState([])
@@ -61,7 +62,7 @@ export function PsychologistCoachAdmin({ psychologistId, onPreviewCoachTeam }) {
 
     const { data: teamList } = await supabase
       .from("teams")
-      .select("id, name, join_token, deleted_at")
+      .select("id, name, join_token, deleted_at, club_id")
       .order("name")
 
     const { data: inv } = await supabase
@@ -362,6 +363,14 @@ export function PsychologistCoachAdmin({ psychologistId, onPreviewCoachTeam }) {
           </ul>
         )}
       </Card>
+
+      <ClubManagement
+        psychologistId={psychologistId}
+        teams={activeTeams}
+        athletes={athletes}
+        checkIns={checkIns}
+        onUpdated={load}
+      />
 
       <PsychologistResourceLibrary psychologistId={psychologistId} />
 

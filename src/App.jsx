@@ -18,6 +18,7 @@ import { InitialAssessment } from "./components/InitialAssessment"
 import { AthleteDashboard } from "./dashboards/AthleteDashboard"
 import { CoachDashboard } from "./dashboards/CoachDashboard"
 import { PsychologistDashboard } from "./dashboards/PsychologistDashboard"
+import { DirectorDashboard } from "./dashboards/DirectorDashboard"
 import {
   clearAuthCallbackFromUrl,
   hasAuthCallbackInUrl,
@@ -245,6 +246,8 @@ function App() {
       {profile?.role === "psychologist" && (
         <PsychologistDashboard profile={profile} />
       )}
+
+      {profile?.role === "director" && <DirectorDashboard profile={profile} />}
     </Layout>
   )
 }

@@ -2,6 +2,10 @@ import { useCallback, useEffect, useMemo, useState } from "react"
 import { supabase } from "../supabase"
 import { useTranslation } from "../i18n/LanguageContext"
 import { buildCheckInsExport, downloadCsv } from "../lib/export"
+import {
+  buildTeamReportSections,
+  downloadPrintReport,
+} from "../lib/pdfReports"
 import { Card } from "../components/ui/Card"
 import { StatCard } from "../components/ui/StatCard"
 import { LoadingSpinner } from "../components/ui/LoadingSpinner"
@@ -61,7 +65,7 @@ export function PsychologistDashboard({ profile }) {
       messagesRes,
     ] = await Promise.all([
       supabase.from("profiles").select("*").eq("role", "athlete").order("name"),
-      supabase.from("teams").select("id, name, deleted_at").is("deleted_at", null).order("name"),
+      supabase.from("teams").select("id, name, deleted_at, club_id").is("deleted_at", null).order("name"),
       supabase
         .from("check_ins")
         .select("*")
@@ -263,6 +267,21 @@ export function PsychologistDashboard({ profile }) {
     downloadCsv(`zona-mental-checkins-${suffix}.csv`, rows)
   }
 
+  const exportTeamPdf = () => {
+    if (!activeTeamSummary) return
+    downloadPrintReport({
+      title: `${teamMap[activeTab]} — ${t("reports.teamReport")}`,
+      subtitle: t("reports.monthlySubtitle"),
+      rows: buildTeamReportSections({
+        teamName: teamMap[activeTab],
+        summary: activeTeamSummary.summary,
+        eorSnapshot: activeTeamSummary.eorSnapshot,
+        t,
+      }),
+      filename: `equip-${teamMap[activeTab]}`,
+    })
+  }
+
   if (loading) return <LoadingSpinner label={t("psychologist.loading")} />
 
   const inboxCount =
@@ -329,12 +348,22 @@ export function PsychologistDashboard({ profile }) {
           <PsychologistCoachAdmin
             psychologistId={profile.id}
             onPreviewCoachTeam={setCoachPreviewTeamId}
+            athletes={athletes}
+            checkIns={checkIns}
           />
         </>
       ) : (
         activeTeamSummary && (
           <>
-            <Card title={teamMap[activeTab]} subtitle={t("psychologist.teamPanelSubtitle")}>
+            <Card
+              title={teamMap[activeTab]}
+              subtitle={t("psychologist.teamPanelSubtitle")}
+              action={
+                <Button variant="ghost" onClick={exportTeamPdf}>
+                  {t("reports.exportPdf")}
+                </Button>
+              }
+            >
               <InsightCard
                 title={t("insights.orgTitle")}
                 insight={activeTeamSummary.insight}

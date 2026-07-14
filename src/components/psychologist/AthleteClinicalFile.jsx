@@ -13,6 +13,10 @@ import { getLatestWeeklyReflection, hasWeeklyReflection } from "../../lib/weekly
 import { calculateRiskLevel } from "../../lib/risk"
 import { consentStatus, isAdultInSpain } from "../../lib/age"
 import { dismissPsychologistAlert } from "../../lib/alertPersistence"
+import {
+  buildAthleteReportSections,
+  downloadPrintReport,
+} from "../../lib/pdfReports"
 
 const TABS = [
   "profile",
@@ -137,6 +141,21 @@ export function AthleteClinicalFile({
 
   const visibleAlerts = athleteAlerts.length ? athleteAlerts : alertHistory.filter((a) => a.status !== "dismissed")
 
+  const exportAthleteReport = () => {
+    downloadPrintReport({
+      title: `${athlete.name} — ${t("reports.athleteReport")}`,
+      subtitle: t("reports.individualSubtitle"),
+      rows: buildAthleteReportSections({
+        athlete,
+        teamName,
+        risk,
+        latestWeekly,
+        t,
+      }),
+      filename: `esportista-${athlete.name}`,
+    })
+  }
+
   return (
     <Card
       title={athlete.name}
@@ -170,7 +189,13 @@ export function AthleteClinicalFile({
 
       <div className="athlete-file-panel">
         {activeTab === "profile" && (
-          <ProfileTab athlete={athlete} teamName={teamName} risk={risk} t={t} />
+          <ProfileTab
+            athlete={athlete}
+            teamName={teamName}
+            risk={risk}
+            t={t}
+            onExportReport={exportAthleteReport}
+          />
         )}
 
         {activeTab === "onboarding" && (
@@ -256,9 +281,15 @@ export function AthleteClinicalFile({
   )
 }
 
-function ProfileTab({ athlete, teamName, risk, t }) {
+function ProfileTab({ athlete, teamName, risk, t, onExportReport }) {
   return (
-    <dl className="athlete-file-profile">
+    <>
+      <div className="athlete-file-profile__actions">
+        <Button variant="ghost" onClick={onExportReport}>
+          {t("reports.exportPdf")}
+        </Button>
+      </div>
+      <dl className="athlete-file-profile">
       <div>
         <dt>{t("athleteFile.profileTeam")}</dt>
         <dd>{teamName || t("risk.noData")}</dd>
@@ -291,7 +322,8 @@ function ProfileTab({ athlete, teamName, risk, t }) {
         <dt>{t("athleteFile.profileRegistered")}</dt>
         <dd>{new Date(athlete.created_at).toLocaleDateString()}</dd>
       </div>
-    </dl>
+      </dl>
+    </>
   )
 }
 
