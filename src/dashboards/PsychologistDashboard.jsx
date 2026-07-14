@@ -36,6 +36,8 @@ import { filterActiveTeams } from "../lib/teams"
 import { AthleteClinicalFile } from "../components/psychologist/AthleteClinicalFile"
 import { EorIndexSummary } from "../components/EorIndexSummary"
 import { WeeklyEorChart } from "../components/WeeklyEorTeamChart"
+import { ComplianceTrendChart } from "../components/ComplianceTrendChart"
+import { buildWeeklyComplianceTrend, currentWeekCompliance } from "../lib/complianceTrend"
 
 const OVERVIEW_TAB = "overview"
 
@@ -81,6 +83,7 @@ export function PsychologistDashboard({ profile }) {
         .from("psychologist_messages")
         .select("*")
         .eq("status", "unread")
+        .eq("sender_role", "athlete")
         .order("created_at", { ascending: false }),
     ])
 
@@ -148,6 +151,14 @@ export function PsychologistDashboard({ profile }) {
   const teamWeeklyTrend = useMemo(
     () => aggregateWeeklyEorTrend(tabCheckIns),
     [tabCheckIns]
+  )
+  const teamComplianceTrend = useMemo(
+    () => buildWeeklyComplianceTrend(tabCheckIns, tabAthletes.map((a) => a.id)),
+    [tabCheckIns, tabAthletes]
+  )
+  const teamComplianceNow = useMemo(
+    () => currentWeekCompliance(tabCheckIns, tabAthletes.map((a) => a.id)),
+    [tabCheckIns, tabAthletes]
   )
   const teamWeeklySnapshot = useMemo(
     () => getLatestWeeklyTeamSnapshot(teamWeeklyTrend),
@@ -377,9 +388,15 @@ export function PsychologistDashboard({ profile }) {
               />
               <StatCard
                 label={t("coach.checkedInThisWeek")}
-                value={activeTeamSummary.summary.checkedInThisWeek}
+                value={t("psychologist.complianceRatio", {
+                  done: teamComplianceNow.done,
+                  total: teamComplianceNow.total,
+                  pct: teamComplianceNow.pct,
+                })}
               />
             </div>
+
+            <ComplianceTrendChart trend={teamComplianceTrend} />
 
             <Card title={t("psychologist.teamEorTitle")} subtitle={t("psychologist.teamEorSubtitle")}>
               <EorIndexSummary indexes={teamWeeklySnapshot} variant="psychologist" t={t} />

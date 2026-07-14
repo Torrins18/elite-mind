@@ -17,9 +17,10 @@ import {
   getLatestWeeklyTeamSnapshot,
 } from "../lib/coachTeamAnalytics"
 import { getLatestWeeklyReflection } from "../lib/weeklyEor"
+import { ComplianceTrendChart } from "../components/ComplianceTrendChart"
+import { buildWeeklyComplianceTrend, currentWeekCompliance } from "../lib/complianceTrend"
 import {
   CHECK_IN_WINDOW_DAYS,
-  countAthletesActiveThisWeek,
   isDateWithinLastDays,
 } from "../lib/dates"
 
@@ -119,6 +120,16 @@ export function CoachDashboard({ profile, teamName }) {
     [weeklyTrend, athletes.length, t]
   )
 
+  const athleteIds = useMemo(() => athletes.map((a) => a.id), [athletes])
+  const complianceNow = useMemo(
+    () => currentWeekCompliance(checkIns, athleteIds),
+    [checkIns, athleteIds]
+  )
+  const complianceTrend = useMemo(
+    () => buildWeeklyComplianceTrend(checkIns, athleteIds),
+    [checkIns, athleteIds]
+  )
+
   const athleteRiskCounts = useMemo(
     () =>
       latestByAthlete.reduce(
@@ -134,8 +145,6 @@ export function CoachDashboard({ profile, teamName }) {
 
   if (loading) return <LoadingSpinner label={t("coach.loading")} />
 
-  const athleteIds = athletes.map((a) => a.id)
-  const activeThisWeek = countAthletesActiveThisWeek(checkIns, athleteIds)
   const inactiveCount = latestByAthlete.filter(
     (x) => !isDateWithinLastDays(x.latest?.check_in_date, CHECK_IN_WINDOW_DAYS)
   ).length
@@ -159,10 +168,16 @@ export function CoachDashboard({ profile, teamName }) {
         <StatCard label={t("coach.athletes")} value={athletes.length} />
         <StatCard
           label={t("coach.checkedInThisWeek")}
-          value={`${activeThisWeek}/${athletes.length}`}
+          value={t("psychologist.complianceRatio", {
+            done: complianceNow.done,
+            total: complianceNow.total,
+            pct: complianceNow.pct,
+          })}
           hint={t("coach.weeklyCompliance")}
         />
       </div>
+
+      <ComplianceTrendChart trend={complianceTrend} />
 
       <Card title={t("coach.eorTeamTitle")} subtitle={t("coach.eorTeamSubtitle")}>
         <EorIndexSummary indexes={latestWeeklySnapshot} variant="coach" t={t} />
@@ -188,7 +203,11 @@ export function CoachDashboard({ profile, teamName }) {
             <span>{t("coach.summaryCompliance")}</span>
             <strong>
               {athletes.length
-                ? `${Math.round((activeThisWeek / athletes.length) * 100)}%`
+                ? t("psychologist.complianceRatio", {
+                    done: complianceNow.done,
+                    total: complianceNow.total,
+                    pct: complianceNow.pct,
+                  })
                 : "—"}
             </strong>
           </li>

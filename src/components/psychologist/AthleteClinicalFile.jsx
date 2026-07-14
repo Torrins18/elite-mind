@@ -9,6 +9,7 @@ import { WeeklyEorPanel } from "../WeeklyEorPanel"
 import { AthleteFileNotes } from "./AthleteFileNotes"
 import { AthleteFileSessions } from "./AthleteFileSessions"
 import { AthleteFileDocuments } from "./AthleteFileDocuments"
+import { AthleteFileMessages } from "./AthleteFileMessages"
 import { AthleteFilePlan } from "./AthleteFilePlan"
 import { aggregateWeeklyEorTrend } from "../../lib/coachTeamAnalytics"
 import { getLatestWeeklyReflection, hasWeeklyReflection } from "../../lib/weeklyEor"
@@ -134,15 +135,10 @@ export function AthleteClinicalFile({
     loadRecord()
   }, [athlete?.id, loadRecord])
 
-  const updateAppointmentStatus = async (id, status) => {
-    const { error } = await supabase.from("appointment_requests").update({ status }).eq("id", id)
-    if (!error) await loadRecord()
-  }
-
-  const markMessageRead = async (id) => {
+  const updateAppointmentStatus = async (id, status, extra = {}) => {
     const { error } = await supabase
-      .from("psychologist_messages")
-      .update({ status: "read" })
+      .from("appointment_requests")
+      .update({ status, ...extra })
       .eq("id", id)
     if (!error) await loadRecord()
   }
@@ -306,12 +302,17 @@ export function AthleteClinicalFile({
         )}
 
         {activeTab === "messages" && (
-          <MessagesTab
-            messages={messages}
-            loading={recordLoading}
-            onMarkRead={markMessageRead}
-            t={t}
-          />
+          recordLoading ? (
+            <p className="empty-state">{t("athleteFile.loading")}</p>
+          ) : (
+            <AthleteFileMessages
+              athleteId={athlete.id}
+              psychologistId={psychologistId}
+              messages={messages}
+              onChange={loadRecord}
+              t={t}
+            />
+          )
         )}
 
         {activeTab === "alerts" && (
@@ -501,6 +502,35 @@ function ChartsTab({ insight, insightLoading, insightSource, weeklyTrend, t }) {
 }
 
 function AppointmentsTab({ appointments, loading, onUpdateStatus, t }) {
+  const [schedulingId, setSchedulingId] = useState(null)
+  const [scheduleForm, setScheduleForm] = useState({
+    scheduled_at: "",
+    duration_minutes: 30,
+    psychologist_reply: "",
+  })
+
+  const openSchedule = (item) => {
+    setSchedulingId(item.id)
+    setScheduleForm({
+      scheduled_at: item.scheduled_at
+        ? new Date(item.scheduled_at).toISOString().slice(0, 16)
+        : "",
+      duration_minutes: item.duration_minutes || 30,
+      psychologist_reply: item.psychologist_reply || "",
+    })
+  }
+
+  const confirmSchedule = async (event) => {
+    event.preventDefault()
+    if (!scheduleForm.scheduled_at) return
+    await onUpdateStatus(schedulingId, "scheduled", {
+      scheduled_at: new Date(scheduleForm.scheduled_at).toISOString(),
+      duration_minutes: Number(scheduleForm.duration_minutes) || 30,
+      psychologist_reply: scheduleForm.psychologist_reply.trim(),
+    })
+    setSchedulingId(null)
+  }
+
   if (loading) return <p className="empty-state">{t("athleteFile.loading")}</p>
   if (!appointments.length) return <p className="empty-state">{t("athleteFile.noAppointments")}</p>
 
@@ -513,49 +543,86 @@ function AppointmentsTab({ appointments, loading, onUpdateStatus, t }) {
             <Badge variant={appointmentVariant(item.status)}>{t(`athleteFile.appointmentStatus.${item.status}`)}</Badge>
           </header>
           <p>{item.message || t("psychologist.appointmentNoMessage")}</p>
-          {item.status === "pending" && (
-            <div className="athlete-file-timeline__actions">
-              <Button variant="ghost" onClick={() => onUpdateStatus(item.id, "scheduled")}>
-                {t("athleteFile.markScheduled")}
-              </Button>
-              <Button variant="ghost" onClick={() => onUpdateStatus(item.id, "completed")}>
-                {t("athleteFile.markCompleted")}
-              </Button>
-              <Button variant="ghost" className="btn--danger-text" onClick={() => onUpdateStatus(item.id, "cancelled")}>
-                {t("athleteFile.markCancelled")}
-              </Button>
-            </div>
+          {item.scheduled_at && (
+            <p>
+              <em>{t("athleteFile.appointments.scheduledFor")}:</em>{" "}
+              {new Date(item.scheduled_at).toLocaleString()} · {item.duration_minutes || 30} min
+            </p>
           )}
-          {item.status === "scheduled" && (
-            <Button variant="ghost" onClick={() => onUpdateStatus(item.id, "completed")}>
-              {t("athleteFile.markCompleted")}
-            </Button>
+          {item.psychologist_reply && (
+            <p>
+              <em>{t("athleteFile.appointments.reply")}:</em> {item.psychologist_reply}
+            </p>
           )}
-        </li>
-      ))}
-    </ul>
-  )
-}
 
-function MessagesTab({ messages, loading, onMarkRead, t }) {
-  if (loading) return <p className="empty-state">{t("athleteFile.loading")}</p>
-  if (!messages.length) return <p className="empty-state">{t("athleteFile.noMessages")}</p>
-
-  return (
-    <ul className="athlete-file-timeline">
-      {messages.map((item) => (
-        <li key={item.id} className="athlete-file-timeline__item">
-          <header>
-            <time>{new Date(item.created_at).toLocaleString()}</time>
-            <Badge variant={item.status === "unread" ? "high" : "default"}>
-              {t(`athleteFile.messageStatus.${item.status}`)}
-            </Badge>
-          </header>
-          <p>{item.message}</p>
-          {item.status === "unread" && (
-            <Button variant="ghost" onClick={() => onMarkRead(item.id)}>
-              {t("psychologist.markMessageRead")}
-            </Button>
+          {schedulingId === item.id ? (
+            <form className="athlete-file-notes__form" onSubmit={confirmSchedule}>
+              <label className="field">
+                <span>{t("athleteFile.appointments.scheduleDate")}</span>
+                <input
+                  type="datetime-local"
+                  value={scheduleForm.scheduled_at}
+                  onChange={(e) => setScheduleForm((p) => ({ ...p, scheduled_at: e.target.value }))}
+                  required
+                />
+              </label>
+              <label className="field">
+                <span>{t("athleteFile.appointments.duration")}</span>
+                <select
+                  value={scheduleForm.duration_minutes}
+                  onChange={(e) =>
+                    setScheduleForm((p) => ({ ...p, duration_minutes: Number(e.target.value) }))
+                  }
+                >
+                  <option value={30}>30 min</option>
+                  <option value={45}>45 min</option>
+                  <option value={60}>60 min</option>
+                </select>
+              </label>
+              <label className="field">
+                <span>{t("athleteFile.appointments.reply")}</span>
+                <textarea
+                  rows={2}
+                  value={scheduleForm.psychologist_reply}
+                  onChange={(e) =>
+                    setScheduleForm((p) => ({ ...p, psychologist_reply: e.target.value }))
+                  }
+                  placeholder={t("athleteFile.appointments.replyPlaceholder")}
+                />
+              </label>
+              <div className="athlete-file-notes__actions">
+                <Button type="submit">{t("athleteFile.appointments.confirmSchedule")}</Button>
+                <Button type="button" variant="ghost" onClick={() => setSchedulingId(null)}>
+                  {t("common.cancel")}
+                </Button>
+              </div>
+            </form>
+          ) : (
+            <>
+              {item.status === "pending" && (
+                <div className="athlete-file-timeline__actions">
+                  <Button variant="ghost" onClick={() => openSchedule(item)}>
+                    {t("athleteFile.appointments.schedule")}
+                  </Button>
+                  <Button variant="ghost" onClick={() => onUpdateStatus(item.id, "completed")}>
+                    {t("athleteFile.markCompleted")}
+                  </Button>
+                  <Button variant="ghost" className="btn--danger-text" onClick={() => onUpdateStatus(item.id, "cancelled")}>
+                    {t("athleteFile.markCancelled")}
+                  </Button>
+                </div>
+              )}
+              {item.status === "scheduled" && (
+                <div className="athlete-file-timeline__actions">
+                  <Button variant="ghost" onClick={() => openSchedule(item)}>
+                    {t("athleteFile.appointments.reschedule")}
+                  </Button>
+                  <Button variant="ghost" onClick={() => onUpdateStatus(item.id, "completed")}>
+                    {t("athleteFile.markCompleted")}
+                  </Button>
+                </div>
+              )}
+            </>
           )}
         </li>
       ))}

@@ -1468,6 +1468,119 @@ input:focus, textarea:focus {
   color: var(--muted);
 }
 
+.message-thread-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.message-thread {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 420px;
+  overflow-y: auto;
+}
+
+.message-thread--athlete {
+  max-height: 320px;
+}
+
+.message-thread__item {
+  max-width: 88%;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+}
+
+.message-thread__item--athlete {
+  align-self: flex-end;
+  background: rgba(34, 211, 238, 0.08);
+}
+
+.message-thread__item--psychologist {
+  align-self: flex-start;
+  background: rgba(148, 163, 184, 0.08);
+}
+
+.message-thread__item header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.message-thread__item header strong {
+  color: var(--text);
+  font-size: 0.85rem;
+}
+
+.message-thread__item p {
+  margin: 0;
+  line-height: 1.45;
+}
+
+.message-thread__unread {
+  font-size: 0.75rem;
+  color: #f87171;
+}
+
+.message-thread__reply {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border);
+}
+
+.message-thread__reply h3 {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.athlete-contact__history {
+  margin-top: 20px;
+}
+
+.athlete-contact__history h3 {
+  margin: 0 0 10px;
+  font-size: 0.95rem;
+}
+
+.athlete-contact__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.athlete-contact__list li {
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: rgba(148, 163, 184, 0.04);
+}
+
+.athlete-contact__list li span {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.athlete-contact__list li p {
+  margin: 6px 0 0;
+  font-size: 0.9rem;
+}
+
 .athlete-file-plan__goal-form,
 .athlete-file-plan__step-form,
 .resource-library__form {

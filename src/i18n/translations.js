@@ -437,6 +437,20 @@ export const translations = {
       sending: "Enviando...",
       appointmentSent: "Solicitud enviada. El/la psicólogo/a te contactará pronto.",
       messageSent: "Mensaje enviado. El/la psicólogo/a lo revisará en breve.",
+      messagesTitle: "Conversación con el/la psicólogo/a",
+      appointmentsTitle: "Tus consultas",
+      loadingThread: "Cargando conversación...",
+      noMessagesYet: "Aún no hay mensajes. Envía uno si lo necesitas.",
+      fromPsychologist: "Psicólogo/a",
+      fromYou: "Tú",
+      scheduledFor: "Programada",
+    },
+
+    compliance: {
+      trendTitle: "Evolución del cumplimiento",
+      trendSubtitle: "Porcentaje de deportistas con revisión semanal — últimas 8 semanas.",
+      noTrend: "Sin datos de cumplimiento todavía.",
+      tooltipLabel: "Cumplimiento",
     },
 
     checkIn: {
@@ -989,6 +1003,25 @@ export const translations = {
         invalidType: "Tipo de archivo no permitido.",
         deleteConfirm: "¿Eliminar este documento?",
       },
+      messages: {
+        threadLabel: "Conversación clínica",
+        fromPsychologist: "Psicólogo/a",
+        fromAthlete: "Deportista",
+        replyTitle: "Responder al deportista",
+        replyLabel: "Tu respuesta",
+        replyPlaceholder: "Mensaje privado para el/la deportista...",
+        sendReply: "Enviar respuesta",
+      },
+      appointments: {
+        schedule: "Programar consulta",
+        reschedule: "Reprogramar",
+        scheduleDate: "Fecha y hora",
+        duration: "Duración",
+        reply: "Respuesta al deportista",
+        replyPlaceholder: "Ej.: Te confirmo la cita por videollamada...",
+        confirmSchedule: "Confirmar cita",
+        scheduledFor: "Programada",
+      },
     },
 
     resources: {
@@ -1461,6 +1494,20 @@ export const translations = {
       sending: "Enviant...",
       appointmentSent: "Sol·licitud enviada. El/la psicòleg/òloga et contactarà aviat.",
       messageSent: "Missatge enviat. El/la psicòleg/òloga el revisarà aviat.",
+      messagesTitle: "Conversa amb el/la psicòleg/òloga",
+      appointmentsTitle: "Les teves consultes",
+      loadingThread: "Carregant conversa...",
+      noMessagesYet: "Encara no hi ha missatges. Envia'n un si ho necessites.",
+      fromPsychologist: "Psicòleg/òloga",
+      fromYou: "Tu",
+      scheduledFor: "Programada",
+    },
+
+    compliance: {
+      trendTitle: "Evolució del compliment",
+      trendSubtitle: "Percentatge d'esportistes amb revisió setmanal — darreres 8 setmanes.",
+      noTrend: "Sense dades de compliment encara.",
+      tooltipLabel: "Compliment",
     },
 
     checkIn: {
@@ -2014,6 +2061,25 @@ export const translations = {
         tooLarge: "L'arxiu supera el límit de 10 MB.",
         invalidType: "Tipus d'arxiu no permès.",
         deleteConfirm: "Eliminar aquest document?",
+      },
+      messages: {
+        threadLabel: "Conversa clínica",
+        fromPsychologist: "Psicòleg/òloga",
+        fromAthlete: "Esportista",
+        replyTitle: "Respondre a l'esportista",
+        replyLabel: "La teva resposta",
+        replyPlaceholder: "Missatge privat per a l'esportista...",
+        sendReply: "Enviar resposta",
+      },
+      appointments: {
+        schedule: "Programar consulta",
+        reschedule: "Reprogramar",
+        scheduleDate: "Data i hora",
+        duration: "Durada",
+        reply: "Resposta a l'esportista",
+        replyPlaceholder: "Ex.: Et confirmo la cita per videotrucada...",
+        confirmSchedule: "Confirmar cita",
+        scheduledFor: "Programada",
       },
     },
 
