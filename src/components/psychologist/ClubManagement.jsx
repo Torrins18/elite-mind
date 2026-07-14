@@ -7,9 +7,13 @@ import {
   buildClubReportSections,
   downloadPrintReport,
 } from "../../lib/pdfReports"
+import { buildClubInsightContext } from "../../lib/insights/buildClubInsightContext"
+import { fetchTeamInsight } from "../../lib/insights/fetchTeamInsight"
+import { aggregateWeeklyEorTrend } from "../../lib/coachTeamAnalytics"
+import { buildWeeklyComplianceTrend } from "../../lib/complianceTrend"
 
 export function ClubManagement({ psychologistId, teams, athletes, checkIns, onUpdated }) {
-  const { t } = useTranslation()
+  const { t, lang } = useTranslation()
   const [clubs, setClubs] = useState([])
   const [directors, setDirectors] = useState([])
   const [newClubName, setNewClubName] = useState("")
@@ -110,9 +114,29 @@ export function ClubManagement({ psychologistId, teams, athletes, checkIns, onUp
     }
   }
 
-  const exportClubReport = (club) => {
+  const exportClubReport = async (club) => {
     const clubTeams = teams.filter((team) => team.club_id === club.id)
     const clubAthletes = athletes.filter((a) => clubTeams.some((tm) => tm.id === a.team_id))
+    const athleteIds = clubAthletes.map((a) => a.id)
+    const clubCheckIns = checkIns.filter((c) => athleteIds.includes(c.athlete_id))
+    const weeklyTrend = aggregateWeeklyEorTrend(clubCheckIns)
+    const complianceTrend = buildWeeklyComplianceTrend(clubCheckIns, athleteIds)
+
+    const context = buildClubInsightContext({
+      clubName: club.name,
+      teams: clubTeams,
+      athletes: clubAthletes,
+      checkIns,
+      lang,
+    })
+
+    const { insight, source } = await fetchTeamInsight({
+      context,
+      weeklyTrend,
+      complianceTrend,
+      t,
+    })
+
     downloadPrintReport({
       title: `${club.name} — ${t("reports.clubReport")}`,
       subtitle: t("reports.monthlySubtitle"),
@@ -121,9 +145,14 @@ export function ClubManagement({ psychologistId, teams, athletes, checkIns, onUp
         teams: clubTeams,
         athletes: clubAthletes,
         checkIns,
+        evolutionInsight: insight,
+        complianceTrend,
+        weeklyTrend,
         t,
+        lang,
       }),
       filename: `club-${club.name}`,
+      source,
     })
   }
 

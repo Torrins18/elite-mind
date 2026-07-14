@@ -16,6 +16,7 @@ import { getLatestWeeklyReflection, hasWeeklyReflection } from "../../lib/weekly
 import { calculateRiskLevel } from "../../lib/risk"
 import { consentStatus, isAdultInSpain } from "../../lib/age"
 import { dismissPsychologistAlert } from "../../lib/alertPersistence"
+import { useTranslation } from "../../i18n/LanguageContext"
 import {
   buildAthleteReportSections,
   downloadPrintReport,
@@ -48,6 +49,7 @@ export function AthleteClinicalFile({
   onAlertsChange,
   t,
 }) {
+  const { lang } = useTranslation()
   const [activeTab, setActiveTab] = useState("profile")
   const [notes, setNotes] = useState([])
   const [sessions, setSessions] = useState([])
@@ -164,9 +166,13 @@ export function AthleteClinicalFile({
         teamName,
         risk,
         latestWeekly,
+        insight,
+        weeklyTrend,
         t,
+        lang,
       }),
       filename: `esportista-${athlete.name}`,
+      source: insightSource,
     })
   }
 

@@ -43,3 +43,17 @@ A Vercel → Settings → Environment Variables:
 - `VITE_SUPABASE_ANON_KEY`
 
 Després **Redeploy**. Guia completa de pilot: `PILOT-CHECKLIST.md` a l'arrel del projecte.
+
+## Edge Functions (resums IA)
+
+Per resums IA d'equip/club i esportista, desplega les funcions:
+
+```bash
+supabase functions deploy generate-athlete-insight
+supabase functions deploy generate-team-insight
+```
+
+Secrets opcionals (Dashboard → Edge Functions → Secrets):
+
+- `OPENAI_API_KEY` — activa resums IA (sense clau, usa síntesi local)
+- `OPENAI_MODEL` — per defecte `gpt-4o-mini`

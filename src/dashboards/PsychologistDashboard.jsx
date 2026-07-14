@@ -13,7 +13,7 @@ import { Badge } from "../components/ui/Badge"
 import { Button } from "../components/ui/Button"
 import { InsightCard } from "../components/InsightCard"
 import { calculateRiskLevel } from "../lib/risk"
-import { buildTeamInsight, buildTeamEvolutionInsight } from "../lib/insights"
+import { buildTeamInsight } from "../lib/insights"
 import { summarizeTeam } from "../lib/insights/metrics"
 import { getLatestWeeklyReflection } from "../lib/weeklyEor"
 import {
@@ -33,7 +33,7 @@ import {
   syncAndLoadPsychologistAlerts,
 } from "../lib/alertPersistence"
 import { filterActiveTeams } from "../lib/teams"
-import { AthleteClinicalFile } from "../components/psychologist/AthleteClinicalFile"
+import { useTeamInsight } from "../hooks/useTeamInsight"
 import { EorIndexSummary } from "../components/EorIndexSummary"
 import { WeeklyEorChart } from "../components/WeeklyEorTeamChart"
 import { ComplianceTrendChart } from "../components/ComplianceTrendChart"
@@ -160,15 +160,20 @@ export function PsychologistDashboard({ profile }) {
     () => currentWeekCompliance(tabCheckIns, tabAthletes.map((a) => a.id)),
     [tabCheckIns, tabAthletes]
   )
-  const teamEvolutionInsight = useMemo(
-    () =>
-      buildTeamEvolutionInsight({
-        weeklyTrend: teamWeeklyTrend,
-        complianceTrend: teamComplianceTrend,
-        t,
-      }),
-    [teamWeeklyTrend, teamComplianceTrend, t]
-  )
+  const {
+    insight: teamEvolutionInsight,
+    source: teamEvolutionSource,
+    loading: teamEvolutionLoading,
+  } = useTeamInsight({
+    teamName: teamMap[activeTab],
+    athletes: tabAthletes,
+    summary: activeTeamSummary?.summary,
+    weeklyTrend: teamWeeklyTrend,
+    complianceTrend: teamComplianceTrend,
+    lang,
+    t,
+    enabled: activeTab !== OVERVIEW_TAB && Boolean(activeTeamSummary),
+  })
   const teamWeeklySnapshot = useMemo(
     () => getLatestWeeklyTeamSnapshot(teamWeeklyTrend),
     [teamWeeklyTrend]
@@ -295,10 +300,15 @@ export function PsychologistDashboard({ profile }) {
       rows: buildTeamReportSections({
         teamName: teamMap[activeTab],
         summary: activeTeamSummary.summary,
-        eorSnapshot: activeTeamSummary.eorSnapshot,
+        eorSnapshot: teamWeeklySnapshot,
+        evolutionInsight: teamEvolutionInsight,
+        complianceTrend: teamComplianceTrend,
+        weeklyTrend: teamWeeklyTrend,
         t,
+        lang,
       }),
       filename: `equip-${teamMap[activeTab]}`,
+      source: teamEvolutionSource,
     })
   }
 
@@ -408,7 +418,12 @@ export function PsychologistDashboard({ profile }) {
             <ComplianceTrendChart trend={teamComplianceTrend} />
 
             <Card title={t("insights.evolutionTitle")} subtitle={t("insights.evolutionSubtitle")}>
-              <InsightCard title={t("insights.evolutionCardTitle")} insight={teamEvolutionInsight} />
+              <InsightCard
+                title={t("insights.evolutionCardTitle")}
+                insight={teamEvolutionInsight}
+                loading={teamEvolutionLoading}
+                source={teamEvolutionSource}
+              />
             </Card>
 
             <Card title={t("psychologist.teamEorTitle")} subtitle={t("psychologist.teamEorSubtitle")}>

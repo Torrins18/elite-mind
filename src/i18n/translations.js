@@ -282,6 +282,10 @@ export const translations = {
       compliance: "Cumplimiento semanal",
       date: "Fecha",
       noTeams: "Sin equipos",
+      sectionAiSummary: "Resumen inteligente",
+      sectionComplianceEvolution: "Evolución del cumplimiento (8 semanas)",
+      sectionEorEvolution: "Evolución EOR semanal",
+      eorWeekSnapshot: "Mental {mental} · Bienestar {wellbeing} · Social {social} ({responses} resp.)",
     },
 
     onboarding: {
@@ -1366,6 +1370,10 @@ export const translations = {
       compliance: "Compliment setmanal",
       date: "Data",
       noTeams: "Sense equips",
+      sectionAiSummary: "Resum intel·ligent",
+      sectionComplianceEvolution: "Evolució del compliment (8 setmanes)",
+      sectionEorEvolution: "Evolució EOR setmanal",
+      eorWeekSnapshot: "Mental {mental} · Benestar {wellbeing} · Social {social} ({responses} resp.)",
     },
 
     onboarding: {
