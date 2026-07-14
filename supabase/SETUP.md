@@ -20,7 +20,8 @@ Si la pàgina no carrega o falten funcions, executa **tot** això al **SQL Edito
 | 14 | `psychologist-notes.sql` (notes clíniques privades del psicòleg) |
 | 15 | `intervention-plans.sql` (objectius, plans d'acció i biblioteca de recursos) |
 | 16 | `clubs-management.sql` (clubs, director de club, informes agregats) |
-| 17 | `seed-demo.sql` (opcional) |
+| 17 | `clinical-sessions-documents.sql` (sessions clíniques + documents privats) |
+| 18 | `seed-demo.sql` (opcional) |
 
 Després de cada fitxer ha de sortir **Success**.
 

@@ -7,6 +7,8 @@ import { InsightCard } from "../InsightCard"
 import { WeeklyEorChart } from "../WeeklyEorTeamChart"
 import { WeeklyEorPanel } from "../WeeklyEorPanel"
 import { AthleteFileNotes } from "./AthleteFileNotes"
+import { AthleteFileSessions } from "./AthleteFileSessions"
+import { AthleteFileDocuments } from "./AthleteFileDocuments"
 import { AthleteFilePlan } from "./AthleteFilePlan"
 import { aggregateWeeklyEorTrend } from "../../lib/coachTeamAnalytics"
 import { getLatestWeeklyReflection, hasWeeklyReflection } from "../../lib/weeklyEor"
@@ -24,6 +26,8 @@ const TABS = [
   "reviews",
   "charts",
   "notes",
+  "sessions",
+  "documents",
   "plan",
   "appointments",
   "messages",
@@ -45,6 +49,8 @@ export function AthleteClinicalFile({
 }) {
   const [activeTab, setActiveTab] = useState("profile")
   const [notes, setNotes] = useState([])
+  const [sessions, setSessions] = useState([])
+  const [documents, setDocuments] = useState([])
   const [goals, setGoals] = useState([])
   const [resources, setResources] = useState([])
   const [appointments, setAppointments] = useState([])
@@ -65,13 +71,23 @@ export function AthleteClinicalFile({
     if (!athlete?.id) return
     setRecordLoading(true)
 
-    const [notesRes, goalsRes, resourcesRes, appointmentsRes, messagesRes, alertsRes] =
+    const [notesRes, sessionsRes, documentsRes, goalsRes, resourcesRes, appointmentsRes, messagesRes, alertsRes] =
       await Promise.all([
       supabase
         .from("psychologist_notes")
         .select("*")
         .eq("athlete_id", athlete.id)
         .order("note_date", { ascending: false }),
+      supabase
+        .from("psychologist_sessions")
+        .select("*")
+        .eq("athlete_id", athlete.id)
+        .order("session_date", { ascending: false }),
+      supabase
+        .from("athlete_documents")
+        .select("*")
+        .eq("athlete_id", athlete.id)
+        .order("created_at", { ascending: false }),
       supabase
         .from("athlete_goals")
         .select(
@@ -102,6 +118,8 @@ export function AthleteClinicalFile({
     ])
 
     setNotes(notesRes.error ? [] : notesRes.data || [])
+    setSessions(sessionsRes.error ? [] : sessionsRes.data || [])
+    setDocuments(documentsRes.error ? [] : documentsRes.data || [])
     setGoals(goalsRes.error ? [] : goalsRes.data || [])
     setResources(resourcesRes.error ? [] : resourcesRes.data || [])
     setAppointments(appointmentsRes.error ? [] : appointmentsRes.data || [])
@@ -230,6 +248,34 @@ export function AthleteClinicalFile({
               psychologistId={psychologistId}
               notes={notes}
               onNotesChange={loadRecord}
+              t={t}
+            />
+          )
+        )}
+
+        {activeTab === "sessions" && (
+          recordLoading ? (
+            <p className="empty-state">{t("athleteFile.loading")}</p>
+          ) : (
+            <AthleteFileSessions
+              athleteId={athlete.id}
+              psychologistId={psychologistId}
+              sessions={sessions}
+              onChange={loadRecord}
+              t={t}
+            />
+          )
+        )}
+
+        {activeTab === "documents" && (
+          recordLoading ? (
+            <p className="empty-state">{t("athleteFile.loading")}</p>
+          ) : (
+            <AthleteFileDocuments
+              athleteId={athlete.id}
+              psychologistId={psychologistId}
+              documents={documents}
+              onChange={loadRecord}
               t={t}
             />
           )

@@ -1436,6 +1436,38 @@ input:focus, textarea:focus {
   margin-top: 10px;
 }
 
+.athlete-file-documents__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.athlete-file-documents__item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: rgba(148, 163, 184, 0.04);
+}
+
+.athlete-file-documents__item strong {
+  display: block;
+  margin-bottom: 4px;
+}
+
+.athlete-file-documents__item span {
+  display: block;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
 .athlete-file-plan__goal-form,
 .athlete-file-plan__step-form,
 .resource-library__form {
