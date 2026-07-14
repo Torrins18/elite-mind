@@ -21,8 +21,8 @@ function Wordmark({ showSubtitle = true, showTagline = false, compact = false })
   )
 }
 
-export function BrandLogo({ variant = "bar", className = "" }) {
-  const rootClass = `brand-logo brand-logo--${variant} ${className}`.trim()
+export function BrandLogo({ variant = "bar", className = "", tone = "default" }) {
+  const rootClass = `brand-logo brand-logo--${variant}${tone === "light" ? " brand-logo--light" : ""} ${className}`.trim()
 
   if (variant === "bar") {
     return (
