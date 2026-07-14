@@ -17,6 +17,7 @@ import { LanguageSwitcher } from "../components/LanguageSwitcher"
 import { RolePicker } from "../components/RolePicker"
 import { Button } from "../components/ui/Button"
 import { AuthHeroContent, AuthLandingSections, scrollToId } from "../components/auth/AuthLandingSections"
+import { AuthHeroMedia } from "../components/auth/AuthHeroMedia"
 
 export function LoginPage() {
   const { t } = useTranslation()
@@ -261,15 +262,7 @@ export function LoginPage() {
 
       <section className="auth-landing__intro" id="auth-top">
         <div className="auth-landing__visual">
-          <div className="auth-landing__image-wrap" aria-hidden>
-            <img
-              className="auth-landing__image"
-              src="/images/auth-hero.jpg"
-              alt=""
-              loading="eager"
-              decoding="async"
-            />
-          </div>
+          <AuthHeroMedia />
           <div className="auth-landing__overlay" aria-hidden />
           <AuthHeroContent onLoginClick={() => scrollToId("auth-form")} />
         </div>
