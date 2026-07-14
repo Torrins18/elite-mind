@@ -1,48 +1,63 @@
 import { LogoMark } from "./brand/LogoMark"
 import { useTranslation } from "../i18n/LanguageContext"
 
-function Wordmark({ showSubtitle = true, surface = "light" }) {
+function Wordmark({ showSubtitle = true, showTagline = false, compact = false, subtitleText, taglineText, hero = false }) {
   const { t } = useTranslation()
-  const subtitle = t("appEyebrow")
+  const subtitle = subtitleText ?? t("appEyebrow")
+  const tagline = taglineText ?? t("login.tagline")
 
   return (
-    <div className={`brand-logo__text brand-logo__text--${surface}`}>
-      <p className="brand-logo__title">
+    <div className={`brand-logo__text${compact ? " brand-logo__text--compact" : ""}${hero ? " brand-logo__text--hero" : ""}`}>
+      <p className="brand-logo__title" aria-hidden="true">
         <span className="brand-logo__zona">ZONA </span>
         <span className="brand-logo__accent">MENTAL+</span>
       </p>
       {showSubtitle && (
         <div className="brand-logo__subtitle-row">
-          <span className="brand-logo__rule brand-logo__rule--left" aria-hidden="true" />
+          <span className="brand-logo__rule brand-logo__rule--blue" aria-hidden="true" />
           <span className="brand-logo__subtitle">{subtitle}</span>
-          <span className="brand-logo__rule brand-logo__rule--right" aria-hidden="true" />
+          <span className="brand-logo__rule brand-logo__rule--green" aria-hidden="true" />
         </div>
       )}
+      {showTagline && <p className="brand-logo__tagline">{tagline}</p>}
     </div>
   )
 }
 
-const VARIANTS = {
-  bar: { mark: 42, showSubtitle: false },
-  compact: { mark: 48, showSubtitle: true },
-  hero: { mark: 68, showSubtitle: true },
-  icon: { mark: 48, showSubtitle: false },
-}
+export function BrandLogo({ variant = "bar", className = "", tone = "default" }) {
+  const { t } = useTranslation()
+  const rootClass = `brand-logo brand-logo--${variant}${tone === "light" ? " brand-logo--light" : ""}${variant === "hero-dark" ? " brand-logo--hero-dark" : ""} ${className}`.trim()
+  const onDark = tone === "light" || variant === "hero-dark"
 
-export function BrandLogo({ variant = "bar", className = "", surface }) {
-  const config = VARIANTS[variant] ?? VARIANTS.bar
-  const resolvedSurface = surface ?? (variant === "hero" ? "dark" : "light")
+  if (variant === "hero-dark") {
+    return (
+      <div className={rootClass} role="img" aria-label="Zona Mental+ — Psicología deportiva">
+        <LogoMark size={82} palette="hero" className="brand-logo__mark brand-logo__mark--hero" title="" />
+        <Wordmark hero showSubtitle showTagline subtitleText={t("authLanding.logoSubtitle")} />
+      </div>
+    )
+  }
 
-  const rootClass = ["brand-logo", `brand-logo--${variant}`, className].filter(Boolean).join(" ")
+  if (variant === "bar") {
+    return (
+      <div className={rootClass} role="img" aria-label="Zona Mental+ — Psicología deportiva">
+        <LogoMark size={40} palette={onDark ? "hero" : "default"} className="brand-logo__mark" title="" />
+        <Wordmark showSubtitle={false} compact />
+      </div>
+    )
+  }
 
   if (variant === "icon") {
-    return <LogoMark size={config.mark} className={rootClass} surface={resolvedSurface} title="" />
+    return <LogoMark size={48} palette={onDark ? "hero" : "default"} className={rootClass} />
   }
+
+  const markSize = variant === "hero" ? 88 : 72
+  const showTagline = variant === "hero"
 
   return (
     <div className={rootClass} role="img" aria-label="Zona Mental+ — Psicología deportiva">
-      <LogoMark size={config.mark} className="brand-logo__mark" surface={resolvedSurface} title="" />
-      <Wordmark showSubtitle={config.showSubtitle} surface={resolvedSurface} />
+      <LogoMark size={markSize} palette={onDark ? "hero" : "default"} className="brand-logo__mark" title="" />
+      <Wordmark showSubtitle showTagline={showTagline} />
     </div>
   )
 }

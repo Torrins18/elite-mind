@@ -235,12 +235,42 @@ select:focus {
   align-items: center;
   justify-content: space-between;
   padding: 16px 32px;
-  border-bottom: none;
-  background: var(--bg-sidebar);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  background: #0f172a;
+  color: rgba(255, 255, 255, 0.92);
   position: sticky;
   top: 0;
   z-index: 10;
-  box-shadow: var(--shadow-sm);
+  box-shadow: 0 4px 24px rgba(15, 23, 42, 0.2);
+}
+
+.topbar .lang-switcher {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+}
+
+.topbar .lang-switcher__btn {
+  color: rgba(255, 255, 255, 0.72);
+  background: transparent;
+}
+
+.topbar .lang-switcher__btn:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.topbar .lang-switcher__btn.active {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.topbar .btn--ghost {
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.topbar .btn--ghost:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .topbar__brand {
@@ -251,30 +281,36 @@ select:focus {
 }
 
 .brand-logo {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 14px;
-  --brand-zona: #3a3a3a;
-  --brand-accent: #e31e24;
-  --brand-muted: #707070;
+  display: block;
+  height: auto;
+  object-fit: contain;
 }
 
 .brand-logo--bar {
-  height: auto;
-  max-width: min(300px, 65vw);
-  gap: 10px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 46px;
+  max-width: min(260px, 48vw);
+}
+
+.brand-logo--hero,
+.brand-logo--compact {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 14px;
 }
 
 .brand-logo--hero {
-  gap: clamp(14px, 2.5vw, 18px);
-  max-width: min(440px, 92vw);
-  margin-bottom: 0;
+  width: min(100%, 300px);
+  margin-bottom: 18px;
 }
 
 .brand-logo--compact {
+  width: min(200px, 72vw);
   gap: 12px;
-  max-width: min(360px, 88vw);
 }
 
 .brand-logo__mark {
@@ -284,15 +320,20 @@ select:focus {
 .brand-logo__text {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  gap: 6px;
+  align-items: center;
+  gap: 8px;
   min-width: 0;
+}
+
+.brand-logo--bar .brand-logo__text {
+  align-items: flex-start;
+  gap: 0;
 }
 
 .brand-logo__title {
   margin: 0;
   font-family: "Inter", "Manrope", system-ui, sans-serif;
-  font-size: 1.1rem;
+  font-size: 1.05rem;
   font-weight: 700;
   letter-spacing: 0.04em;
   line-height: 1.1;
@@ -300,60 +341,67 @@ select:focus {
 }
 
 .brand-logo--hero .brand-logo__title {
-  font-size: clamp(1.35rem, 2.8vw, 1.75rem);
+  font-size: 1.65rem;
 }
 
 .brand-logo--compact .brand-logo__title {
-  font-size: 1.25rem;
+  font-size: 1.35rem;
 }
 
 .brand-logo__zona {
-  color: var(--brand-zona);
+  color: var(--text-primary);
 }
 
 .brand-logo__accent {
-  color: var(--brand-accent);
+  color: var(--color-healthy);
 }
 
-.brand-logo__text--dark {
-  --brand-zona: rgba(255, 255, 255, 0.96);
-  --brand-muted: rgba(255, 255, 255, 0.55);
+.brand-logo--light .brand-logo__zona {
+  color: rgba(255, 255, 255, 0.96);
 }
 
-.brand-logo__text--light {
-  --brand-zona: #3a3a3a;
-  --brand-muted: #707070;
+.brand-logo--light .brand-logo__accent {
+  color: #84cc16;
 }
 
 .brand-logo__subtitle-row {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   width: 100%;
+  max-width: 280px;
 }
 
 .brand-logo__rule {
   flex: 1;
   height: 1px;
-  min-width: 10px;
   border-radius: 1px;
 }
 
-.brand-logo__rule--left {
-  background: linear-gradient(90deg, transparent, var(--brand-muted));
+.brand-logo__rule--blue {
+  background: linear-gradient(90deg, transparent, var(--color-nav));
 }
 
-.brand-logo__rule--right {
-  background: linear-gradient(90deg, var(--brand-muted), transparent);
+.brand-logo__rule--green {
+  background: linear-gradient(90deg, var(--color-healthy), transparent);
 }
 
 .brand-logo__subtitle {
   flex-shrink: 0;
-  font-size: 0.58rem;
+  font-size: 0.62rem;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.brand-logo__tagline {
+  margin: 0;
+  font-size: 0.62rem;
   font-weight: 500;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: var(--brand-muted);
+  color: var(--color-nav);
 }
 
 .auth-panel__tagline {
@@ -408,11 +456,12 @@ select:focus {
 .topbar__name {
   font-weight: 600;
   font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.95);
 }
 
 .topbar__role {
   font-size: 0.78rem;
-  color: var(--text-muted);
+  color: rgba(255, 255, 255, 0.58);
   text-transform: uppercase;
   letter-spacing: 0.05em;
   font-weight: 500;
@@ -3260,12 +3309,8 @@ select:focus {
   }
 
   .brand-logo--bar {
-    gap: 8px;
-    max-width: min(260px, 75vw);
-  }
-
-  .brand-logo--bar .brand-logo__title {
-    font-size: 0.95rem;
+    height: 40px;
+    max-width: min(200px, 70vw);
   }
 
   .topbar__mark {

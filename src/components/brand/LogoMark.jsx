@@ -1,35 +1,18 @@
 import { useId } from "react"
 
-export const BRAND = {
-  red: "#E31E24",
-  grey: "#3A3A3A",
-  muted: "#707070",
-}
-
 const PALETTES = {
-  light: {
-    leftArc: BRAND.grey,
-    rightArc: BRAND.red,
-    brain: BRAND.grey,
-    athlete: BRAND.red,
-    strokeWidth: 2.8,
-  },
-  dark: {
-    leftArc: "rgba(255,255,255,0.9)",
-    rightArc: BRAND.red,
-    brain: "rgba(255,255,255,0.9)",
-    athlete: BRAND.red,
-    strokeWidth: 2.8,
-  },
+  default: { left: "#2563EB", right: "#16A34A", athlete: "#16A34A", strokeWidth: 2.4 },
+  /** Original brand — cyan brain + lime athlete (legible on dark hero) */
+  hero: { left: "#22D3EE", right: "#84CC16", athlete: "#84CC16", strokeWidth: 2.6 },
 }
 
 /** Zona Mental+ emblem — brain + athlete */
-export function LogoMark({ size = 48, className = "", title = "Zona Mental+", surface = "light" }) {
+export function LogoMark({ size = 48, className = "", title = "Zona Mental+", palette = "default" }) {
   const uid = useId().replace(/:/g, "")
   const leftClip = `zm-left-${uid}`
   const rightClip = `zm-right-${uid}`
-  const colors = PALETTES[surface] || PALETTES.light
-  const strokeW = colors.strokeWidth
+  const colors = PALETTES[palette] || PALETTES.default
+  const strokeW = colors.strokeWidth ?? 2.4
 
   return (
     <svg
@@ -55,24 +38,23 @@ export function LogoMark({ size = 48, className = "", title = "Zona Mental+", su
 
       <path
         d="M 50 6 A 44 44 0 0 0 50 94"
-        stroke={colors.leftArc}
+        stroke={colors.left}
         strokeWidth={strokeW}
         strokeLinecap="round"
       />
       <path
         d="M 50 6 A 44 44 0 0 1 50 94"
-        stroke={colors.rightArc}
+        stroke={colors.right}
         strokeWidth={strokeW}
         strokeLinecap="round"
       />
 
       <g
         clipPath={`url(#${leftClip})`}
-        stroke={colors.brain}
+        stroke={colors.left}
         strokeWidth={strokeW}
         strokeLinecap="round"
         strokeLinejoin="round"
-        fill="none"
       >
         <path d="M 34 30 C 26 28 22 36 24 44 C 20 50 22 58 28 60 C 26 66 30 72 36 68 C 34 74 40 78 46 72" />
         <path d="M 28 42 C 32 40 36 44 34 50" />
@@ -80,10 +62,19 @@ export function LogoMark({ size = 48, className = "", title = "Zona Mental+", su
         <path d="M 38 34 C 42 32 44 38 42 44" />
       </g>
 
-      <g clipPath={`url(#${rightClip})`} fill={colors.athlete} stroke="none">
-        <circle cx="68" cy="28" r="5.5" />
-        <path d="M 66 34 L 60 48 L 54 70 L 48 78 L 54 80 L 62 72 L 66 58 L 72 62 L 78 56 L 70 50 L 68 42 Z" />
-        <path d="M 64 42 L 76 36 L 78 40 L 68 46 Z" />
+      <g
+        clipPath={`url(#${rightClip})`}
+        stroke={colors.athlete}
+        strokeWidth={strokeW}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <circle cx="68" cy="30" r="4.5" fill={colors.athlete} stroke="none" />
+        <path d="M 68 35 L 62 50 L 56 72" />
+        <path d="M 64 44 L 74 38" />
+        <path d="M 62 50 L 72 58" />
+        <path d="M 56 72 L 50 78" />
+        <path d="M 56 72 L 64 76" />
       </g>
     </svg>
   )

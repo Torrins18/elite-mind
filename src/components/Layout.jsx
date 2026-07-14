@@ -11,7 +11,7 @@ export function Layout({ profile, session, teamName, onLogout, children }) {
     <div className="app-shell">
       <header className="topbar">
         <div className="topbar__brand">
-          <BrandLogo variant="bar" />
+          <BrandLogo variant="bar" tone="light" />
         </div>
 
         <div className="topbar__user">
