@@ -5,6 +5,7 @@ import { Card } from "./ui/Card"
 import { Button } from "./ui/Button"
 import { TeamJoinLink } from "./TeamJoinLink"
 import { filterActiveTeams } from "../lib/teams"
+import { PsychologistResourceLibrary } from "./psychologist/PsychologistResourceLibrary"
 
 export function PsychologistCoachAdmin({ psychologistId, onPreviewCoachTeam }) {
   const { t } = useTranslation()
@@ -361,6 +362,8 @@ export function PsychologistCoachAdmin({ psychologistId, onPreviewCoachTeam }) {
           </ul>
         )}
       </Card>
+
+      <PsychologistResourceLibrary psychologistId={psychologistId} />
 
       {message && <p className="form-message">{message}</p>}
     </div>

@@ -7,6 +7,7 @@ import { InsightCard } from "../InsightCard"
 import { WeeklyEorChart } from "../WeeklyEorTeamChart"
 import { WeeklyEorPanel } from "../WeeklyEorPanel"
 import { AthleteFileNotes } from "./AthleteFileNotes"
+import { AthleteFilePlan } from "./AthleteFilePlan"
 import { aggregateWeeklyEorTrend } from "../../lib/coachTeamAnalytics"
 import { getLatestWeeklyReflection, hasWeeklyReflection } from "../../lib/weeklyEor"
 import { calculateRiskLevel } from "../../lib/risk"
@@ -19,6 +20,7 @@ const TABS = [
   "reviews",
   "charts",
   "notes",
+  "plan",
   "appointments",
   "messages",
   "alerts",
@@ -39,6 +41,8 @@ export function AthleteClinicalFile({
 }) {
   const [activeTab, setActiveTab] = useState("profile")
   const [notes, setNotes] = useState([])
+  const [goals, setGoals] = useState([])
+  const [resources, setResources] = useState([])
   const [appointments, setAppointments] = useState([])
   const [messages, setMessages] = useState([])
   const [alertHistory, setAlertHistory] = useState([])
@@ -57,12 +61,25 @@ export function AthleteClinicalFile({
     if (!athlete?.id) return
     setRecordLoading(true)
 
-    const [notesRes, appointmentsRes, messagesRes, alertsRes] = await Promise.all([
+    const [notesRes, goalsRes, resourcesRes, appointmentsRes, messagesRes, alertsRes] =
+      await Promise.all([
       supabase
         .from("psychologist_notes")
         .select("*")
         .eq("athlete_id", athlete.id)
         .order("note_date", { ascending: false }),
+      supabase
+        .from("athlete_goals")
+        .select(
+          "*, athlete_goal_steps(*, psychologist_resources(id, title, resource_type, url))"
+        )
+        .eq("athlete_id", athlete.id)
+        .order("created_at", { ascending: false }),
+      supabase
+        .from("psychologist_resources")
+        .select("id, title, resource_type")
+        .eq("psychologist_id", psychologistId)
+        .order("title"),
       supabase
         .from("appointment_requests")
         .select("*")
@@ -81,11 +98,13 @@ export function AthleteClinicalFile({
     ])
 
     setNotes(notesRes.error ? [] : notesRes.data || [])
+    setGoals(goalsRes.error ? [] : goalsRes.data || [])
+    setResources(resourcesRes.error ? [] : resourcesRes.data || [])
     setAppointments(appointmentsRes.error ? [] : appointmentsRes.data || [])
     setMessages(messagesRes.error ? [] : messagesRes.data || [])
     setAlertHistory(alertsRes.error ? [] : alertsRes.data || [])
     setRecordLoading(false)
-  }, [athlete?.id])
+  }, [athlete?.id, psychologistId])
 
   useEffect(() => {
     setActiveTab("profile")
@@ -135,6 +154,11 @@ export function AthleteClinicalFile({
             onClick={() => setActiveTab(tab)}
           >
             {t(`athleteFile.tab.${tab}`)}
+            {tab === "plan" && goals.filter((g) => g.status === "active").length > 0 && (
+              <span className="athlete-file-tabs__badge">
+                {goals.filter((g) => g.status === "active").length}
+              </span>
+            )}
             {tab === "alerts" && visibleAlerts.filter((a) => a.status === "active").length > 0 && (
               <span className="athlete-file-tabs__badge">
                 {visibleAlerts.filter((a) => a.status === "active").length}
@@ -181,6 +205,21 @@ export function AthleteClinicalFile({
               psychologistId={psychologistId}
               notes={notes}
               onNotesChange={loadRecord}
+              t={t}
+            />
+          )
+        )}
+
+        {activeTab === "plan" && (
+          recordLoading ? (
+            <p className="empty-state">{t("athleteFile.loading")}</p>
+          ) : (
+            <AthleteFilePlan
+              athleteId={athlete.id}
+              psychologistId={psychologistId}
+              goals={goals}
+              resources={resources}
+              onChange={loadRecord}
               t={t}
             />
           )
