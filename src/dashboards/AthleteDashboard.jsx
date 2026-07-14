@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from "react"
 import { supabase } from "../supabase"
 import { useTranslation } from "../i18n/LanguageContext"
 import { CheckInForm } from "../components/CheckInForm"
+import { WeeklyReflectionScreen } from "../components/WeeklyReflectionScreen"
 import { AthletePsychologistContact } from "../components/AthletePsychologistContact"
 import { LoadingSpinner } from "../components/ui/LoadingSpinner"
 import { todayISO } from "../lib/dates"
@@ -10,12 +11,14 @@ import {
   hasWeeklyReflectionThisWeek,
   isWeeklyReflectionDue,
 } from "../lib/checkInSchedule"
+import { shouldShowWeeklyReflection } from "../lib/weeklyReflectionRotation"
 
 export function AthleteDashboard({ profile, teamName }) {
   const { t } = useTranslation()
   const [checkIns, setCheckIns] = useState([])
   const [loading, setLoading] = useState(true)
   const [activeForm, setActiveForm] = useState(null)
+  const [weeklyStep, setWeeklyStep] = useState(null)
   const [helpIntent, setHelpIntent] = useState(null)
   const [confirmation, setConfirmation] = useState(null)
 
@@ -60,10 +63,36 @@ export function AthleteDashboard({ profile, teamName }) {
   const handleWeeklySaved = async () => {
     await load()
     setActiveForm(null)
+    setWeeklyStep(null)
     setConfirmation(t("athlete.confirmWeekly"))
   }
 
+  const openWeeklyReview = () => {
+    if (weeklyDoneThisWeek) {
+      setWeeklyStep("form")
+    } else if (shouldShowWeeklyReflection(profile.id, today, false)) {
+      setWeeklyStep("reflection")
+    } else {
+      setWeeklyStep("form")
+    }
+    setActiveForm("weekly")
+  }
+
+  const closeWeeklyReview = () => {
+    setActiveForm(null)
+    setWeeklyStep(null)
+  }
+
   if (loading) return <LoadingSpinner label={t("athlete.loading")} />
+
+  if (activeForm === "weekly" && weeklyStep === "reflection") {
+    return (
+      <WeeklyReflectionScreen
+        athleteId={profile.id}
+        onContinue={() => setWeeklyStep("form")}
+      />
+    )
+  }
 
   if (activeForm === "weekly") {
     return (
@@ -72,7 +101,7 @@ export function AthleteDashboard({ profile, teamName }) {
           athleteId={profile.id}
           existing={weeklyCheckIn}
           onSaved={handleWeeklySaved}
-          onCancel={() => setActiveForm(null)}
+          onCancel={closeWeeklyReview}
         />
       </div>
     )
@@ -119,7 +148,7 @@ export function AthleteDashboard({ profile, teamName }) {
           <button
             type="button"
             className={`athlete-home__action${weeklyDue && !weeklyDoneThisWeek ? " athlete-home__action--primary" : ""}`}
-            onClick={() => setActiveForm("weekly")}
+            onClick={openWeeklyReview}
           >
             <span className="athlete-home__action-label">{t("athlete.actionWeekly")}</span>
             <span className="athlete-home__action-hint">

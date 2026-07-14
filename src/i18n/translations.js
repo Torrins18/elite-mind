@@ -483,6 +483,11 @@ export const translations = {
       weeklyEorSubtitle: "Resumen de tus índices semanales (solo tú y el/la psicólogo/a los ven).",
     },
 
+    weeklyReflection: {
+      title: "Reflexión de la semana",
+      startReview: "Comenzar revisión",
+    },
+
     athleteContact: {
       title: "¿Necesitas hablar con el/la psicólogo/a?",
       subtitle: "Pide una consulta de 30 minutos o envía un mensaje si lo necesitas.",
@@ -1632,6 +1637,11 @@ export const translations = {
       updateResponses: "Actualitzar respostes d'avui",
       weeklyEorTitle: "La teva darrera revisió EOR",
       weeklyEorSubtitle: "Resum dels teus índexs setmanals (només tu i el/la psicòleg/òloga els veieu).",
+    },
+
+    weeklyReflection: {
+      title: "Reflexió de la setmana",
+      startReview: "Començar revisió",
     },
 
     athleteContact: {
