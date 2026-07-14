@@ -261,19 +261,26 @@ export function LoginPage() {
       </header>
 
       <section className="auth-landing__intro" id="auth-top">
-        <div className="auth-landing__visual">
-          <AuthHeroMedia />
-          <div className="auth-landing__overlay" aria-hidden />
-          <AuthHeroContent />
-        </div>
+        <AuthHeroMedia />
+        <div className="auth-landing__overlay" aria-hidden />
 
-        <aside className="auth-landing__panel" id="auth-form">
-          <div className="auth-landing__card">
-            <form
-              className={`auth-landing__form${isMinimalLogin ? " auth-landing__form--minimal" : ""}`}
-              onSubmit={isForgotMode ? requestPasswordReset : mode === "login" ? login : signUp}
-            >
-              {!isMinimalLogin && <h2 className="auth-landing__form-title">{formTitle}</h2>}
+        <div className="auth-landing__intro-grid">
+          <AuthHeroContent />
+
+          <aside className="auth-landing__panel" id="auth-form">
+            <div className="auth-landing__card auth-landing__card--glass">
+              <form
+                className={`auth-landing__form${isMinimalLogin ? " auth-landing__form--minimal" : ""}`}
+                onSubmit={isForgotMode ? requestPasswordReset : mode === "login" ? login : signUp}
+              >
+                {isMinimalLogin && (
+                  <header className="auth-landing__welcome">
+                    <h2 className="auth-landing__welcome-title">{t("authLanding.welcomeTitle")}</h2>
+                    <p className="auth-landing__welcome-subtitle">{t("authLanding.welcomeSubtitle")}</p>
+                  </header>
+                )}
+
+                {!isMinimalLogin && <h2 className="auth-landing__form-title">{formTitle}</h2>}
 
               {!isMinimalLogin && (
                 <p className="auth-landing__form-hint">
@@ -388,6 +395,7 @@ export function LoginPage() {
             </form>
           </div>
         </aside>
+        </div>
       </section>
 
       <AuthLandingSections />
