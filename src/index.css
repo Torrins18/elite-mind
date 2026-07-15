@@ -34,6 +34,10 @@
   --color-risk-soft: rgba(220, 38, 38, 0.08);
   --color-risk-border: rgba(220, 38, 38, 0.16);
 
+  /* Zona Mental+ brand green — matches logo MENTAL+ */
+  --brand-green: #6dbd6f;
+  --brand-green-on-light: #57a657;
+
   /* Legacy aliases */
   --bg-deep: var(--bg-app);
   --bg-panel: var(--bg-surface);
@@ -405,7 +409,7 @@ select:focus {
 }
 
 .brand-logo--dark .brand-logo__accent {
-  color: #6dbd6f;
+  color: var(--brand-green);
 }
 
 .brand-logo--dark .brand-logo__subtitle {
@@ -425,7 +429,7 @@ select:focus {
 }
 
 .brand-logo--light .brand-logo__accent {
-  color: #57a657;
+  color: var(--brand-green-on-light);
 }
 
 .brand-logo--light .brand-logo__subtitle {
