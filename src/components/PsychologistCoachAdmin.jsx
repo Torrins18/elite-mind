@@ -11,6 +11,7 @@ import { TeamManagement } from "./psychologist/TeamManagement"
 export function PsychologistCoachAdmin({
   psychologistId,
   onPreviewCoachTeam,
+  onOpenTeam,
   athletes = [],
   checkIns = [],
   alerts = [],
@@ -238,6 +239,7 @@ export function PsychologistCoachAdmin({
         onCreateTeam={createTeam}
         onRenameTeam={renameTeam}
         onDeleteTeam={deleteTeam}
+        onOpenTeam={onOpenTeam}
         onNotify={setMessage}
       />
 

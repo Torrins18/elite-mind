@@ -380,6 +380,7 @@ export function PsychologistDashboard({ profile }) {
           <PsychologistCoachAdmin
             psychologistId={profile.id}
             onPreviewCoachTeam={setCoachPreviewTeamId}
+            onOpenTeam={openTeam}
             athletes={athletes}
             checkIns={checkIns}
             alerts={psychologistAlerts}

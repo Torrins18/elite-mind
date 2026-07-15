@@ -1,130 +1,132 @@
-import { useEffect, useMemo, useRef, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { useTranslation } from "../../i18n/LanguageContext"
-import { calculateRiskLevel } from "../../lib/risk"
-import { summarizeTeam } from "../../lib/insights/metrics"
 import { buildAthleteJoinLink } from "../../lib/invites"
+import {
+  buildTeamClinicalOverview,
+  sortTeamsByClinicalPriority,
+} from "../../lib/teamClinicalOverview"
 import { Button } from "../ui/Button"
 import { Modal } from "../ui/Modal"
 
-function buildTeamCardStats(teams, athletes, checkIns, alerts) {
-  const alertCounts = {}
-  for (const alert of alerts || []) {
-    if (alert.status !== "active") continue
-    const athlete = athletes.find((row) => row.id === alert.athleteId)
-    if (athlete?.team_id) {
-      alertCounts[athlete.team_id] = (alertCounts[athlete.team_id] || 0) + 1
-    }
-  }
-
-  return teams.map((team) => {
-    const teamAthletes = athletes.filter((row) => row.team_id === team.id)
-    const ids = new Set(teamAthletes.map((row) => row.id))
-    const teamCheckIns = checkIns.filter((row) => ids.has(row.athlete_id))
-    const latestByAthlete = teamAthletes.map((athlete) => {
-      const rows = teamCheckIns.filter((row) => row.athlete_id === athlete.id)
-      const latest = rows.sort((a, b) => b.check_in_date.localeCompare(a.check_in_date))[0]
-      return { athlete, latest, risk: calculateRiskLevel(latest) }
-    })
-    const summary = summarizeTeam({ athletes: teamAthletes, checkIns: teamCheckIns, latestByAthlete })
-
-    return {
-      team,
-      athleteCount: teamAthletes.length,
-      reviewsDone: summary.checkedInThisWeek,
-      pending: Math.max(0, teamAthletes.length - summary.checkedInThisWeek),
-      alertCount: alertCounts[team.id] || 0,
-    }
-  })
+const STATUS_CLASS = {
+  stable: "team-card--stable",
+  watch: "team-card--watch",
+  observation: "team-card--observation",
+  critical: "team-card--critical",
+  unknown: "team-card--unknown",
 }
 
-function TeamCardMenu({ teamId, onRename, onDelete, onClose }) {
-  const { t } = useTranslation()
-  const menuRef = useRef(null)
+function formatScore(value) {
+  if (value == null) return "—"
+  return Number(value).toFixed(1)
+}
 
-  useEffect(() => {
-    const handlePointerDown = (event) => {
-      if (!menuRef.current?.contains(event.target)) onClose()
-    }
-
-    document.addEventListener("pointerdown", handlePointerDown)
-    return () => document.removeEventListener("pointerdown", handlePointerDown)
-  }, [onClose])
-
+function MetricRow({ icon, label, metric }) {
   return (
-    <div className="team-card__menu" ref={menuRef}>
-      <button type="button" className="team-card__menu-item" onClick={() => onRename(teamId)}>
-        {t("teams.edit")}
-      </button>
-      <button
-        type="button"
-        className="team-card__menu-item team-card__menu-item--danger"
-        onClick={() => onDelete(teamId)}
-      >
-        {t("teams.delete")}
-      </button>
+    <div className="team-card__metric">
+      <span className="team-card__metric-label">
+        {icon} {label}
+      </span>
+      <span className="team-card__metric-dots" aria-hidden="true" />
+      <span className={`team-card__metric-value team-card__metric-value--${metric.level}`}>
+        {formatScore(metric.value)}
+      </span>
     </div>
   )
 }
 
-function TeamCard({ stats, copiedTeamId, onCopyInvitation, onRename, onDelete }) {
+function TeamCard({
+  overview,
+  copiedTeamId,
+  onViewTeam,
+  onCopyInvitation,
+  onRename,
+  onDelete,
+}) {
   const { t } = useTranslation()
-  const [menuOpen, setMenuOpen] = useState(false)
-  const { team, athleteCount, reviewsDone, pending, alertCount } = stats
+  const { team, athleteCount, reviewsDone, pending, alertCount, status, metrics, lastReviewDays } =
+    overview
   const copied = copiedTeamId === team.id
 
+  const lastReviewLabel =
+    lastReviewDays == null
+      ? t("teams.lastReviewNone")
+      : lastReviewDays === 0
+        ? t("teams.lastReviewToday")
+        : lastReviewDays === 1
+          ? t("teams.lastReviewYesterday")
+          : t("teams.lastReviewDaysAgo", { days: lastReviewDays })
+
   return (
-    <article className="team-card">
+    <article className={`team-card ${STATUS_CLASS[status] || ""}`}>
       <div className="team-card__head">
-        <h3 className="team-card__name">{team.name}</h3>
-        <div className="team-card__menu-wrap">
-          <button
-            type="button"
-            className="team-card__menu-btn"
-            aria-label={t("teams.menuActions")}
-            aria-expanded={menuOpen}
-            onClick={() => setMenuOpen((open) => !open)}
-          >
-            ⋮
-          </button>
-          {menuOpen ? (
-            <TeamCardMenu
-              teamId={team.id}
-              onRename={(id) => {
-                setMenuOpen(false)
-                onRename(id)
-              }}
-              onDelete={(id) => {
-                setMenuOpen(false)
-                onDelete(id)
-              }}
-              onClose={() => setMenuOpen(false)}
-            />
-          ) : null}
+        <div className="team-card__title-block">
+          <span className={`team-card__status team-card__status--${status}`}>
+            {t(`teams.status.${status}`)}
+          </span>
+          <h3 className="team-card__name">{team.name}</h3>
         </div>
       </div>
 
       <ul className="team-card__stats">
         <li>{t("teams.cardAthletes", { count: athleteCount })}</li>
-        <li>{t("teams.cardReviewsDone", { count: reviewsDone })}</li>
-        {pending > 0 ? <li className="team-card__stat--pending">{t("teams.cardPending", { count: pending })}</li> : null}
-        {alertCount > 0 ? <li className="team-card__stat--alert">{t("teams.cardAlerts", { count: alertCount })}</li> : null}
+        {athleteCount > 0 ? (
+          reviewsDone > 0 ? (
+            <li className="team-card__stat--good">
+              {t("teams.cardReviewsDoneGood", { count: reviewsDone })}
+            </li>
+          ) : (
+            <li className="team-card__stat--pending">{t("teams.cardNoReviewsThisWeek")}</li>
+          )
+        ) : null}
+        {pending > 0 ? (
+          <li className="team-card__stat--pending">{t("teams.cardPendingGood", { count: pending })}</li>
+        ) : null}
+        {alertCount > 0 ? (
+          <li className="team-card__stat--alert">{t("teams.cardAlertsGood", { count: alertCount })}</li>
+        ) : null}
       </ul>
 
+      <div className="team-card__divider" />
+
+      <div className="team-card__metrics">
+        <MetricRow icon="🧠" label={t("teams.metricMental")} metric={metrics.mental} />
+        <MetricRow icon="💚" label={t("teams.metricWellbeing")} metric={metrics.wellbeing} />
+        <MetricRow icon="🤝" label={t("teams.metricSocial")} metric={metrics.social} />
+        <MetricRow icon="🗣" label={t("teams.metricCoach")} metric={metrics.coachCommunication} />
+        <MetricRow icon="⚡" label={t("teams.metricEnergy")} metric={metrics.energy} />
+      </div>
+
+      <div className="team-card__divider" />
+
+      <p className="team-card__last-review">
+        <span>{t("teams.lastReviewLabel")}</span>
+        <strong>{lastReviewLabel}</strong>
+      </p>
+
       <div className="team-card__actions">
+        <button type="button" className="team-card__action team-card__action--primary" onClick={() => onViewTeam(team.id)}>
+          → {t("teams.viewTeam")}
+        </button>
         {team.join_token ? (
           <button
             type="button"
-            className={`team-card__copy${copied ? " team-card__copy--done" : ""}`}
+            className={`team-card__action${copied ? " team-card__action--done" : ""}`}
             onClick={() => onCopyInvitation(team)}
           >
-            {copied ? t("teams.invitationCopied") : t("teams.copyInvitation")}
+            {copied ? t("teams.invitationCopiedShort") : t("teams.copyInvitationShort")}
           </button>
-        ) : (
-          <span className="team-card__copy-missing">{t("teams.joinLinkMissing")}</span>
-        )}
-        <Button variant="ghost" className="team-card__rename" onClick={() => onRename(team.id)}>
+        ) : null}
+        <button type="button" className="team-card__action" onClick={() => onRename(team.id)}>
           {t("teams.edit")}
-        </Button>
+        </button>
+        <button
+          type="button"
+          className="team-card__action team-card__action--danger"
+          onClick={() => onDelete(team.id)}
+        >
+          {t("teams.delete")}
+        </button>
       </div>
     </article>
   )
@@ -138,6 +140,7 @@ export function TeamManagement({
   onCreateTeam,
   onRenameTeam,
   onDeleteTeam,
+  onOpenTeam,
   onNotify,
 }) {
   const { t } = useTranslation()
@@ -148,10 +151,10 @@ export function TeamManagement({
   const [copiedTeamId, setCopiedTeamId] = useState(null)
   const [submitting, setSubmitting] = useState(false)
 
-  const teamStats = useMemo(
-    () => buildTeamCardStats(teams, athletes, checkIns, alerts),
-    [teams, athletes, checkIns, alerts]
-  )
+  const teamOverviews = useMemo(() => {
+    const overviews = buildTeamClinicalOverview(teams, athletes, checkIns, alerts)
+    return sortTeamsByClinicalPriority(overviews)
+  }, [teams, athletes, checkIns, alerts])
 
   const totalAthletes = useMemo(
     () => athletes.filter((row) => teams.some((team) => team.id === row.team_id)).length,
@@ -224,15 +227,16 @@ export function TeamManagement({
         </Button>
       </header>
 
-      {teamStats.length === 0 ? (
+      {teamOverviews.length === 0 ? (
         <p className="empty-state team-management__empty">{t("teams.emptyTeams")}</p>
       ) : (
         <div className="team-management__grid">
-          {teamStats.map((stats) => (
+          {teamOverviews.map((overview) => (
             <TeamCard
-              key={stats.team.id}
-              stats={stats}
+              key={overview.team.id}
+              overview={overview}
               copiedTeamId={copiedTeamId}
+              onViewTeam={onOpenTeam}
               onCopyInvitation={copyInvitation}
               onRename={openRename}
               onDelete={handleDelete}
