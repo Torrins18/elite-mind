@@ -30,7 +30,7 @@ export function Layout({ profile, session, teamName, onLogout, children }) {
       </header>
 
       <main className="main-content">{children}</main>
-      {profile && <PrivacyNotice />}
+      {profile && profile.role !== "athlete" && <PrivacyNotice />}
     </div>
   )
 }

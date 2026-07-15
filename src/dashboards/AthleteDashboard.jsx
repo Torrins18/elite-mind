@@ -9,18 +9,50 @@ import { todayISO } from "../lib/dates"
 import {
   getWeeklyCheckInForEdit,
   hasWeeklyReflectionThisWeek,
-  isWeeklyReflectionDue,
 } from "../lib/checkInSchedule"
 import { shouldShowWeeklyReflection } from "../lib/weeklyReflectionRotation"
 
-export function AthleteDashboard({ profile, teamName }) {
+function AthleteCompletionScreen({ onAppointment, onMessage, onHome }) {
+  const { t } = useTranslation()
+
+  return (
+    <div className="dashboard-grid dashboard-grid--athlete athlete-home athlete-home--completion">
+      <div className="athlete-home__panel">
+        <p className="athlete-home__completion-icon" aria-hidden="true">
+          ✔
+        </p>
+        <h1>{t("athlete.completionTitle")}</h1>
+        <p className="athlete-home__lead">{t("athlete.completionThanks")}</p>
+        <p className="athlete-home__body">{t("athlete.completionBody")}</p>
+        <p className="athlete-home__honesty">{t("athlete.completionHonesty")}</p>
+
+        <div className="athlete-home__secondary">
+          <button type="button" className="athlete-home__secondary-btn" onClick={onAppointment}>
+            <span aria-hidden="true">📅</span> {t("athlete.actionAppointment")}
+          </button>
+          <button type="button" className="athlete-home__secondary-btn" onClick={onMessage}>
+            <span aria-hidden="true">💬</span> {t("athlete.actionMessage")}
+          </button>
+        </div>
+
+        <p className="athlete-home__confidentiality">{t("athlete.confidentiality")}</p>
+
+        {onHome && (
+          <button type="button" className="athlete-home__home-link" onClick={onHome}>
+            {t("athlete.backHome")}
+          </button>
+        )}
+      </div>
+    </div>
+  )
+}
+
+export function AthleteDashboard({ profile }) {
   const { t } = useTranslation()
   const [checkIns, setCheckIns] = useState([])
   const [loading, setLoading] = useState(true)
-  const [activeForm, setActiveForm] = useState(null)
-  const [weeklyStep, setWeeklyStep] = useState(null)
+  const [screen, setScreen] = useState("home")
   const [helpIntent, setHelpIntent] = useState(null)
-  const [confirmation, setConfirmation] = useState(null)
 
   const today = todayISO()
 
@@ -45,11 +77,6 @@ export function AthleteDashboard({ profile, teamName }) {
     load()
   }, [load])
 
-  const weeklyDue = useMemo(
-    () => isWeeklyReflectionDue(checkIns, today),
-    [checkIns, today]
-  )
-
   const weeklyDoneThisWeek = useMemo(
     () => hasWeeklyReflectionThisWeek(checkIns, today),
     [checkIns, today]
@@ -60,62 +87,61 @@ export function AthleteDashboard({ profile, teamName }) {
     [checkIns, today]
   )
 
-  const handleWeeklySaved = async () => {
-    await load()
-    setActiveForm(null)
-    setWeeklyStep(null)
-    setConfirmation(t("athlete.confirmWeekly"))
-  }
+  const firstName = profile.name?.split(" ")[0] || profile.name
 
   const openWeeklyReview = () => {
-    if (weeklyDoneThisWeek) {
-      setWeeklyStep("form")
-    } else if (shouldShowWeeklyReflection(profile.id, today, false)) {
-      setWeeklyStep("reflection")
+    if (shouldShowWeeklyReflection(profile.id, today, weeklyDoneThisWeek)) {
+      setScreen("reflection")
     } else {
-      setWeeklyStep("form")
+      setScreen("form")
     }
-    setActiveForm("weekly")
   }
 
-  const closeWeeklyReview = () => {
-    setActiveForm(null)
-    setWeeklyStep(null)
+  const handleWeeklySaved = async () => {
+    await load()
+    setScreen("completion")
+  }
+
+  const openHelp = (intent) => {
+    setHelpIntent(intent)
+    setScreen("help")
+  }
+
+  const closeHelp = () => {
+    setHelpIntent(null)
+    setScreen(weeklyDoneThisWeek ? "completion" : "home")
   }
 
   if (loading) return <LoadingSpinner label={t("athlete.loading")} />
 
-  if (activeForm === "weekly" && weeklyStep === "reflection") {
+  if (screen === "reflection") {
     return (
       <WeeklyReflectionScreen
         athleteId={profile.id}
-        onContinue={() => setWeeklyStep("form")}
+        onContinue={() => setScreen("form")}
       />
     )
   }
 
-  if (activeForm === "weekly") {
+  if (screen === "form") {
     return (
       <div className="dashboard-grid dashboard-grid--athlete">
         <CheckInForm
           athleteId={profile.id}
           existing={weeklyCheckIn}
           onSaved={handleWeeklySaved}
-          onCancel={closeWeeklyReview}
+          onCancel={() => setScreen("home")}
         />
       </div>
     )
   }
 
-  if (activeForm === "help") {
+  if (screen === "help") {
     return (
       <div className="dashboard-grid dashboard-grid--athlete">
         <AthletePsychologistContact
           userId={profile.id}
-          onClose={() => {
-            setActiveForm(null)
-            setHelpIntent(null)
-          }}
+          onClose={closeHelp}
           standalone
           defaultForm={helpIntent}
         />
@@ -123,70 +149,46 @@ export function AthleteDashboard({ profile, teamName }) {
     )
   }
 
-  const firstName = profile.name?.split(" ")[0] || profile.name
+  if (screen === "completion") {
+    return (
+      <AthleteCompletionScreen
+        onAppointment={() => openHelp("appointment")}
+        onMessage={() => openHelp("message")}
+        onHome={() => setScreen("home")}
+      />
+    )
+  }
+
+  if (weeklyDoneThisWeek) {
+    return (
+      <div className="dashboard-grid dashboard-grid--athlete athlete-home athlete-home--completed">
+        <div className="athlete-home__panel">
+          <h1>{t("athlete.weekCompletedTitle")}</h1>
+          <p className="athlete-home__lead">{t("athlete.weekCompletedBody")}</p>
+          <p className="athlete-home__body">{t("athlete.weekCompletedSupport")}</p>
+          <p className="athlete-home__week-status">
+            {t("athlete.weekStatusLabel")} · {t("athlete.weekStatusCompleted")}
+          </p>
+        </div>
+      </div>
+    )
+  }
 
   return (
-    <div className="dashboard-grid dashboard-grid--athlete athlete-home">
-      <header className="athlete-home__hero">
+    <div className="dashboard-grid dashboard-grid--athlete athlete-home athlete-home--pending">
+      <div className="athlete-home__panel">
         <h1>{t("athlete.homeGreeting", { name: firstName })}</h1>
-        {teamName && <p className="athlete-home__team">{teamName}</p>}
-        <p className="athlete-home__tagline">{t("athlete.homeTagline")}</p>
-      </header>
+        <p className="athlete-home__lead">{t("athlete.homeWelcome")}</p>
+        <p className="athlete-home__duration">{t("athlete.homeDuration")}</p>
 
-      {confirmation && (
-        <div className="athlete-home__confirmation" role="status">
-          <p>{confirmation}</p>
-          <button type="button" onClick={() => setConfirmation(null)}>
-            {t("common.close")}
-          </button>
-        </div>
-      )}
+        <button type="button" className="athlete-home__cta" onClick={openWeeklyReview}>
+          {t("athlete.startReview")}
+        </button>
 
-      <section className="athlete-home__section">
-        <h2>{t("athlete.homeAvailable")}</h2>
-        <div className="athlete-home__actions">
-          <button
-            type="button"
-            className={`athlete-home__action${weeklyDue && !weeklyDoneThisWeek ? " athlete-home__action--primary" : ""}`}
-            onClick={openWeeklyReview}
-          >
-            <span className="athlete-home__action-label">{t("athlete.actionWeekly")}</span>
-            <span className="athlete-home__action-hint">
-              {weeklyDoneThisWeek
-                ? t("athlete.actionWeeklyDone")
-                : weeklyDue
-                  ? t("athlete.actionWeeklyDue")
-                  : t("athlete.actionWeeklyHint")}
-            </span>
-          </button>
-        </div>
-      </section>
-
-      <section className="athlete-home__section athlete-home__section--help">
-        <h2>{t("athlete.homeNeedHelp")}</h2>
-        <div className="athlete-home__help-actions">
-          <button
-            type="button"
-            className="athlete-home__help-btn"
-            onClick={() => {
-              setHelpIntent("appointment")
-              setActiveForm("help")
-            }}
-          >
-            {t("athlete.actionAppointment")}
-          </button>
-          <button
-            type="button"
-            className="athlete-home__help-btn athlete-home__help-btn--ghost"
-            onClick={() => {
-              setHelpIntent("message")
-              setActiveForm("help")
-            }}
-          >
-            {t("athlete.actionMessage")}
-          </button>
-        </div>
-      </section>
+        <p className="athlete-home__week-status">
+          {t("athlete.weekStatusLabel")} · {t("athlete.weekStatusPending")}
+        </p>
+      </div>
     </div>
   )
 }
