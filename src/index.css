@@ -304,10 +304,10 @@ select:focus {
 
 .brand-logo__icon img {
   display: block;
+  width: 100%;
   height: 100%;
-  width: auto;
   max-width: none;
-  object-fit: cover;
+  object-fit: contain;
   object-position: left center;
 }
 
@@ -332,8 +332,8 @@ select:focus {
 }
 
 .brand-logo--hero-dark .brand-logo__icon {
-  width: clamp(118px, 17vw, 164px);
-  height: clamp(118px, 17vw, 164px);
+  width: clamp(80px, 12vw, 164px);
+  height: clamp(80px, 12vw, 164px);
 }
 
 .brand-logo--hero-dark .brand-logo__title {
@@ -370,6 +370,7 @@ select:focus {
   align-items: flex-start;
   gap: 6px;
   min-width: 0;
+  flex: 1;
 }
 
 .brand-logo__title {
@@ -3348,13 +3349,19 @@ select:focus {
     justify-content: center;
   }
 
+  .brand-logo--bar.brand-logo--split {
+    max-width: min(240px, 88vw);
+    margin: 0 auto;
+  }
+
   .brand-logo--bar .brand-logo__icon {
-    width: 40px;
-    height: 40px;
+    width: 36px;
+    height: 36px;
   }
 
   .brand-logo--bar .brand-logo__title {
-    font-size: 0.92rem;
+    font-size: 0.88rem;
+    letter-spacing: 0.03em;
   }
 
   .topbar__mark {

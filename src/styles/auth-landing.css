@@ -675,27 +675,68 @@
 
 /* Mobile — unified immersive stack */
 @media (max-width: 960px) {
+  .auth-landing__intro {
+    overflow-x: hidden;
+    overflow-y: visible;
+  }
+
   .auth-landing__intro-grid {
     grid-template-columns: 1fr;
     min-height: auto;
     padding: 0;
+    align-items: stretch;
   }
 
   .auth-landing__hero-content {
-    min-height: min(68vh, 620px);
-    max-width: none;
-    justify-content: flex-end;
-    padding: 96px 24px 36px;
+    min-height: auto;
+    max-width: 100%;
+    justify-content: flex-start;
+    padding: max(72px, calc(env(safe-area-inset-top) + 56px)) 20px 28px;
+    overflow: visible;
+  }
+
+  .auth-landing__hero-logo.brand-logo--hero-dark {
+    width: 100%;
+    max-width: 100%;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .auth-landing__hero-logo .brand-logo__icon {
+    width: 64px;
+    height: 64px;
+    flex-shrink: 0;
+  }
+
+  .auth-landing__hero-logo .brand-logo__title {
+    font-size: clamp(1.15rem, 5.8vw, 1.55rem);
+    letter-spacing: 0.03em;
+    white-space: normal;
+  }
+
+  .auth-landing__hero-logo .brand-logo__subtitle {
+    font-size: 0.48rem;
+    letter-spacing: 0.14em;
+  }
+
+  .auth-landing__hero-logo .brand-logo__subtitle-row {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .auth-landing__hero-logo .brand-logo__rule {
+    flex: 1;
+    min-width: 6px;
   }
 
   .auth-landing__headline {
-    font-size: clamp(2.25rem, 9vw, 3rem);
+    font-size: clamp(2rem, 8.5vw, 2.75rem);
   }
 
   .auth-landing__panel {
-    margin-top: -20px;
+    margin-top: -12px;
     align-self: stretch;
-    padding: 0 20px 52px;
+    padding: 0 20px 48px;
   }
 
   .auth-landing__card {
@@ -715,12 +756,27 @@
 
 @media (max-width: 480px) {
   .auth-landing__hero-content {
-    min-height: auto;
-    padding-top: 0;
+    padding: max(68px, calc(env(safe-area-inset-top) + 52px)) 16px 24px;
+  }
+
+  .auth-landing__hero-logo.brand-logo--hero-dark {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .auth-landing__hero-logo .brand-logo__icon {
+    width: 56px;
+    height: 56px;
+  }
+
+  .auth-landing__hero-logo .brand-logo__title {
+    font-size: 1.25rem;
+    line-height: 1.1;
   }
 
   .auth-landing__headline {
-    font-size: 2.15rem;
+    font-size: 1.95rem;
   }
 
   .auth-landing__audience-grid {
