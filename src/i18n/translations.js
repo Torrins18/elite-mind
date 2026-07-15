@@ -673,6 +673,19 @@ export const translations = {
       startReview: "Comenzar revisión",
     },
 
+    espaiMental: {
+      title: "Espacio Mental",
+      types: {
+        reflection: "Reflexión",
+        focus: "Enfoque",
+        breathing: "Respiración",
+        mental_skill: "Habilidad mental",
+        quote: "Recordatorio",
+        mini_challenge: "Mini reto",
+        visualization: "Visualización",
+      },
+    },
+
     athleteContact: {
       title: "¿Necesitas hablar con el/la psicólogo/a?",
       subtitle: "Pide una consulta de 30 minutos o envía un mensaje si lo necesitas.",
@@ -2110,6 +2123,19 @@ export const translations = {
     weeklyReflection: {
       title: "Reflexió de la setmana",
       startReview: "Començar revisió",
+    },
+
+    espaiMental: {
+      title: "Espai Mental",
+      types: {
+        reflection: "Reflexió",
+        focus: "Focus",
+        breathing: "Respiració",
+        mental_skill: "Habilitat mental",
+        quote: "Recordatori",
+        mini_challenge: "Mini repte",
+        visualization: "Visualització",
+      },
     },
 
     athleteContact: {

@@ -1,0 +1,36 @@
+-- Future: psychologist-uploaded Espai Mental content
+-- Run when enabling custom content in the app (not required for v1 static library)
+
+-- create table if not exists public.espai_mental_content (
+--   id uuid primary key default gen_random_uuid(),
+--   psychologist_id uuid not null references public.profiles(id) on delete cascade,
+--   type text not null check (type in (
+--     'reflection', 'focus', 'breathing', 'mental_skill',
+--     'quote', 'mini_challenge', 'visualization'
+--   )),
+--   title_es text,
+--   title_ca text,
+--   body_es text not null,
+--   body_ca text not null,
+--   sports text[] default '{general}',
+--   contexts text[] default '{general}',
+--   active boolean not null default true,
+--   created_at timestamptz not null default now()
+-- );
+--
+-- alter table public.espai_mental_content enable row level security;
+--
+-- create policy "Psychologists manage own espai mental content"
+--   on public.espai_mental_content for all
+--   using (auth.uid() = psychologist_id)
+--   with check (auth.uid() = psychologist_id);
+--
+-- create policy "Athletes read psychologist espai mental via team"
+--   on public.espai_mental_content for select
+--   using (
+--     active = true
+--     and psychologist_id in (
+--       select p.psychologist_id from public.profiles p
+--       where p.id = auth.uid()
+--     )
+--   );

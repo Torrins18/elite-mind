@@ -1249,6 +1249,49 @@ select:focus {
   color: var(--text);
 }
 
+.espai-mental {
+  margin-top: 28px;
+}
+
+.espai-mental__heading {
+  margin: 0 0 10px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--text-muted);
+}
+
+.espai-mental__card {
+  padding: 16px 18px;
+  border-radius: 12px;
+  background: var(--bg-subtle, rgba(148, 163, 184, 0.08));
+  border: 1px solid var(--border);
+}
+
+.espai-mental__type {
+  margin: 0 0 8px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  letter-spacing: 0.01em;
+}
+
+.espai-mental__body {
+  margin: 0;
+  font-size: 0.9375rem;
+  line-height: 1.55;
+  color: var(--text);
+}
+
+.athlete-home--completion .espai-mental {
+  margin-top: 32px;
+}
+
+.athlete-home--completed .espai-mental {
+  margin-top: 24px;
+  margin-bottom: 28px;
+}
+
 /* Legacy athlete-home classes kept for compatibility */
 .athlete-home__team {
   margin: 0;

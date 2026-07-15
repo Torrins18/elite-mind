@@ -4,6 +4,7 @@ import { useTranslation } from "../i18n/LanguageContext"
 import { CheckInForm } from "../components/CheckInForm"
 import { WeeklyReflectionScreen } from "../components/WeeklyReflectionScreen"
 import { AthletePsychologistContact } from "../components/AthletePsychologistContact"
+import { EspaiMentalCard } from "../components/EspaiMentalCard"
 import { LoadingSpinner } from "../components/ui/LoadingSpinner"
 import { todayISO } from "../lib/dates"
 import {
@@ -11,8 +12,9 @@ import {
   hasWeeklyReflectionThisWeek,
 } from "../lib/checkInSchedule"
 import { shouldShowWeeklyReflection } from "../lib/weeklyReflectionRotation"
+import { getWeeklyEspaiMentalContent } from "../lib/espaiMental"
 
-function AthleteCompletionScreen({ onAppointment, onMessage, onHome }) {
+function AthleteCompletionScreen({ espaiMental, onAppointment, onMessage, onHome }) {
   const { t } = useTranslation()
 
   return (
@@ -25,6 +27,8 @@ function AthleteCompletionScreen({ onAppointment, onMessage, onHome }) {
         <p className="athlete-home__lead">{t("athlete.completionThanks")}</p>
         <p className="athlete-home__body">{t("athlete.completionBody")}</p>
         <p className="athlete-home__honesty">{t("athlete.completionHonesty")}</p>
+
+        <EspaiMentalCard content={espaiMental} />
 
         <div className="athlete-home__secondary">
           <button type="button" className="athlete-home__secondary-btn" onClick={onAppointment}>
@@ -48,7 +52,7 @@ function AthleteCompletionScreen({ onAppointment, onMessage, onHome }) {
 }
 
 export function AthleteDashboard({ profile }) {
-  const { t } = useTranslation()
+  const { t, lang } = useTranslation()
   const [checkIns, setCheckIns] = useState([])
   const [loading, setLoading] = useState(true)
   const [screen, setScreen] = useState("home")
@@ -86,6 +90,11 @@ export function AthleteDashboard({ profile }) {
     () => getWeeklyCheckInForEdit(checkIns, today),
     [checkIns, today]
   )
+
+  const espaiMental = useMemo(() => {
+    if (!weeklyDoneThisWeek && screen !== "completion") return null
+    return getWeeklyEspaiMentalContent(profile.id, today, lang, t)
+  }, [weeklyDoneThisWeek, screen, profile.id, today, lang, t])
 
   const firstName = profile.name?.split(" ")[0] || profile.name
 
@@ -152,6 +161,7 @@ export function AthleteDashboard({ profile }) {
   if (screen === "completion") {
     return (
       <AthleteCompletionScreen
+        espaiMental={espaiMental}
         onAppointment={() => openHelp("appointment")}
         onMessage={() => openHelp("message")}
         onHome={() => setScreen("home")}
@@ -166,6 +176,7 @@ export function AthleteDashboard({ profile }) {
           <h1>{t("athlete.weekCompletedTitle")}</h1>
           <p className="athlete-home__lead">{t("athlete.weekCompletedBody")}</p>
           <p className="athlete-home__body">{t("athlete.weekCompletedSupport")}</p>
+          <EspaiMentalCard content={espaiMental} />
           <p className="athlete-home__week-status">
             {t("athlete.weekStatusLabel")} · {t("athlete.weekStatusCompleted")}
           </p>
