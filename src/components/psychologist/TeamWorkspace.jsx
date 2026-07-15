@@ -166,6 +166,7 @@ export function TeamWorkspace({
             ← {t("workspace.backToDashboard")}
           </button>
           <h2 className="team-workspace__title">{teamName}</h2>
+          <p className="team-workspace__subtitle">{t("brand.performanceCenter")}</p>
         </div>
       </header>
 

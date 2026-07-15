@@ -1,4 +1,4 @@
-/* Clinical premium UI — Zona Mental+ */
+/* Performance premium UI — Zona Mental+ */
 
 .hero-strip {
   display: flex;
@@ -938,7 +938,7 @@
   }
 }
 
-/* Clinical Command Center */
+/* Performance Command Center */
 .clinical-command {
   display: flex;
   flex-direction: column;
@@ -1513,6 +1513,15 @@
   font-size: 1.25rem;
   font-weight: 700;
   letter-spacing: -0.02em;
+}
+
+.team-workspace__subtitle {
+  margin: 4px 0 0;
+  color: var(--text-muted);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
 }
 
 .team-workspace-tabs {
