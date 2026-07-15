@@ -382,6 +382,7 @@ export function PsychologistDashboard({ profile }) {
             onPreviewCoachTeam={setCoachPreviewTeamId}
             athletes={athletes}
             checkIns={checkIns}
+            alerts={psychologistAlerts}
           />
         </>
       ) : (

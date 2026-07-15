@@ -3,12 +3,18 @@ import { supabase } from "../supabase"
 import { useTranslation } from "../i18n/LanguageContext"
 import { Card } from "./ui/Card"
 import { Button } from "./ui/Button"
-import { TeamJoinLink } from "./TeamJoinLink"
 import { filterActiveTeams } from "../lib/teams"
 import { PsychologistResourceLibrary } from "./psychologist/PsychologistResourceLibrary"
 import { ClubManagement } from "./psychologist/ClubManagement"
+import { TeamManagement } from "./psychologist/TeamManagement"
 
-export function PsychologistCoachAdmin({ psychologistId, onPreviewCoachTeam, athletes = [], checkIns = [] }) {
+export function PsychologistCoachAdmin({
+  psychologistId,
+  onPreviewCoachTeam,
+  athletes = [],
+  checkIns = [],
+  alerts = [],
+}) {
   const { t } = useTranslation()
   const [pendingCoaches, setPendingCoaches] = useState([])
   const [approvedCoaches, setApprovedCoaches] = useState([])
@@ -16,9 +22,6 @@ export function PsychologistCoachAdmin({ psychologistId, onPreviewCoachTeam, ath
   const [teams, setTeams] = useState([])
   const [coachTeams, setCoachTeams] = useState({})
   const [previewTeamId, setPreviewTeamId] = useState("")
-  const [newTeamName, setNewTeamName] = useState("")
-  const [editingTeamId, setEditingTeamId] = useState(null)
-  const [editTeamName, setEditTeamName] = useState("")
   const [newLink, setNewLink] = useState("")
   const [loading, setLoading] = useState(true)
   const [message, setMessage] = useState("")
@@ -122,21 +125,17 @@ export function PsychologistCoachAdmin({ psychologistId, onPreviewCoachTeam, ath
     setMessage(t("invites.copied"))
   }
 
-  const createTeam = async (event) => {
-    event.preventDefault()
-    const name = newTeamName.trim()
-    if (!name) return
-
+  const createTeam = async (name) => {
     setMessage("")
     const { error } = await supabase.from("teams").insert([{ name }])
     if (error) {
       setMessage(error.message)
-      return
+      return false
     }
 
-    setNewTeamName("")
     setMessage(t("teams.created"))
     await load()
+    return true
   }
 
   const updateCoachTeam = async (coachId, teamId) => {
@@ -195,7 +194,7 @@ export function PsychologistCoachAdmin({ psychologistId, onPreviewCoachTeam, ath
   const activeTeams = useMemo(() => filterActiveTeams(teams), [teams])
 
   const deleteTeam = async (teamId) => {
-    if (!confirm(t("teams.deleteConfirm"))) return
+    if (!confirm(t("teams.deleteConfirm"))) return false
 
     setMessage("")
     const { error } = await supabase
@@ -205,97 +204,42 @@ export function PsychologistCoachAdmin({ psychologistId, onPreviewCoachTeam, ath
 
     if (error) {
       setMessage(error.message)
-      return
+      return false
     }
 
     setMessage(t("teams.deleted"))
     await load()
+    return true
   }
 
-  const saveTeamName = async (event, teamId) => {
-    event.preventDefault()
-    const name = editTeamName.trim()
-    if (!name) return
-
+  const renameTeam = async (teamId, name) => {
     setMessage("")
     const { error } = await supabase.from("teams").update({ name }).eq("id", teamId)
 
     if (error) {
       setMessage(error.message)
-      return
+      return false
     }
 
-    setEditingTeamId(null)
-    setEditTeamName("")
     setMessage(t("teams.updated"))
     await load()
+    return true
   }
 
   if (loading) return null
 
   return (
     <div className="admin-grid">
-      <Card title={t("teams.manageTitle")} subtitle={t("teams.manageSubtitle")}>
-        <form className="team-create" onSubmit={createTeam}>
-          <input
-            value={newTeamName}
-            onChange={(event) => setNewTeamName(event.target.value)}
-            placeholder={t("teams.newPlaceholder")}
-          />
-          <Button type="submit">{t("teams.create")}</Button>
-        </form>
-        {activeTeams.length > 0 && (
-          <ul className="team-join-list">
-            {activeTeams.map((team) => (
-              <li key={team.id} className="team-join-list__item">
-                {editingTeamId === team.id ? (
-                  <form className="team-edit-form" onSubmit={(event) => saveTeamName(event, team.id)}>
-                    <input
-                      value={editTeamName}
-                      onChange={(event) => setEditTeamName(event.target.value)}
-                      placeholder={t("teams.editPlaceholder")}
-                      required
-                    />
-                    <div className="team-edit-form__actions">
-                      <Button type="submit">{t("teams.save")}</Button>
-                      <Button type="button" variant="ghost" onClick={() => setEditingTeamId(null)}>
-                        {t("common.cancel")}
-                      </Button>
-                    </div>
-                  </form>
-                ) : (
-                  <>
-                    <div className="team-join-list__header">
-                      <strong>{team.name}</strong>
-                      <Button
-                        variant="ghost"
-                        onClick={() => {
-                          setEditingTeamId(team.id)
-                          setEditTeamName(team.name)
-                        }}
-                      >
-                        {t("teams.edit")}
-                      </Button>
-                    </div>
-                    <TeamJoinLink
-                      joinToken={team.join_token}
-                      teamName={team.name}
-                      onCopied={setMessage}
-                    />
-                    <Button
-                      variant="ghost"
-                      className="btn--danger-text"
-                      onClick={() => deleteTeam(team.id)}
-                    >
-                      {t("teams.delete")}
-                    </Button>
-                  </>
-                )}
-              </li>
-            ))}
-          </ul>
-        )}
-      </Card>
+      <TeamManagement
+        teams={activeTeams}
+        athletes={athletes}
+        checkIns={checkIns}
+        alerts={alerts}
+        onCreateTeam={createTeam}
+        onRenameTeam={renameTeam}
+        onDeleteTeam={deleteTeam}
+        onNotify={setMessage}
+      />
 
       <Card title={t("teams.previewTitle")} subtitle={t("teams.previewSubtitle")}>
         <div className="coach-preview-controls">
