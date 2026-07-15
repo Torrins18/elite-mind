@@ -282,126 +282,38 @@ select:focus {
 
 .brand-logo {
   display: block;
+  width: auto;
   height: auto;
   object-fit: contain;
+  object-position: left center;
 }
 
 .brand-logo--bar {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  height: 46px;
-  max-width: min(260px, 48vw);
+  width: min(220px, 54vw);
+  max-height: 52px;
 }
 
-.brand-logo--hero,
-.brand-logo--compact {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  gap: 14px;
-}
-
-.brand-logo--hero {
-  width: min(100%, 300px);
-  margin-bottom: 18px;
+.brand-logo--hero-dark {
+  width: min(360px, 90vw);
+  max-height: clamp(88px, 12vh, 112px);
 }
 
 .brand-logo--compact {
-  width: min(200px, 72vw);
-  gap: 12px;
+  width: min(300px, 84vw);
+  max-height: 72px;
 }
 
-.brand-logo__mark {
-  flex-shrink: 0;
+.brand-logo--icon {
+  width: 48px;
+  max-height: 48px;
 }
 
-.brand-logo__text {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  min-width: 0;
+.brand-logo--on-dark {
+  filter: drop-shadow(0 2px 20px rgba(0, 0, 0, 0.35));
 }
 
-.brand-logo--bar .brand-logo__text {
-  align-items: flex-start;
-  gap: 0;
-}
-
-.brand-logo__title {
-  margin: 0;
-  font-family: "Inter", "Manrope", system-ui, sans-serif;
-  font-size: 1.05rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  line-height: 1.1;
-  white-space: nowrap;
-}
-
-.brand-logo--hero .brand-logo__title {
-  font-size: 1.65rem;
-}
-
-.brand-logo--compact .brand-logo__title {
-  font-size: 1.35rem;
-}
-
-.brand-logo__zona {
-  color: var(--text-primary);
-}
-
-.brand-logo__accent {
-  color: var(--color-healthy);
-}
-
-.brand-logo--light .brand-logo__zona {
-  color: rgba(255, 255, 255, 0.96);
-}
-
-.brand-logo--light .brand-logo__accent {
-  color: #84cc16;
-}
-
-.brand-logo__subtitle-row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  width: 100%;
-  max-width: 280px;
-}
-
-.brand-logo__rule {
-  flex: 1;
-  height: 1px;
-  border-radius: 1px;
-}
-
-.brand-logo__rule--blue {
-  background: linear-gradient(90deg, transparent, var(--color-nav));
-}
-
-.brand-logo__rule--green {
-  background: linear-gradient(90deg, var(--color-healthy), transparent);
-}
-
-.brand-logo__subtitle {
-  flex-shrink: 0;
-  font-size: 0.62rem;
-  font-weight: 500;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--text-secondary);
-}
-
-.brand-logo__tagline {
-  margin: 0;
-  font-size: 0.62rem;
-  font-weight: 500;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--color-nav);
+.brand-logo--on-light {
+  filter: none;
 }
 
 .auth-panel__tagline {
@@ -3309,8 +3221,8 @@ select:focus {
   }
 
   .brand-logo--bar {
-    height: 40px;
-    max-width: min(200px, 70vw);
+    width: min(200px, 72vw);
+    max-height: 46px;
   }
 
   .topbar__mark {

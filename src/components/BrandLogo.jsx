@@ -1,63 +1,25 @@
-import { LogoMark } from "./brand/LogoMark"
-import { useTranslation } from "../i18n/LanguageContext"
+const LOGO_SRC = "/images/zona-mental-logo-v2-transparent.png"
+const LABEL = "Zona Mental+ — Psicología deportiva"
 
-function Wordmark({ showSubtitle = true, showTagline = false, compact = false, subtitleText, taglineText, hero = false }) {
-  const { t } = useTranslation()
-  const subtitle = subtitleText ?? t("appEyebrow")
-  const tagline = taglineText ?? t("login.tagline")
-
-  return (
-    <div className={`brand-logo__text${compact ? " brand-logo__text--compact" : ""}${hero ? " brand-logo__text--hero" : ""}`}>
-      <p className="brand-logo__title" aria-hidden="true">
-        <span className="brand-logo__zona">ZONA </span>
-        <span className="brand-logo__accent">MENTAL+</span>
-      </p>
-      {showSubtitle && (
-        <div className="brand-logo__subtitle-row">
-          <span className="brand-logo__rule brand-logo__rule--blue" aria-hidden="true" />
-          <span className="brand-logo__subtitle">{subtitle}</span>
-          <span className="brand-logo__rule brand-logo__rule--green" aria-hidden="true" />
-        </div>
-      )}
-      {showTagline && <p className="brand-logo__tagline">{tagline}</p>}
-    </div>
-  )
-}
-
+/** Official brand logo — transparent PNG v2 (red/grey/white). */
 export function BrandLogo({ variant = "bar", className = "", tone = "default" }) {
-  const { t } = useTranslation()
-  const rootClass = `brand-logo brand-logo--${variant}${tone === "light" ? " brand-logo--light" : ""}${variant === "hero-dark" ? " brand-logo--hero-dark" : ""} ${className}`.trim()
   const onDark = tone === "light" || variant === "hero-dark"
-
-  if (variant === "hero-dark") {
-    return (
-      <div className={rootClass} role="img" aria-label="Zona Mental+ — Psicología deportiva">
-        <LogoMark size={82} palette="hero" className="brand-logo__mark brand-logo__mark--hero" title="" />
-        <Wordmark hero showSubtitle showTagline subtitleText={t("authLanding.logoSubtitle")} />
-      </div>
-    )
-  }
-
-  if (variant === "bar") {
-    return (
-      <div className={rootClass} role="img" aria-label="Zona Mental+ — Psicología deportiva">
-        <LogoMark size={40} palette={onDark ? "hero" : "default"} className="brand-logo__mark" title="" />
-        <Wordmark showSubtitle={false} compact />
-      </div>
-    )
-  }
-
-  if (variant === "icon") {
-    return <LogoMark size={48} palette={onDark ? "hero" : "default"} className={rootClass} />
-  }
-
-  const markSize = variant === "hero" ? 88 : 72
-  const showTagline = variant === "hero"
+  const rootClass = [
+    "brand-logo",
+    `brand-logo--${variant}`,
+    onDark ? "brand-logo--on-dark" : "brand-logo--on-light",
+    className,
+  ]
+    .filter(Boolean)
+    .join(" ")
 
   return (
-    <div className={rootClass} role="img" aria-label="Zona Mental+ — Psicología deportiva">
-      <LogoMark size={markSize} palette={onDark ? "hero" : "default"} className="brand-logo__mark" title="" />
-      <Wordmark showSubtitle showTagline={showTagline} />
-    </div>
+    <img
+      className={rootClass}
+      src={LOGO_SRC}
+      alt={LABEL}
+      decoding="async"
+      fetchPriority={variant === "hero-dark" ? "high" : undefined}
+    />
   )
 }
