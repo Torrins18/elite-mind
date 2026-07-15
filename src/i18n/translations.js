@@ -983,6 +983,26 @@ export const translations = {
       },
     },
 
+    workspace: {
+      backToDashboard: "Panel",
+      tabsLabel: "Secciones del equipo",
+      summaryEorHint: "Índices agregados de la última revisión semanal.",
+      reportsTitle: "Informes",
+      reportsSubtitle: "Exporta datos clínicos del equipo.",
+      notesTitle: "Notas del equipo",
+      notesSubtitle: "Notas clínicas recientes de todos los deportistas.",
+      noTeamNotes: "Aún no hay notas registradas en este equipo.",
+      tab: {
+        summary: "Resumen",
+        athletes: "Deportistas",
+        alerts: "Alertas",
+        participation: "Participación",
+        eor: "Evolución EOR",
+        reports: "Informes",
+        notes: "Notas",
+      },
+    },
+
     psychologist: {
       loading: "Cargando vista clínica...",
       title: "Vista clínica",
@@ -2274,6 +2294,26 @@ export const translations = {
         priorityAlerts: "🔴 {count} alertes prioritàries actives.",
         priorityAlertOne: "🔴 1 alerta prioritària activa.",
         teamMostChanged: "📈 L'equip {team} ha canviat més aquesta setmana.",
+      },
+    },
+
+    workspace: {
+      backToDashboard: "Panell",
+      tabsLabel: "Seccions de l'equip",
+      summaryEorHint: "Índexs agregats de l'última revisió setmanal.",
+      reportsTitle: "Informes",
+      reportsSubtitle: "Exporta dades clíniques de l'equip.",
+      notesTitle: "Notes de l'equip",
+      notesSubtitle: "Notes clíniques recents de tots els esportistes.",
+      noTeamNotes: "Encara no hi ha notes registrades en aquest equip.",
+      tab: {
+        summary: "Resum",
+        athletes: "Esportistes",
+        alerts: "Alertes",
+        participation: "Participació",
+        eor: "Evolució EOR",
+        reports: "Informes",
+        notes: "Notes",
       },
     },
 

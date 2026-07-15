@@ -6,16 +6,10 @@ import {
   buildTeamReportSections,
   downloadPrintReport,
 } from "../lib/pdfReports"
-import { Card } from "../components/ui/Card"
-import { StatCard } from "../components/ui/StatCard"
 import { LoadingSpinner } from "../components/ui/LoadingSpinner"
-import { Badge } from "../components/ui/Badge"
 import { Button } from "../components/ui/Button"
-import { InsightCard } from "../components/InsightCard"
 import { calculateRiskLevel } from "../lib/risk"
-import { buildTeamInsight } from "../lib/insights"
 import { summarizeTeam } from "../lib/insights/metrics"
-import { getLatestWeeklyReflection } from "../lib/weeklyEor"
 import {
   aggregateWeeklyEorTrend,
   getLatestWeeklyTeamSnapshot,
@@ -33,11 +27,8 @@ import {
   syncAndLoadPsychologistAlerts,
 } from "../lib/alertPersistence"
 import { filterActiveTeams } from "../lib/teams"
-import { AthleteClinicalFile } from "../components/psychologist/AthleteClinicalFile"
+import { TeamWorkspace } from "../components/psychologist/TeamWorkspace"
 import { useTeamInsight } from "../hooks/useTeamInsight"
-import { EorIndexSummary } from "../components/EorIndexSummary"
-import { WeeklyEorChart } from "../components/WeeklyEorTeamChart"
-import { ComplianceTrendChart } from "../components/ComplianceTrendChart"
 import { buildWeeklyComplianceTrend, currentWeekCompliance } from "../lib/complianceTrend"
 
 const OVERVIEW_TAB = "overview"
@@ -129,8 +120,8 @@ export function PsychologistDashboard({ profile }) {
   )
 
   const teamSummaries = useMemo(
-    () => buildTeamSummaries(teams, athletes, checkIns, t),
-    [teams, athletes, checkIns, t]
+    () => buildTeamSummaries(teams, athletes, checkIns),
+    [teams, athletes, checkIns]
   )
 
   const activeTeamSummary = useMemo(
@@ -198,6 +189,13 @@ export function PsychologistDashboard({ profile }) {
     return counts
   }, [psychologistAlerts, athleteMap])
 
+  const teamAlerts = useMemo(() => {
+    if (activeTab === OVERVIEW_TAB) return []
+    return psychologistAlerts.filter(
+      (alert) => athleteMap[alert.athleteId]?.team_id === activeTab
+    )
+  }, [psychologistAlerts, athleteMap, activeTab])
+
   const selectedAssessment = useMemo(
     () => assessments.find((item) => item.athlete_id === selectedId) ?? null,
     [assessments, selectedId]
@@ -246,6 +244,11 @@ export function PsychologistDashboard({ profile }) {
 
   const openTeam = (teamId) => {
     setActiveTab(teamId)
+    setSelectedId(null)
+  }
+
+  const backToOverview = () => {
+    setActiveTab(OVERVIEW_TAB)
     setSelectedId(null)
   }
 
@@ -322,18 +325,6 @@ export function PsychologistDashboard({ profile }) {
 
   return (
     <div className="dashboard-grid dashboard-grid--psych">
-      {activeTab !== OVERVIEW_TAB ? (
-        <section className="hero-strip">
-          <div>
-            <h2>{t("psychologist.title")}</h2>
-            <p>{t("psychologist.subtitle")}</p>
-          </div>
-          <Button variant="ghost" onClick={exportCsv}>
-            {t("export.button")}
-          </Button>
-        </section>
-      ) : null}
-
       <nav className="psych-tabs" aria-label={t("psychologist.tabsLabel")}>
         <button
           type="button"
@@ -385,134 +376,46 @@ export function PsychologistDashboard({ profile }) {
             onPreviewCoachTeam={setCoachPreviewTeamId}
             athletes={athletes}
             checkIns={checkIns}
-            alerts={psychologistAlerts}
             externalMessage={adminMessage}
             onMessage={setAdminMessage}
           />
         </>
       ) : (
         activeTeamSummary && (
-          <>
-            <Card
-              title={teamMap[activeTab]}
-              subtitle={t("psychologist.teamPanelSubtitle")}
-              action={
-                <Button variant="ghost" onClick={exportTeamPdf}>
-                  {t("reports.exportPdf")}
-                </Button>
-              }
-            >
-              <InsightCard
-                title={t("insights.orgTitle")}
-                insight={activeTeamSummary.insight}
-              />
-            </Card>
-
-            <div className="stats-row stats-row--compact">
-              <StatCard
-                label={t("psychologist.athletesMonitored")}
-                value={activeTeamSummary.athletes.length}
-              />
-              <StatCard
-                label={t("coach.checkedInThisWeek")}
-                value={t("psychologist.complianceRatio", {
-                  done: teamComplianceNow.done,
-                  total: teamComplianceNow.total,
-                  pct: teamComplianceNow.pct,
-                })}
-              />
-            </div>
-
-            <ComplianceTrendChart trend={teamComplianceTrend} />
-
-            <Card title={t("insights.evolutionTitle")} subtitle={t("insights.evolutionSubtitle")}>
-              <InsightCard
-                title={t("insights.evolutionCardTitle")}
-                insight={teamEvolutionInsight}
-                loading={teamEvolutionLoading}
-                source={teamEvolutionSource}
-              />
-            </Card>
-
-            <Card title={t("psychologist.teamEorTitle")} subtitle={t("psychologist.teamEorSubtitle")}>
-              <EorIndexSummary indexes={teamWeeklySnapshot} variant="psychologist" t={t} />
-            </Card>
-
-            <WeeklyEorChart
-              weeklyTrend={teamWeeklyTrend}
-              variant="psychologist"
-              title={t("psychologist.teamEorChartTitle")}
-              subtitle={t("psychologist.teamEorChartSubtitle")}
-            />
-
-            <div className="psych-layout">
-              <Card
-                className="psych-sidebar"
-                title={t("psychologist.allAthletes")}
-                subtitle={t("psychologist.allAthletesSubtitle")}
-              >
-                {tabAthletes.length === 0 ? (
-                  <p className="empty-state">{t("psychologist.noAthletesInCategory")}</p>
-                ) : (
-                  <ul className="athlete-picker">
-                    {tabAthletes.map((a) => {
-                      const athleteCheckInRows = tabCheckIns.filter((c) => c.athlete_id === a.id)
-                      const latestWeekly = getLatestWeeklyReflection(athleteCheckInRows)
-                      const risk = latestWeekly ? calculateRiskLevel(latestWeekly) : "noData"
-                      const teamLabel = a.team_id ? teamMap[a.team_id] : null
-
-                      return (
-                        <li key={a.id}>
-                          <button
-                            type="button"
-                            className={
-                              selectedId === a.id
-                                ? "athlete-picker__btn active"
-                                : "athlete-picker__btn"
-                            }
-                            onClick={() => selectAthlete(a.id)}
-                          >
-                            <span className="athlete-picker__main">
-                              <strong>{a.name}</strong>
-                              {teamLabel && (
-                                <small className="athlete-picker__team">{teamLabel}</small>
-                              )}
-                            </span>
-                            <Badge variant={risk === "noData" ? "default" : risk}>
-                              {t(`psychologist.riskBadge.${risk}`)}
-                            </Badge>
-                          </button>
-                        </li>
-                      )
-                    })}
-                  </ul>
-                )}
-              </Card>
-
-              <div className="psych-detail">
-                {selected ? (
-                  <AthleteClinicalFile
-                    athlete={selected}
-                    teamName={teamMap[activeTab]}
-                    checkIns={athleteCheckIns}
-                    assessment={selectedAssessment}
-                    insight={athleteInsight}
-                    insightLoading={athleteInsightLoading}
-                    insightSource={athleteInsightSource}
-                    psychologistId={profile.id}
-                    athleteAlerts={selectedAthleteAlerts}
-                    onAlertsChange={refreshAlerts}
-                    onAssessmentUpdated={load}
-                    t={t}
-                  />
-                ) : (
-                  <Card title={t("psychologist.selectAthleteTitle")}>
-                    <p className="empty-state">{t("psychologist.selectAthleteText")}</p>
-                  </Card>
-                )}
-              </div>
-            </div>
-          </>
+          <TeamWorkspace
+            teamId={activeTab}
+            teamName={teamMap[activeTab]}
+            teamSummary={activeTeamSummary}
+            athletes={tabAthletes}
+            checkIns={tabCheckIns}
+            teamAlerts={teamAlerts}
+            teamWeeklyTrend={teamWeeklyTrend}
+            teamComplianceTrend={teamComplianceTrend}
+            teamComplianceNow={teamComplianceNow}
+            teamWeeklySnapshot={teamWeeklySnapshot}
+            teamEvolutionInsight={teamEvolutionInsight}
+            teamEvolutionLoading={teamEvolutionLoading}
+            teamEvolutionSource={teamEvolutionSource}
+            selectedId={selectedId}
+            onSelectAthlete={selectAthlete}
+            selectedAthlete={selected}
+            athleteCheckIns={athleteCheckIns}
+            selectedAssessment={selectedAssessment}
+            athleteInsight={athleteInsight}
+            athleteInsightLoading={athleteInsightLoading}
+            athleteInsightSource={athleteInsightSource}
+            selectedAthleteAlerts={selectedAthleteAlerts}
+            psychologistId={profile.id}
+            athleteMap={athleteMap}
+            onBackToOverview={backToOverview}
+            onExportTeamPdf={exportTeamPdf}
+            onExportCsv={exportCsv}
+            onDismissAlert={dismissAlert}
+            onOpenAthlete={openAthlete}
+            onAlertsChange={refreshAlerts}
+            onAssessmentUpdated={load}
+            t={t}
+          />
         )
       )}
 
@@ -537,7 +440,7 @@ export function PsychologistDashboard({ profile }) {
   )
 }
 
-function buildTeamSummaries(teams, athletes, checkIns, t) {
+function buildTeamSummaries(teams, athletes, checkIns) {
   return teams.map((team) => {
     const teamAthletes = athletes.filter((a) => a.team_id === team.id)
     const ids = new Set(teamAthletes.map((a) => a.id))
@@ -546,10 +449,6 @@ function buildTeamSummaries(teams, athletes, checkIns, t) {
       const latest = teamCheckIns.find((c) => c.athlete_id === a.id)
       return { athlete: a, latest, risk: calculateRiskLevel(latest) }
     })
-    const insight = buildTeamInsight(
-      { athletes: teamAthletes, checkIns: teamCheckIns, latestByAthlete },
-      t
-    )
     const summary = summarizeTeam({
       athletes: teamAthletes,
       checkIns: teamCheckIns,
@@ -563,7 +462,6 @@ function buildTeamSummaries(teams, athletes, checkIns, t) {
       athletes: teamAthletes,
       checkIns: teamCheckIns,
       latestByAthlete,
-      insight,
       summary,
       highRiskCount,
       eorSnapshot,
