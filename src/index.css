@@ -282,38 +282,162 @@ select:focus {
 
 .brand-logo {
   display: block;
+}
+
+.brand-logo--split {
+  display: flex;
+  align-items: center;
+  gap: clamp(10px, 2vw, 16px);
   width: auto;
-  height: auto;
-  object-fit: contain;
+  max-width: 100%;
+}
+
+.brand-logo__icon {
+  flex-shrink: 0;
+  overflow: hidden;
+  line-height: 0;
+}
+
+.brand-logo__icon img {
+  display: block;
+  height: 100%;
+  width: auto;
+  max-width: none;
+  object-fit: cover;
   object-position: left center;
 }
 
-.brand-logo--bar {
-  width: min(220px, 54vw);
-  max-height: 52px;
+.brand-logo--bar.brand-logo--split {
+  gap: 10px;
+  max-width: min(280px, 62vw);
 }
 
-.brand-logo--hero-dark {
-  width: min(360px, 90vw);
-  max-height: clamp(88px, 12vh, 112px);
+.brand-logo--bar .brand-logo__icon {
+  width: 44px;
+  height: 44px;
 }
 
-.brand-logo--compact {
-  width: min(300px, 84vw);
-  max-height: 72px;
+.brand-logo--bar .brand-logo__title {
+  font-size: 1rem;
 }
 
-.brand-logo--icon {
+.brand-logo--hero-dark.brand-logo--split {
+  align-items: center;
+  gap: clamp(14px, 2.5vw, 22px);
+  width: 100%;
+}
+
+.brand-logo--hero-dark .brand-logo__icon {
+  width: clamp(118px, 17vw, 164px);
+  height: clamp(118px, 17vw, 164px);
+}
+
+.brand-logo--hero-dark .brand-logo__title {
+  font-size: clamp(1.85rem, 4.2vw, 3rem);
+}
+
+.brand-logo--hero-dark .brand-logo__subtitle {
+  font-size: clamp(0.52rem, 1.1vw, 0.62rem);
+  letter-spacing: 0.22em;
+}
+
+.brand-logo--compact.brand-logo--split {
+  gap: 12px;
+  max-width: min(340px, 88vw);
+}
+
+.brand-logo--compact .brand-logo__icon {
+  width: 56px;
+  height: 56px;
+}
+
+.brand-logo--compact .brand-logo__title {
+  font-size: 1.25rem;
+}
+
+.brand-logo--icon .brand-logo__icon {
   width: 48px;
-  max-height: 48px;
+  height: 48px;
 }
 
-.brand-logo--on-dark {
-  filter: drop-shadow(0 2px 18px rgba(0, 0, 0, 0.35));
+.brand-logo__text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  min-width: 0;
 }
 
-.brand-logo--on-light {
-  filter: none;
+.brand-logo__title {
+  margin: 0;
+  font-family: "Inter", "Manrope", system-ui, sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  line-height: 1.05;
+  white-space: nowrap;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.brand-logo__subtitle-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+
+.brand-logo__rule {
+  flex: 0 1 40px;
+  height: 1px;
+  border-radius: 1px;
+}
+
+.brand-logo__subtitle {
+  flex-shrink: 0;
+  font-size: 0.58rem;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.brand-logo--dark .brand-logo__zona {
+  color: #ffffff;
+}
+
+.brand-logo--dark .brand-logo__accent {
+  color: #6dbd6f;
+}
+
+.brand-logo--dark .brand-logo__subtitle {
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.brand-logo--dark .brand-logo__rule--left {
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.55));
+}
+
+.brand-logo--dark .brand-logo__rule--right {
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.55), transparent);
+}
+
+.brand-logo--light .brand-logo__zona {
+  color: #444444;
+}
+
+.brand-logo--light .brand-logo__accent {
+  color: #57a657;
+}
+
+.brand-logo--light .brand-logo__subtitle {
+  color: #666666;
+}
+
+.brand-logo--light .brand-logo__rule--left {
+  background: linear-gradient(90deg, transparent, #888888);
+}
+
+.brand-logo--light .brand-logo__rule--right {
+  background: linear-gradient(90deg, #888888, transparent);
 }
 
 .auth-panel__tagline {
@@ -3220,9 +3344,13 @@ select:focus {
     justify-content: center;
   }
 
-  .brand-logo--bar {
-    width: min(200px, 72vw);
-    max-height: 46px;
+  .brand-logo--bar .brand-logo__icon {
+    width: 40px;
+    height: 40px;
+  }
+
+  .brand-logo--bar .brand-logo__title {
+    font-size: 0.92rem;
   }
 
   .topbar__mark {

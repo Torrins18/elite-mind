@@ -143,13 +143,6 @@
   margin-bottom: 4px;
 }
 
-.auth-landing__hero-logo.brand-logo--hero-dark {
-  width: min(680px, 98vw);
-  max-width: 100%;
-  max-height: clamp(220px, 32vh, 320px);
-  height: auto;
-}
-
 .auth-landing__footer-logo {
   filter: none;
 }
@@ -746,9 +739,13 @@
     padding-bottom: 28px;
   }
 
-  .auth-landing__hero-logo.brand-logo--hero-dark {
-    width: min(560px, 96vw);
-    max-height: clamp(180px, 26vh, 240px);
+  .auth-landing__hero-logo .brand-logo__icon {
+    width: clamp(100px, 14vw, 136px);
+    height: clamp(100px, 14vw, 136px);
+  }
+
+  .auth-landing__hero-logo .brand-logo__title {
+    font-size: clamp(1.55rem, 3.6vw, 2.25rem);
   }
 
   .auth-landing__headline {
