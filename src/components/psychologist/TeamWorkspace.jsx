@@ -136,13 +136,15 @@ export function TeamWorkspace({
   onOpenAthlete,
   onAlertsChange,
   onAssessmentUpdated,
+  initialTeamTab,
+  initialAthleteTab,
   t,
 }) {
-  const [activeTab, setActiveTab] = useState("athletes")
+  const [activeTab, setActiveTab] = useState(initialTeamTab || "athletes")
 
   useEffect(() => {
-    setActiveTab("athletes")
-  }, [teamId])
+    setActiveTab(initialTeamTab || "athletes")
+  }, [teamId, initialTeamTab])
 
   const alertCount = useMemo(
     () => teamAlerts.filter((row) => row.status === "active").length,
@@ -265,6 +267,7 @@ export function TeamWorkspace({
                   athleteAlerts={selectedAthleteAlerts}
                   onAlertsChange={onAlertsChange}
                   onAssessmentUpdated={onAssessmentUpdated}
+                  initialTab={initialAthleteTab}
                   t={t}
                 />
               ) : (

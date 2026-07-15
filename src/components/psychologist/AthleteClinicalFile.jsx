@@ -49,10 +49,11 @@ export function AthleteClinicalFile({
   athleteAlerts = [],
   onAlertsChange,
   onAssessmentUpdated,
+  initialTab,
   t,
 }) {
   const { lang } = useTranslation()
-  const [activeTab, setActiveTab] = useState("profile")
+  const [activeTab, setActiveTab] = useState(initialTab || "profile")
   const [notes, setNotes] = useState([])
   const [sessions, setSessions] = useState([])
   const [documents, setDocuments] = useState([])
@@ -134,10 +135,10 @@ export function AthleteClinicalFile({
   }, [athlete?.id, psychologistId])
 
   useEffect(() => {
-    setActiveTab("profile")
+    setActiveTab(initialTab || "profile")
     setExpandedReviewId(null)
     loadRecord()
-  }, [athlete?.id, loadRecord])
+  }, [athlete?.id, initialTab, loadRecord])
 
   const updateAppointmentStatus = async (id, status, extra = {}) => {
     const { error } = await supabase

@@ -30,6 +30,17 @@ import { filterActiveTeams } from "../lib/teams"
 import { TeamWorkspace } from "../components/psychologist/TeamWorkspace"
 import { useTeamInsight } from "../hooks/useTeamInsight"
 import { buildWeeklyComplianceTrend, currentWeekCompliance } from "../lib/complianceTrend"
+import {
+  loadPriorityStates,
+  priorityItemMetadata,
+  resolvePriorityStates,
+  upsertPriorityState,
+} from "../lib/priorityStates"
+import { buildTodayPriorities } from "../lib/clinicalCommandCenter"
+import {
+  buildTeamClinicalOverview,
+  getMostChangedTeam,
+} from "../lib/teamClinicalOverview"
 
 const OVERVIEW_TAB = "overview"
 
@@ -45,6 +56,8 @@ export function PsychologistDashboard({ profile }) {
   const [appointmentRequests, setAppointmentRequests] = useState([])
   const [psychologistMessages, setPsychologistMessages] = useState([])
   const [psychologistAlerts, setPsychologistAlerts] = useState([])
+  const [priorityStates, setPriorityStates] = useState({})
+  const [navFocus, setNavFocus] = useState(null)
   const [loading, setLoading] = useState(true)
   const [adminMessage, setAdminMessage] = useState("")
 
@@ -102,8 +115,33 @@ export function PsychologistDashboard({ profile }) {
       assessmentRes.error ? [] : assessmentRes.data || []
     )
     setPsychologistAlerts(alerts)
+
+    const states = await loadPriorityStates(supabase, profile.id)
+    const activeTeams = filterActiveTeams(teamList || [])
+    const teamOverviews = buildTeamClinicalOverview(
+      activeTeams,
+      athleteRows,
+      checkInRows,
+      alerts
+    )
+    const priorityItems = buildTodayPriorities({
+      teamOverviews,
+      alerts,
+      appointmentRequests: appointmentsRes.error ? [] : appointmentsRes.data || [],
+      psychologistMessages: messagesRes.error ? [] : messagesRes.data || [],
+      mostChangedTeam: getMostChangedTeam(teamOverviews),
+      athleteMap: Object.fromEntries(athleteRows.map((row) => [row.id, row])),
+    })
+    const resolvedStates = await resolvePriorityStates(
+      supabase,
+      profile.id,
+      priorityItems.map((item) => item.priorityKey),
+      states
+    )
+    setPriorityStates(resolvedStates)
+
     setLoading(false)
-  }, [])
+  }, [profile.id])
 
   useEffect(() => {
     load()
@@ -228,6 +266,17 @@ export function PsychologistDashboard({ profile }) {
 
     if (!error) {
       setAppointmentRequests((rows) => rows.filter((row) => row.id !== id))
+      const priorityKey = `appointment:${id}:pending`
+      try {
+        await upsertPriorityState(supabase, profile.id, priorityKey, "resolved")
+        setPriorityStates((prev) => {
+          const next = { ...prev }
+          delete next[priorityKey]
+          return next
+        })
+      } catch {
+        /* priority_states table may not exist yet */
+      }
     }
   }
 
@@ -239,12 +288,26 @@ export function PsychologistDashboard({ profile }) {
 
     if (!error) {
       setPsychologistMessages((rows) => rows.filter((row) => row.id !== id))
+      const priorityKey = `message:${id}:unread`
+      try {
+        await upsertPriorityState(supabase, profile.id, priorityKey, "resolved")
+        setPriorityStates((prev) => {
+          const next = { ...prev }
+          delete next[priorityKey]
+          return next
+        })
+      } catch {
+        /* priority_states table may not exist yet */
+      }
     }
   }
 
-  const openTeam = (teamId) => {
+  const openTeam = (teamId, opts = {}) => {
     setActiveTab(teamId)
-    setSelectedId(null)
+    setSelectedId(opts.athleteId ?? null)
+    if (opts.teamTab || opts.athleteTab) {
+      setNavFocus({ teamTab: opts.teamTab, athleteTab: opts.athleteTab })
+    }
   }
 
   const backToOverview = () => {
@@ -257,14 +320,63 @@ export function PsychologistDashboard({ profile }) {
     setPsychologistAlerts(alerts)
   }, [athletes])
 
-  const openAthlete = async (athleteId) => {
+  const openAthlete = async (athleteId, opts = {}) => {
     const athlete = athleteMap[athleteId]
     if (athlete?.team_id) {
-      setActiveTab(athlete.team_id)
+      openTeam(athlete.team_id, {
+        athleteId,
+        athleteTab: opts.athleteTab || opts.tab || "profile",
+        teamTab: opts.teamTab || "athletes",
+      })
+    } else {
+      setSelectedId(athleteId)
     }
-    setSelectedId(athleteId)
     await markAlertsReviewedForAthlete(supabase, athleteId, profile.id)
     await refreshAlerts()
+  }
+
+  const markPriorityReviewed = async (item) => {
+    const metadata = priorityItemMetadata(item)
+    try {
+      await upsertPriorityState(supabase, profile.id, item.priorityKey, "reviewed", { metadata })
+      setPriorityStates((prev) => ({
+        ...prev,
+        [item.priorityKey]: {
+          priority_key: item.priorityKey,
+          status: "reviewed",
+          metadata,
+          reviewed_at: new Date().toISOString(),
+        },
+      }))
+    } catch (error) {
+      console.warn("markPriorityReviewed:", error.message)
+    }
+  }
+
+  const dismissPriority = async (item) => {
+    const metadata = priorityItemMetadata(item)
+    try {
+      await upsertPriorityState(supabase, profile.id, item.priorityKey, "dismissed", { metadata })
+      setPriorityStates((prev) => ({
+        ...prev,
+        [item.priorityKey]: {
+          priority_key: item.priorityKey,
+          status: "dismissed",
+          metadata,
+          dismissed_at: new Date().toISOString(),
+        },
+      }))
+    } catch (error) {
+      console.warn("dismissPriority:", error.message)
+    }
+  }
+
+  const openMessage = async (_messageId, athleteId) => {
+    await openAthlete(athleteId, { athleteTab: "messages" })
+  }
+
+  const openAppointment = async (_appointmentId, athleteId) => {
+    await openAthlete(athleteId, { athleteTab: "appointments" })
   }
 
   const selectAthlete = async (athleteId) => {
@@ -277,6 +389,17 @@ export function PsychologistDashboard({ profile }) {
     try {
       await dismissPsychologistAlert(supabase, alertId, profile.id)
       setPsychologistAlerts((rows) => rows.filter((row) => row.dbId !== alertId))
+      const priorityKey = `alert:${alertId}:active`
+      try {
+        await upsertPriorityState(supabase, profile.id, priorityKey, "resolved")
+        setPriorityStates((prev) => {
+          const next = { ...prev }
+          delete next[priorityKey]
+          return next
+        })
+      } catch {
+        /* priority_states table may not exist yet */
+      }
     } catch (error) {
       console.error("Dismiss alert failed:", error.message)
     }
@@ -365,8 +488,17 @@ export function PsychologistDashboard({ profile }) {
             alerts={psychologistAlerts}
             appointmentRequests={appointmentRequests}
             psychologistMessages={psychologistMessages}
+            athleteMap={athleteMap}
+            teamMap={teamMap}
+            priorityStates={priorityStates}
             onOpenTeam={openTeam}
             onOpenAthlete={openAthlete}
+            onOpenMessage={openMessage}
+            onOpenAppointment={openAppointment}
+            onMarkPriorityReviewed={markPriorityReviewed}
+            onDismissPriority={dismissPriority}
+            onMarkAppointmentHandled={markAppointmentHandled}
+            onMarkMessageRead={markMessageRead}
             onTeamsChanged={load}
             onNotify={setAdminMessage}
           />
@@ -399,6 +531,8 @@ export function PsychologistDashboard({ profile }) {
             selectedId={selectedId}
             onSelectAthlete={selectAthlete}
             selectedAthlete={selected}
+            initialTeamTab={navFocus?.teamTab}
+            initialAthleteTab={navFocus?.athleteTab}
             athleteCheckIns={athleteCheckIns}
             selectedAssessment={selectedAssessment}
             athleteInsight={athleteInsight}

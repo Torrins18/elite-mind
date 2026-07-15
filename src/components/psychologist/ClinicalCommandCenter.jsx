@@ -12,10 +12,11 @@ import {
   getMostChangedTeam,
   sortTeamsByClinicalPriority,
 } from "../../lib/teamClinicalOverview"
+import { buildPriorityHistory, splitPriorities } from "../../lib/priorityStates"
 import { Button } from "../ui/Button"
 import { Modal } from "../ui/Modal"
 import { TeamClinicalCard } from "./TeamClinicalCard"
-import { SystemMethodologyStrip } from "./SystemMethodologyStrip"
+import { PsychologistInbox } from "./PsychologistInbox"
 
 function ExecutiveSummary({ summary, greetingKey, t }) {
   return (
@@ -61,26 +62,91 @@ function ExecutiveSummary({ summary, greetingKey, t }) {
   )
 }
 
-function TodayPriorities({ items, t, onAction }) {
-  if (!items.length) return null
+function TodayPriorities({
+  activeItems,
+  historyItems,
+  t,
+  onActivate,
+  onMarkReviewed,
+  onDismiss,
+}) {
+  const [historyOpen, setHistoryOpen] = useState(false)
 
   return (
     <section className="clinical-command__priorities">
       <h2 className="clinical-command__section-title">{t("command.prioritiesTitle")}</h2>
-      <ul className="clinical-command__priority-list">
-        {items.map((item) => (
-          <li key={item.id}>
-            <button
-              type="button"
-              className={`clinical-command__priority clinical-command__priority--${item.tone}`}
-              onClick={() => item.action && onAction(item.action)}
-              disabled={!item.action}
-            >
-              {t(`command.priority.${item.key}`, item.params)}
-            </button>
-          </li>
-        ))}
-      </ul>
+
+      {activeItems.length === 0 ? (
+        <p className="clinical-command__priorities-empty">{t("command.prioritiesEmpty")}</p>
+      ) : (
+        <ul className="clinical-command__priority-list">
+          {activeItems.map((item) => (
+            <li key={item.priorityKey} className="clinical-command__priority-row">
+              <button
+                type="button"
+                className={`clinical-command__priority clinical-command__priority--${item.tone}`}
+                onClick={() => onActivate(item)}
+              >
+                {t(`command.priority.${item.key}`, item.params)}
+              </button>
+              <div className="clinical-command__priority-actions">
+                <button
+                  type="button"
+                  className="clinical-command__priority-check"
+                  title={t("command.markReviewed")}
+                  aria-label={t("command.markReviewed")}
+                  onClick={() => onMarkReviewed(item)}
+                >
+                  ✓
+                </button>
+                <button
+                  type="button"
+                  className="clinical-command__priority-dismiss"
+                  title={t("command.dismissPriority")}
+                  aria-label={t("command.dismissPriority")}
+                  onClick={() => onDismiss(item)}
+                >
+                  ×
+                </button>
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
+
+      {historyItems.length > 0 && (
+        <div className="clinical-command__priorities-history">
+          <button
+            type="button"
+            className="clinical-command__priorities-history-toggle"
+            onClick={() => setHistoryOpen((open) => !open)}
+            aria-expanded={historyOpen}
+          >
+            {historyOpen ? t("command.hideHistory") : t("command.showHistory")}
+            <span className="clinical-command__priorities-history-count">{historyItems.length}</span>
+          </button>
+          {historyOpen && (
+            <ul className="clinical-command__priority-list clinical-command__priority-list--history">
+              {historyItems.map((row) => {
+                const meta = row.metadata || {}
+                const labelKey = meta.labelKey || "teamCriticalReview"
+                return (
+                  <li key={row.priority_key} className="clinical-command__priority-row">
+                    <span className="clinical-command__priority clinical-command__priority--history">
+                      {t(`command.priority.${labelKey}`, meta.params || {})}
+                    </span>
+                    <span className="clinical-command__priority-history-status">
+                      {row.status === "dismissed"
+                        ? t("command.statusDismissed")
+                        : t("command.statusReviewed")}
+                    </span>
+                  </li>
+                )
+              })}
+            </ul>
+          )}
+        </div>
+      )}
     </section>
   )
 }
@@ -93,8 +159,17 @@ export function ClinicalCommandCenter({
   alerts = [],
   appointmentRequests = [],
   psychologistMessages = [],
+  athleteMap = {},
+  teamMap = {},
+  priorityStates = {},
   onOpenTeam,
   onOpenAthlete,
+  onOpenMessage,
+  onOpenAppointment,
+  onMarkPriorityReviewed,
+  onDismissPriority,
+  onMarkAppointmentHandled,
+  onMarkMessageRead,
   onTeamsChanged,
   onNotify,
 }) {
@@ -128,7 +203,7 @@ export function ClinicalCommandCenter({
     [profile, teamOverviews, alerts, appointmentRequests, psychologistMessages, athletes, teams]
   )
 
-  const priorities = useMemo(
+  const allPriorities = useMemo(
     () =>
       buildTodayPriorities({
         teamOverviews,
@@ -136,8 +211,19 @@ export function ClinicalCommandCenter({
         appointmentRequests,
         psychologistMessages,
         mostChangedTeam,
+        athleteMap,
       }),
-    [teamOverviews, alerts, appointmentRequests, psychologistMessages, mostChangedTeam]
+    [teamOverviews, alerts, appointmentRequests, psychologistMessages, mostChangedTeam, athleteMap]
+  )
+
+  const { active: activePriorities } = useMemo(
+    () => splitPriorities(allPriorities, priorityStates),
+    [allPriorities, priorityStates]
+  )
+
+  const priorityHistory = useMemo(
+    () => buildPriorityHistory(priorityStates),
+    [priorityStates]
   )
 
   useEffect(() => {
@@ -146,12 +232,19 @@ export function ClinicalCommandCenter({
     return () => window.clearTimeout(timer)
   }, [copiedTeamId])
 
-  const handlePriorityAction = useCallback(
-    (action) => {
-      if (action.type === "team") onOpenTeam?.(action.id)
-      if (action.type === "athlete") onOpenAthlete?.(action.id)
+  const handlePriorityActivate = useCallback(
+    async (item) => {
+      await onMarkPriorityReviewed?.(item)
+
+      const action = item.action
+      if (!action) return
+
+      if (action.type === "team") onOpenTeam?.(action.id, { teamTab: action.tab })
+      if (action.type === "athlete") onOpenAthlete?.(action.id, { athleteTab: action.tab })
+      if (action.type === "message") onOpenMessage?.(action.id, action.athleteId)
+      if (action.type === "appointment") onOpenAppointment?.(action.id, action.athleteId)
     },
-    [onOpenTeam, onOpenAthlete]
+    [onMarkPriorityReviewed, onOpenTeam, onOpenAthlete, onOpenMessage, onOpenAppointment]
   )
 
   const createTeam = async (name) => {
@@ -234,8 +327,26 @@ export function ClinicalCommandCenter({
   return (
     <div className="clinical-command">
       <ExecutiveSummary summary={executiveSummary} greetingKey={greetingKey} t={t} />
-      <SystemMethodologyStrip compact />
-      <TodayPriorities items={priorities} t={t} onAction={handlePriorityAction} />
+
+      <TodayPriorities
+        activeItems={activePriorities}
+        historyItems={priorityHistory}
+        t={t}
+        onActivate={handlePriorityActivate}
+        onMarkReviewed={onMarkPriorityReviewed}
+        onDismiss={onDismissPriority}
+      />
+
+      <PsychologistInbox
+        appointmentRequests={appointmentRequests}
+        psychologistMessages={psychologistMessages}
+        athleteMap={athleteMap}
+        teamMap={teamMap}
+        t={t}
+        onMarkAppointmentHandled={onMarkAppointmentHandled}
+        onMarkMessageRead={onMarkMessageRead}
+        onOpenAthlete={(athleteId) => onOpenAthlete?.(athleteId)}
+      />
 
       <section className="clinical-command__teams">
         <header className="clinical-command__teams-header">

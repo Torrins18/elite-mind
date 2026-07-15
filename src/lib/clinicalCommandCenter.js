@@ -1,3 +1,6 @@
+import { todayISO } from "./dates"
+import { weekStartSundayISO } from "./checkInSchedule"
+
 export function getGreetingKey(hour = new Date().getHours()) {
   if (hour >= 5 && hour < 12) return "morning"
   if (hour >= 12 && hour < 19) return "afternoon"
@@ -42,76 +45,110 @@ export function buildExecutiveSummary({
   }
 }
 
+function athleteName(athleteMap, athleteId, fallback = "") {
+  return athleteMap?.[athleteId]?.name || fallback
+}
+
 export function buildTodayPriorities({
   teamOverviews,
   alerts,
   appointmentRequests,
   psychologistMessages,
   mostChangedTeam,
+  athleteMap = {},
 }) {
   const items = []
+  const weekKey = weekStartSundayISO(todayISO())
+  const seenKeys = new Set()
+
+  const push = (item) => {
+    if (seenKeys.has(item.priorityKey)) return
+    seenKeys.add(item.priorityKey)
+    items.push(item)
+  }
 
   const criticalTeams = (teamOverviews || []).filter((row) => row.status === "critical")
-  for (const overview of criticalTeams.slice(0, 2)) {
-    items.push({
+  for (const overview of criticalTeams.slice(0, 3)) {
+    push({
       id: `team-critical-${overview.team.id}`,
+      priorityKey: `team:${overview.team.id}:status:critical`,
       tone: "critical",
       key: "teamCriticalReview",
       params: { team: overview.team.name },
-      action: { type: "team", id: overview.team.id },
+      action: { type: "team", id: overview.team.id, tab: "alerts" },
     })
   }
 
   const observationTeams = (teamOverviews || []).filter((row) => row.status === "observation")
-  for (const overview of observationTeams.slice(0, 1)) {
+  for (const overview of observationTeams.slice(0, 2)) {
     if (items.some((row) => row.action?.id === overview.team.id)) continue
-    items.push({
+    push({
       id: `team-observation-${overview.team.id}`,
+      priorityKey: `team:${overview.team.id}:status:observation`,
       tone: "observation",
       key: "teamObservationReview",
       params: { team: overview.team.name },
-      action: { type: "team", id: overview.team.id },
+      action: { type: "team", id: overview.team.id, tab: "athletes" },
     })
   }
 
-  const totalPending = (teamOverviews || []).reduce((sum, row) => sum + row.pending, 0)
-  if (totalPending > 0) {
-    items.push({
-      id: "pending-reviews",
+  for (const overview of teamOverviews || []) {
+    if (!overview.pending) continue
+    push({
+      id: `team-pending-${overview.team.id}`,
+      priorityKey: `team:${overview.team.id}:pending-reviews:${weekKey}`,
       tone: "observation",
-      key: totalPending === 1 ? "athletesPendingReviewOne" : "athletesPendingReview",
-      params: { count: totalPending },
+      key: overview.pending === 1 ? "teamPendingReviewOne" : "teamPendingReview",
+      params: { team: overview.team.name, count: overview.pending },
+      action: { type: "team", id: overview.team.id, tab: "participation" },
     })
   }
 
-  if (appointmentRequests?.length) {
-    items.push({
-      id: "appointments",
+  for (const item of appointmentRequests || []) {
+    const name = athleteName(athleteMap, item.user_id)
+    push({
+      id: `appointment-${item.id}`,
+      priorityKey: `appointment:${item.id}:pending`,
       tone: "watch",
-      key: appointmentRequests.length === 1 ? "appointmentPendingOne" : "appointmentPending",
-      params: { count: appointmentRequests.length },
+      key: "appointmentPendingAthlete",
+      params: { name: name || "?" },
+      action: {
+        type: "appointment",
+        id: item.id,
+        athleteId: item.user_id,
+      },
     })
   }
 
-  if (psychologistMessages?.length) {
-    items.push({
-      id: "messages",
+  for (const item of psychologistMessages || []) {
+    const name = athleteName(athleteMap, item.user_id)
+    push({
+      id: `message-${item.id}`,
+      priorityKey: `message:${item.id}:unread`,
       tone: "watch",
-      key: psychologistMessages.length === 1 ? "messagesUnreadOne" : "messagesUnread",
-      params: { count: psychologistMessages.length },
+      key: "messageUnreadFrom",
+      params: { name: name || "?" },
+      action: {
+        type: "message",
+        id: item.id,
+        athleteId: item.user_id,
+      },
     })
   }
 
   const highAlerts = (alerts || []).filter(
     (row) => row.status === "active" && row.severity === "high"
   )
-  if (highAlerts.length && !items.some((row) => row.id.startsWith("team-critical"))) {
-    items.push({
-      id: "high-alerts",
+  for (const alert of highAlerts.slice(0, 4)) {
+    const alertKey = alert.dbId || alert.id
+    const name = alert.athleteName || athleteName(athleteMap, alert.athleteId)
+    push({
+      id: `alert-${alertKey}`,
+      priorityKey: `alert:${alertKey}:active`,
       tone: "critical",
-      key: highAlerts.length === 1 ? "priorityAlertOne" : "priorityAlerts",
-      params: { count: highAlerts.length },
-      action: { type: "athlete", id: highAlerts[0].athleteId },
+      key: "priorityAlertAthlete",
+      params: { name: name || "?" },
+      action: { type: "athlete", id: alert.athleteId, tab: "alerts" },
     })
   }
 
@@ -120,14 +157,15 @@ export function buildTodayPriorities({
     mostChangedTeam.changeMagnitude >= 1.2 &&
     mostChangedTeam.status !== "critical"
   ) {
-    items.push({
+    push({
       id: `changed-${mostChangedTeam.team.id}`,
+      priorityKey: `team:${mostChangedTeam.team.id}:most-changed:${weekKey}`,
       tone: "watch",
       key: "teamMostChanged",
       params: { team: mostChangedTeam.team.name },
-      action: { type: "team", id: mostChangedTeam.team.id },
+      action: { type: "team", id: mostChangedTeam.team.id, tab: "eor" },
     })
   }
 
-  return items.slice(0, 5)
+  return items.slice(0, 15)
 }
