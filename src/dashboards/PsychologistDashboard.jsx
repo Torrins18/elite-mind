@@ -517,6 +517,7 @@ export function PsychologistDashboard({ profile }) {
           <TeamWorkspace
             teamId={activeTab}
             teamName={teamMap[activeTab]}
+            teamRecord={teams.find((row) => row.id === activeTab) || null}
             teamSummary={activeTeamSummary}
             athletes={tabAthletes}
             checkIns={tabCheckIns}
@@ -548,6 +549,7 @@ export function PsychologistDashboard({ profile }) {
             onOpenAthlete={openAthlete}
             onAlertsChange={refreshAlerts}
             onAssessmentUpdated={load}
+            lang={lang}
             t={t}
           />
         )

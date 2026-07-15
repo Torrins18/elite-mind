@@ -287,7 +287,8 @@
   border-radius: var(--radius-md);
 }
 
-.espai-mental__card {
+.espai-mental__card,
+.entrenament-mental__card {
   border: none;
   border-radius: var(--radius-md);
   background: var(--bg-subtle);

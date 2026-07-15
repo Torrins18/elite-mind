@@ -10,6 +10,9 @@ import { WeeklyEorChart } from "../WeeklyEorTeamChart"
 import { ComplianceTrendChart } from "../ComplianceTrendChart"
 import { AthleteClinicalFile } from "./AthleteClinicalFile"
 import { CoachShareRecommendation } from "./CoachShareRecommendation"
+import { TeamEntrenamentMentalPanel } from "../EntrenamentMentalCard"
+import { getTeamMentalTrainingStatus } from "../../lib/entrenamentMental"
+import { todayISO } from "../../lib/dates"
 import { calculateRiskLevel } from "../../lib/risk"
 import { getLatestWeeklyReflection } from "../../lib/weeklyEor"
 
@@ -108,6 +111,7 @@ function TeamNotesPanel({ athleteIds, athleteMap, t, onOpenAthlete }) {
 export function TeamWorkspace({
   teamId,
   teamName,
+  teamRecord,
   teamSummary,
   athletes,
   checkIns,
@@ -139,6 +143,7 @@ export function TeamWorkspace({
   onAssessmentUpdated,
   initialTeamTab,
   initialAthleteTab,
+  lang,
   t,
 }) {
   const [activeTab, setActiveTab] = useState(initialTeamTab || "athletes")
@@ -153,6 +158,11 @@ export function TeamWorkspace({
   )
 
   const athleteIds = useMemo(() => athletes.map((row) => row.id), [athletes])
+
+  const mentalTrainingStatus = useMemo(
+    () => getTeamMentalTrainingStatus(todayISO(), lang, t, teamRecord),
+    [teamRecord, lang, t]
+  )
 
   const tabLabel = (tab) => {
     if (tab === "alerts" && alertCount > 0) {
@@ -217,6 +227,9 @@ export function TeamWorkspace({
               psychologistId={psychologistId}
               t={t}
             />
+            <Card title={t("entrenamentMental.psychologistPanelTitle")}>
+              <TeamEntrenamentMentalPanel status={mentalTrainingStatus} />
+            </Card>
           </>
         ) : null}
 

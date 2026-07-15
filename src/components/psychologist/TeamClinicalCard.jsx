@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from "react"
 import { useTranslation } from "../../i18n/LanguageContext"
+import { todayISO } from "../../lib/dates"
+import { getTeamMentalTrainingStatus } from "../../lib/entrenamentMental"
 
 const STATUS_CLASS = {
   stable: "team-clinical-card--stable",
@@ -93,7 +95,7 @@ export function TeamClinicalCard({
   onRename,
   onDelete,
 }) {
-  const { t } = useTranslation()
+  const { t, lang } = useTranslation()
   const [menuOpen, setMenuOpen] = useState(false)
   const {
     team,
@@ -122,6 +124,8 @@ export function TeamClinicalCard({
 
   const healthEmoji =
     healthScore.label === "healthy" ? "🟢" : healthScore.label === "monitoring" ? "🟡" : "🔴"
+
+  const mentalTraining = getTeamMentalTrainingStatus(todayISO(), lang, t, team)
 
   return (
     <article className={`team-clinical-card ${STATUS_CLASS[status] || ""}`}>
@@ -191,6 +195,15 @@ export function TeamClinicalCard({
         <span>{t("teams.lastReviewShort")}</span>
         <strong>{lastReviewLabel}</strong>
       </div>
+
+      {mentalTraining ? (
+        <div className="team-clinical-card__mental-training">
+          <span>{t("entrenamentMental.currentTopic")}</span>
+          <strong>
+            {t("entrenamentMental.weekShort", { week: mentalTraining.seasonWeek })} · {mentalTraining.topic}
+          </strong>
+        </div>
+      ) : null}
 
       <div className="team-clinical-card__changes">
         <span className="team-clinical-card__changes-label">{t("teams.last7Days")}</span>

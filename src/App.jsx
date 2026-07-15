@@ -30,6 +30,7 @@ function App() {
   const [session, setSession] = useState(null)
   const [profile, setProfile] = useState(null)
   const [teamName, setTeamName] = useState("")
+  const [teamMeta, setTeamMeta] = useState(null)
   const [profileError, setProfileError] = useState("")
   const [passwordRecovery, setPasswordRecovery] = useState(false)
   const [booting, setBooting] = useState(true)
@@ -86,6 +87,7 @@ function App() {
 
       setProfile(null)
       setTeamName("")
+      setTeamMeta(null)
       setProfileError("")
       setPasswordRecovery(false)
       finishBoot()
@@ -97,13 +99,19 @@ function App() {
     }
   }, [])
 
-  const loadTeamName = async (teamId) => {
+  const loadTeamMeta = async (teamId) => {
     if (!teamId) {
       setTeamName("")
+      setTeamMeta(null)
       return
     }
-    const { data } = await supabase.from("teams").select("name").eq("id", teamId).single()
+    const { data } = await supabase
+      .from("teams")
+      .select("id, name, created_at")
+      .eq("id", teamId)
+      .single()
     setTeamName(data?.name || "")
+    setTeamMeta(data ? { id: data.id, created_at: data.created_at } : null)
   }
 
   const loadProfile = async (activeSession) => {
@@ -114,10 +122,11 @@ function App() {
 
     if (loaded) {
       setProfile(loaded)
-      await loadTeamName(loaded.team_id)
+      await loadTeamMeta(loaded.team_id)
     } else {
       setProfile(null)
       setTeamName("")
+      setTeamMeta(null)
       setProfileError(error)
     }
 
@@ -230,7 +239,7 @@ function App() {
         profile.date_of_birth &&
         (isAdultInSpain(profile.date_of_birth) || hasGuardianConsent(profile)) &&
         profile.initial_assessment_completed_at &&
-        profile.team_id && <AthleteDashboard profile={profile} teamName={teamName} />}
+        profile.team_id && <AthleteDashboard profile={profile} team={teamMeta} />}
 
       {profile?.role === "coach" && profile.approved && profile.team_id && (
         <CoachDashboard profile={profile} teamName={teamName} />
