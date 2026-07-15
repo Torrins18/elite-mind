@@ -1,18 +1,28 @@
 param(
-  [string]$Source = (Join-Path $PSScriptRoot "..\public\images\zona-mental-logo-v2.png"),
-  [string]$Output = (Join-Path $PSScriptRoot "..\public\images\zona-mental-logo-v2-transparent.png"),
-  [int]$Threshold = 45
+  [string]$Source = (Join-Path $PSScriptRoot "..\public\images\zona-mental-logo-v3.png"),
+  [string]$Output = (Join-Path $PSScriptRoot "..\public\images\zona-mental-logo-v3-transparent.png"),
+  [int]$Threshold = 45,
+  [double]$CropTopRatio = 0.5
 )
 
 Add-Type -AssemblyName System.Drawing
-$bmp = [System.Drawing.Bitmap]::FromFile($Source)
-for ($y = 0; $y -lt $bmp.Height; $y++) {
-  for ($x = 0; $x -lt $bmp.Width; $x++) {
-    $c = $bmp.GetPixel($x, $y)
+
+$src = [System.Drawing.Bitmap]::FromFile($Source)
+$cropHeight = [Math]::Max(1, [int][Math]::Round($src.Height * $CropTopRatio))
+$cropped = New-Object System.Drawing.Bitmap $src.Width, $cropHeight
+$graphics = [System.Drawing.Graphics]::FromImage($cropped)
+$graphics.DrawImage($src, 0, 0, (New-Object System.Drawing.Rectangle 0, 0, $src.Width, $cropHeight), [System.Drawing.GraphicsUnit]::Pixel)
+$graphics.Dispose()
+$src.Dispose()
+
+for ($y = 0; $y -lt $cropped.Height; $y++) {
+  for ($x = 0; $x -lt $cropped.Width; $x++) {
+    $c = $cropped.GetPixel($x, $y)
     if ($c.R -lt $Threshold -and $c.G -lt $Threshold -and $c.B -lt $Threshold) {
-      $bmp.SetPixel($x, $y, [System.Drawing.Color]::FromArgb(0, 0, 0, 0))
+      $cropped.SetPixel($x, $y, [System.Drawing.Color]::FromArgb(0, 0, 0, 0))
     }
   }
 }
-$bmp.Save($Output, [System.Drawing.Imaging.ImageFormat]::Png)
-Write-Output "Saved $Output ($($bmp.Width)x$($bmp.Height))"
+
+$cropped.Save($Output, [System.Drawing.Imaging.ImageFormat]::Png)
+Write-Output "Saved $Output ($($cropped.Width)x$($cropped.Height))"
