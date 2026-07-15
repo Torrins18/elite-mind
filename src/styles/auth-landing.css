@@ -140,12 +140,14 @@
 }
 
 .auth-landing__hero-logo {
-  margin-bottom: 0;
+  margin-bottom: 4px;
 }
 
 .auth-landing__hero-logo.brand-logo--hero-dark {
-  width: min(520px, 96vw);
-  max-height: clamp(118px, 16vh, 158px);
+  width: min(680px, 98vw);
+  max-width: 100%;
+  max-height: clamp(220px, 32vh, 320px);
+  height: auto;
 }
 
 .auth-landing__footer-logo {
@@ -745,8 +747,8 @@
   }
 
   .auth-landing__hero-logo.brand-logo--hero-dark {
-    width: min(460px, 94vw);
-    max-height: 112px;
+    width: min(560px, 96vw);
+    max-height: clamp(180px, 26vh, 240px);
   }
 
   .auth-landing__headline {
