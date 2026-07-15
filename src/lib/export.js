@@ -1,4 +1,5 @@
 import { calculateRiskLevel } from "./risk"
+import { trackFeatureUsed } from "./productAnalytics"
 
 function escapeCsv(value) {
   const str = String(value ?? "")
@@ -9,6 +10,7 @@ function escapeCsv(value) {
 }
 
 export function downloadCsv(filename, rows) {
+  trackFeatureUsed("export_csv", { filename })
   const csv = rows.map((row) => row.map(escapeCsv).join(",")).join("\n")
   const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" })
   const url = URL.createObjectURL(blob)

@@ -41,6 +41,7 @@ import {
   buildTeamClinicalOverview,
   getMostChangedTeam,
 } from "../lib/teamClinicalOverview"
+import { trackFeatureUsed, trackPageView } from "../lib/productAnalytics"
 
 const OVERVIEW_TAB = "overview"
 
@@ -146,6 +147,19 @@ export function PsychologistDashboard({ profile }) {
   useEffect(() => {
     load()
   }, [load])
+
+  useEffect(() => {
+    trackPageView("psychologist/dashboard")
+  }, [])
+
+  useEffect(() => {
+    if (activeTab === OVERVIEW_TAB) {
+      trackPageView("psychologist/overview")
+    } else {
+      trackPageView("psychologist/team")
+      trackFeatureUsed("psychologist_team_workspace")
+    }
+  }, [activeTab])
 
   const teamMap = useMemo(
     () => Object.fromEntries(teams.map((tm) => [tm.id, tm.name])),
@@ -418,11 +432,13 @@ export function PsychologistDashboard({ profile }) {
       activeTab === OVERVIEW_TAB
         ? "todos"
         : teamMap[activeTab] || t("brand.nav.home")
+    trackFeatureUsed("psychologist_export_csv")
     downloadCsv(`zona-mental-checkins-${suffix}.csv`, rows)
   }
 
   const exportTeamPdf = () => {
     if (!activeTeamSummary) return
+    trackFeatureUsed("psychologist_export_pdf")
     downloadPrintReport({
       title: `${teamMap[activeTab]} — ${t("reports.teamReport")}`,
       subtitle: t("reports.monthlySubtitle"),

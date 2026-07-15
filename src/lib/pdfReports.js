@@ -1,11 +1,13 @@
 import { formatDate } from "./dates"
 import { compareWeeklyToBaseline, formatAssessmentFieldValue } from "./baseline"
+import { trackFeatureUsed } from "./productAnalytics"
 
 export function buildReportSections({ title, subtitle, generatedAt, rows }) {
   return { title, subtitle, generatedAt, rows }
 }
 
 export function downloadPrintReport({ title, subtitle, rows, filename = "informe", source }) {
+  trackFeatureUsed("export_pdf", { source: source || "report" })
   const generatedAt = new Date().toLocaleString()
   const sourceLine = source === "ai" ? " · IA" : source === "synthesis" ? " · Síntesi" : ""
   const html = `<!DOCTYPE html>

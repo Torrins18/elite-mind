@@ -19,11 +19,13 @@ import { AthleteDashboard } from "./dashboards/AthleteDashboard"
 import { CoachDashboard } from "./dashboards/CoachDashboard"
 import { PsychologistDashboard } from "./dashboards/PsychologistDashboard"
 import { DirectorDashboard } from "./dashboards/DirectorDashboard"
+import { ProductAnalyticsDashboard } from "./dashboards/ProductAnalyticsDashboard"
 import {
   clearAuthCallbackFromUrl,
   hasAuthCallbackInUrl,
   isPasswordRecoveryUrl,
 } from "./lib/authCallback"
+import { initProductAnalytics, isPlatformAdmin, trackPageView } from "./lib/productAnalytics"
 
 function App() {
   const { t } = useTranslation()
@@ -122,7 +124,11 @@ function App() {
 
     if (loaded) {
       setProfile(loaded)
+      initProductAnalytics(loaded)
       await loadTeamMeta(loaded.team_id)
+      if (!isPlatformAdmin(loaded)) {
+        trackPageView(`app/${loaded.role}`)
+      }
     } else {
       setProfile(null)
       setTeamName("")
@@ -187,11 +193,13 @@ function App() {
 
   return (
     <Layout profile={profile} session={session} teamName={teamName} onLogout={logout}>
-      {!profile && !profileError && (
+      {isPlatformAdmin(profile) && <ProductAnalyticsDashboard />}
+
+      {!isPlatformAdmin(profile) && !profile && !profileError && (
         <ProfileRoleSetup session={session} onComplete={refreshProfile} />
       )}
 
-      {!profile && profileError && (
+      {!isPlatformAdmin(profile) && !profile && profileError && (
         <div className="empty-state setup-hint">
           <p>{t("noProfile")}</p>
           <p className="form-error">{t("errorLabel")}</p>
@@ -209,25 +217,25 @@ function App() {
         </div>
       )}
 
-      {profile?.role === "athlete" && !profile.date_of_birth && (
+      {!isPlatformAdmin(profile) && profile?.role === "athlete" && !profile.date_of_birth && (
         <AthleteOnboarding profile={profile} session={session} onUpdated={refreshProfile} />
       )}
 
-      {profile?.role === "athlete" &&
+      {!isPlatformAdmin(profile) && profile?.role === "athlete" &&
         profile.date_of_birth &&
         !isAdultInSpain(profile.date_of_birth) &&
         !hasGuardianConsent(profile) && (
           <AthleteOnboarding profile={profile} session={session} onUpdated={refreshProfile} />
         )}
 
-      {profile?.role === "athlete" &&
+      {!isPlatformAdmin(profile) && profile?.role === "athlete" &&
         profile.date_of_birth &&
         (isAdultInSpain(profile.date_of_birth) || hasGuardianConsent(profile)) &&
         !profile.initial_assessment_completed_at && (
           <InitialAssessment profile={profile} onCompleted={refreshProfile} />
         )}
 
-      {profile?.role === "athlete" &&
+      {!isPlatformAdmin(profile) && profile?.role === "athlete" &&
         profile.date_of_birth &&
         (isAdultInSpain(profile.date_of_birth) || hasGuardianConsent(profile)) &&
         profile.initial_assessment_completed_at &&
@@ -235,27 +243,27 @@ function App() {
           <TeamSelector profile={profile} onUpdated={refreshProfile} />
         )}
 
-      {profile?.role === "athlete" &&
+      {!isPlatformAdmin(profile) && profile?.role === "athlete" &&
         profile.date_of_birth &&
         (isAdultInSpain(profile.date_of_birth) || hasGuardianConsent(profile)) &&
         profile.initial_assessment_completed_at &&
         profile.team_id && <AthleteDashboard profile={profile} team={teamMeta} />}
 
-      {profile?.role === "coach" && profile.approved && profile.team_id && (
+      {!isPlatformAdmin(profile) && profile?.role === "coach" && profile.approved && profile.team_id && (
         <CoachDashboard profile={profile} teamName={teamName} />
       )}
 
-      {profile?.role === "coach" && profile.approved && !profile.team_id && (
+      {!isPlatformAdmin(profile) && profile?.role === "coach" && profile.approved && !profile.team_id && (
         <Card title={t("coach.noTeamTitle")} subtitle={t("coach.noTeamSubtitle")}>
           <p className="empty-state">{t("coach.noTeamText")}</p>
         </Card>
       )}
 
-      {profile?.role === "psychologist" && (
+      {!isPlatformAdmin(profile) && profile?.role === "psychologist" && (
         <PsychologistDashboard profile={profile} />
       )}
 
-      {profile?.role === "director" && <DirectorDashboard profile={profile} />}
+      {!isPlatformAdmin(profile) && profile?.role === "director" && <DirectorDashboard profile={profile} />}
     </Layout>
   )
 }

@@ -13,6 +13,12 @@ import {
 } from "../lib/checkInSchedule"
 import { shouldShowWeeklyReflection } from "../lib/weeklyReflectionRotation"
 import { getWeeklyMentalTraining } from "../lib/entrenamentMental"
+import {
+  abandonWeeklyReviewTracking,
+  completeWeeklyReviewTracking,
+  startWeeklyReviewTracking,
+  trackFeatureUsed,
+} from "../lib/productAnalytics"
 
 function AthleteCompletionScreen({ mentalTraining, onAppointment, onMessage, onHome }) {
   const { t } = useTranslation()
@@ -99,6 +105,7 @@ export function AthleteDashboard({ profile, team }) {
   const firstName = profile.name?.split(" ")[0] || profile.name
 
   const openWeeklyReview = () => {
+    startWeeklyReviewTracking()
     if (shouldShowWeeklyReflection(profile.id, today, weeklyDoneThisWeek)) {
       setScreen("reflection")
     } else {
@@ -108,10 +115,14 @@ export function AthleteDashboard({ profile, team }) {
 
   const handleWeeklySaved = async () => {
     await load()
+    completeWeeklyReviewTracking()
     setScreen("completion")
   }
 
   const openHelp = (intent) => {
+    trackFeatureUsed(intent === "appointment" ? "appointment_request" : "message_compose", {
+      role: "athlete",
+    })
     setHelpIntent(intent)
     setScreen("help")
   }
@@ -139,7 +150,10 @@ export function AthleteDashboard({ profile, team }) {
           athleteId={profile.id}
           existing={weeklyCheckIn}
           onSaved={handleWeeklySaved}
-          onCancel={() => setScreen("home")}
+          onCancel={() => {
+            abandonWeeklyReviewTracking("form")
+            setScreen("home")
+          }}
         />
       </div>
     )

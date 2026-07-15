@@ -15,6 +15,7 @@ import {
   buildCoachWeeklyMetrics,
 } from "../lib/coachTeamDashboard"
 import { currentWeekCompliance } from "../lib/complianceTrend"
+import { trackFeatureUsed, trackPageView } from "../lib/productAnalytics"
 
 const COACH_COLUMNS =
   "id, athlete_id, check_in_date, " +
@@ -83,6 +84,11 @@ export function CoachDashboard({ profile, teamName }) {
   useEffect(() => {
     load()
   }, [load])
+
+  useEffect(() => {
+    trackPageView("coach/dashboard")
+    trackFeatureUsed("coach_dashboard_visit")
+  }, [])
 
   const athleteCount = athletes.length
   const athleteIds = useMemo(() => athletes.map((a) => a.id), [athletes])

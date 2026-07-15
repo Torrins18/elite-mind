@@ -1,7 +1,23 @@
+import { useEffect, useRef } from "react"
 import { useTranslation } from "../i18n/LanguageContext"
+import { trackMentalTrainingRead, trackMentalTrainingShown } from "../lib/productAnalytics"
 
 export function EntrenamentMentalCard({ content }) {
   const { t } = useTranslation()
+  const shownAt = useRef(null)
+
+  useEffect(() => {
+    if (!content) return
+    shownAt.current = Date.now()
+    trackMentalTrainingShown(content.topic, content.programWeek)
+    return () => {
+      if (!shownAt.current) return
+      const dwellMs = Date.now() - shownAt.current
+      if (dwellMs >= 3000) {
+        trackMentalTrainingRead(content.topic, content.programWeek, dwellMs)
+      }
+    }
+  }, [content])
 
   if (!content) return null
 

@@ -24,8 +24,15 @@ Si la pàgina no carrega o falten funcions, executa **tot** això al **SQL Edito
 | 18 | `communication-compliance.sql` (missatgeria bidireccional + cites programades) |
 | 19 | `baseline-assessment-v2.sql` (perfil mental, objectius, resum línia base) |
 | 20 | `seed-demo.sql` (opcional) |
+| 21 | `product-analytics.sql` (Product Analytics — només admins de plataforma) |
 
 Després de cada fitxer ha de sortir **Success**.
+
+**Product Analytics (admin intern):** després d'executar `product-analytics.sql`, marca el teu usuari:
+
+```sql
+update public.profiles set is_platform_admin = true where id = 'UUID-DEL-TEU-USUARI';
+```
 
 **Rutina esportista (pilot):** 1-2 autoavaluacions per setmana (no cal diari).
 
