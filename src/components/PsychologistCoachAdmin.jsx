@@ -6,15 +6,14 @@ import { Button } from "./ui/Button"
 import { filterActiveTeams } from "../lib/teams"
 import { PsychologistResourceLibrary } from "./psychologist/PsychologistResourceLibrary"
 import { ClubManagement } from "./psychologist/ClubManagement"
-import { TeamManagement } from "./psychologist/TeamManagement"
 
 export function PsychologistCoachAdmin({
   psychologistId,
   onPreviewCoachTeam,
-  onOpenTeam,
   athletes = [],
   checkIns = [],
-  alerts = [],
+  externalMessage = "",
+  onMessage,
 }) {
   const { t } = useTranslation()
   const [pendingCoaches, setPendingCoaches] = useState([])
@@ -126,31 +125,23 @@ export function PsychologistCoachAdmin({
     setMessage(t("invites.copied"))
   }
 
-  const createTeam = async (name) => {
-    setMessage("")
-    const { error } = await supabase.from("teams").insert([{ name }])
-    if (error) {
-      setMessage(error.message)
-      return false
-    }
-
-    setMessage(t("teams.created"))
-    await load()
-    return true
+  const notify = (value) => {
+    setMessage(value)
+    onMessage?.(value)
   }
 
   const updateCoachTeam = async (coachId, teamId) => {
     setCoachTeams((prev) => ({ ...prev, [coachId]: teamId }))
-    setMessage("")
+    notify("")
 
     const { error } = await supabase
       .from("profiles")
       .update({ team_id: teamId || null })
       .eq("id", coachId)
 
-    if (error) setMessage(error.message)
+    if (error) notify(error.message)
     else {
-      setMessage(t("teams.assigned"))
+      notify(t("teams.assigned"))
       await load()
     }
   }
@@ -194,55 +185,12 @@ export function PsychologistCoachAdmin({
 
   const activeTeams = useMemo(() => filterActiveTeams(teams), [teams])
 
-  const deleteTeam = async (teamId) => {
-    if (!confirm(t("teams.deleteConfirm"))) return false
-
-    setMessage("")
-    const { error } = await supabase
-      .from("teams")
-      .update({ deleted_at: new Date().toISOString() })
-      .eq("id", teamId)
-
-    if (error) {
-      setMessage(error.message)
-      return false
-    }
-
-    setMessage(t("teams.deleted"))
-    await load()
-    return true
-  }
-
-  const renameTeam = async (teamId, name) => {
-    setMessage("")
-    const { error } = await supabase.from("teams").update({ name }).eq("id", teamId)
-
-    if (error) {
-      setMessage(error.message)
-      return false
-    }
-
-    setMessage(t("teams.updated"))
-    await load()
-    return true
-  }
-
   if (loading) return null
 
-  return (
-    <div className="admin-grid">
-      <TeamManagement
-        teams={activeTeams}
-        athletes={athletes}
-        checkIns={checkIns}
-        alerts={alerts}
-        onCreateTeam={createTeam}
-        onRenameTeam={renameTeam}
-        onDeleteTeam={deleteTeam}
-        onOpenTeam={onOpenTeam}
-        onNotify={setMessage}
-      />
+  const displayMessage = externalMessage || message
 
+  return (
+    <div className="admin-grid admin-grid--config">
       <Card title={t("teams.previewTitle")} subtitle={t("teams.previewSubtitle")}>
         <div className="coach-preview-controls">
           <label className="team-selector__label">
@@ -372,7 +320,7 @@ export function PsychologistCoachAdmin({
 
       <PsychologistResourceLibrary psychologistId={psychologistId} />
 
-      {message && <p className="form-message">{message}</p>}
+      {displayMessage && <p className="form-message">{displayMessage}</p>}
     </div>
   )
 }

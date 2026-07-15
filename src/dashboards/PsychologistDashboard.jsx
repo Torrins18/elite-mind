@@ -21,9 +21,9 @@ import {
   getLatestWeeklyTeamSnapshot,
 } from "../lib/coachTeamAnalytics"
 import { useAthleteInsight } from "../hooks/useAthleteInsight"
+import { ClinicalCommandCenter } from "../components/psychologist/ClinicalCommandCenter"
 import { PsychologistCoachAdmin } from "../components/PsychologistCoachAdmin"
 import { CoachDashboard } from "./CoachDashboard"
-import { PsychologistActionCenter } from "../components/psychologist/PsychologistActionCenter"
 import { todayISO } from "../lib/dates"
 import {
   countActiveAlerts,
@@ -55,6 +55,7 @@ export function PsychologistDashboard({ profile }) {
   const [psychologistMessages, setPsychologistMessages] = useState([])
   const [psychologistAlerts, setPsychologistAlerts] = useState([])
   const [loading, setLoading] = useState(true)
+  const [adminMessage, setAdminMessage] = useState("")
 
   const load = useCallback(async () => {
     setLoading(true)
@@ -68,7 +69,7 @@ export function PsychologistDashboard({ profile }) {
       messagesRes,
     ] = await Promise.all([
       supabase.from("profiles").select("*").eq("role", "athlete").order("name"),
-      supabase.from("teams").select("id, name, deleted_at, club_id").is("deleted_at", null).order("name"),
+      supabase.from("teams").select("id, name, deleted_at, club_id, join_token").is("deleted_at", null).order("name"),
       supabase
         .from("check_ins")
         .select("*")
@@ -321,15 +322,17 @@ export function PsychologistDashboard({ profile }) {
 
   return (
     <div className="dashboard-grid dashboard-grid--psych">
-      <section className="hero-strip">
-        <div>
-          <h2>{t("psychologist.title")}</h2>
-          <p>{t("psychologist.subtitle")}</p>
-        </div>
-        <Button variant="ghost" onClick={exportCsv}>
-          {t("export.button")}
-        </Button>
-      </section>
+      {activeTab !== OVERVIEW_TAB ? (
+        <section className="hero-strip">
+          <div>
+            <h2>{t("psychologist.title")}</h2>
+            <p>{t("psychologist.subtitle")}</p>
+          </div>
+          <Button variant="ghost" onClick={exportCsv}>
+            {t("export.button")}
+          </Button>
+        </section>
+      ) : null}
 
       <nav className="psych-tabs" aria-label={t("psychologist.tabsLabel")}>
         <button
@@ -363,27 +366,28 @@ export function PsychologistDashboard({ profile }) {
 
       {activeTab === OVERVIEW_TAB ? (
         <>
-          <PsychologistActionCenter
+          <ClinicalCommandCenter
+            profile={profile}
+            teams={teams}
+            athletes={athletes}
+            checkIns={checkIns}
             alerts={psychologistAlerts}
             appointmentRequests={appointmentRequests}
             psychologistMessages={psychologistMessages}
-            teamSummaries={teamSummaries}
-            athleteMap={athleteMap}
-            t={t}
-            onOpenAthlete={openAthlete}
-            onDismissAlert={dismissAlert}
-            onMarkAppointmentHandled={markAppointmentHandled}
-            onMarkMessageRead={markMessageRead}
             onOpenTeam={openTeam}
+            onOpenAthlete={openAthlete}
+            onTeamsChanged={load}
+            onNotify={setAdminMessage}
           />
 
           <PsychologistCoachAdmin
             psychologistId={profile.id}
             onPreviewCoachTeam={setCoachPreviewTeamId}
-            onOpenTeam={openTeam}
             athletes={athletes}
             checkIns={checkIns}
             alerts={psychologistAlerts}
+            externalMessage={adminMessage}
+            onMessage={setAdminMessage}
           />
         </>
       ) : (
