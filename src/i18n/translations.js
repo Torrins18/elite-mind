@@ -6,14 +6,39 @@ export const translations = {
     brand: {
       platformDescription: "Plataforma de Seguimiento Psicológico Deportivo",
       performanceCenter: "Centro de Rendimiento Mental",
+      coreConcept: "Rendimiento mental",
+      tagline:
+        "Ayudamos a los clubs a mejorar el rendimiento mental mediante seguimiento psicológico continuo.",
+      nav: {
+        home: "Centro de Rendimiento Mental",
+        athletes: "Seguimiento de Deportistas",
+        teams: "Equipos",
+        evolution: "Evolución del Rendimiento Mental",
+        ai: "Interpretación IA",
+        actionPlans: "Planes de Acción",
+        reports: "Informes de Rendimiento Psicológico",
+        appointments: "Citas",
+        messages: "Mensajes",
+        settings: "Configuración",
+      },
+      microcopy: {
+        loadingCenter: "Preparando tu Centro de Rendimiento Mental...",
+        insufficientData: "Aún no hay suficiente información para generar una interpretación.",
+        somethingWrong: "Algo no ha ido como esperábamos.",
+        loadingSession: "Preparando tu acceso...",
+        appError: "Algo no ha ido como esperábamos",
+        appErrorHint:
+          "Prueba de recargar la página. Si persiste, revisa la configuración en supabase/ (véase SETUP.md).",
+        reload: "Recargar",
+      },
     },
     signOut: "Cerrar sesión",
     retry: "Reintentar",
-    loadingSession: "Cargando sesión...",
+    loadingSession: "Preparando tu acceso...",
     noProfile: "No se encontró tu perfil.",
     noProfileHint:
       "En Supabase SQL Editor, ejecuta el archivo completo supabase/fix-profiles.sql y luego pulsa Reintentar.",
-    errorLabel: "Error",
+    errorLabel: "Algo no ha ido como esperábamos.",
     user: "Usuario",
 
     common: {
@@ -25,7 +50,7 @@ export const translations = {
     privacy: {
       title: "Privacidad y uso de datos",
       athleteData:
-        "Tus autoevaluaciones y notas personales son privadas: solo tú y el/la psicólogo/a autorizado/a pueden ver el detalle.",
+        "Tus reflexiones y notas personales son privadas: solo tú y el/la psicólogo/a autorizado/a pueden ver el detalle.",
       coachView:
         "El/la entrenador/a solo ve resúmenes agregados del equipo, sin respuestas individuales ni notas privadas.",
       psychologistView:
@@ -33,7 +58,7 @@ export const translations = {
       minors:
         "Si eres menor en España, hace falta consentimiento firmado por un tutor legal antes del uso completo.",
       cadence:
-        "Rutina recomendada: 1-2 autoevaluaciones por semana (unos 2 minutos cada una).",
+        "Rutina recomendada: 1-2 reflexiones por semana (unos 2 minutos cada una).",
     },
 
     roles: {
@@ -47,7 +72,7 @@ export const translations = {
       low: "Estable",
       medium: "Vigilar",
       high: "Atención prioritaria",
-      noData: "Sin datos",
+      noData: "Pendiente de seguimiento",
     },
 
     consent: {
@@ -60,7 +85,7 @@ export const translations = {
     login: {
       tagline: "Mide. Entiende. Potencia.",
       heroText:
-        "Autoevaluaciones mentales, inteligencia de equipo para entrenadores y centro de rendimiento mental para psicólogos.",
+        "Reflexiones de rendimiento, inteligencia de equipo para entrenadores y centro de rendimiento mental para psicólogos.",
       welcome: "Bienvenido/a de nuevo",
       register: "Crear cuenta",
       hintLogin: "Inicia sesión en tu panel de rendimiento.",
@@ -68,7 +93,7 @@ export const translations = {
         "Los deportistas solo pueden activar su cuenta con el enlace de invitación del psicólogo. Los entrenadores pueden registrarse y quedarán pendientes de aprobación.",
       roleTitle: "Tipo de cuenta",
       athleteOnly: "Registro abierto para deportistas y entrenadores.",
-      athleteRoleHint: "Autoevaluaciones y seguimiento personal.",
+      athleteRoleHint: "Reflexión y seguimiento personal.",
       coachRoleHint: "Panel de equipo tras aprobación.",
       coachApprovalHint:
         "Tu cuenta de entrenador/a quedará pendiente hasta que el psicólogo apruebe el acceso.",
@@ -131,7 +156,7 @@ export const translations = {
       why3Title: "Conexión",
       why3Text: "Deportistas, entrenadores y psicólogos trabajando juntos.",
       howTitle: "Cómo funciona",
-      step1: "Valoración inicial",
+      step1: "Preparación inicial",
       step2: "Revisión semanal",
       step3: "Seguimiento del psicólogo",
       step4: "Mejora continua",
@@ -343,9 +368,9 @@ export const translations = {
     },
 
     director: {
-      title: "Panel del club",
-      subtitle: "Visión agregada para la dirección — sin datos confidenciales individuales.",
-      loading: "Cargando panel del club...",
+      title: "Rendimiento mental del club",
+      subtitle: "Participación, tendencias de bienestar y evolución de equipos — sin datos confidenciales individuales.",
+      loading: "Preparando el panel de dirección...",
       noClubTitle: "Club pendiente",
       noClubSubtitle: "Tu cuenta de director/a aún no tiene un club asignado.",
       noClubText: "El psicólogo debe asignarte un club para activar este panel.",
@@ -365,7 +390,7 @@ export const translations = {
       checkInsThisMonth: "Registros este mes",
       complianceTrendTitle: "Evolución del cumplimiento",
       complianceTrendSubtitle: "Porcentaje de deportistas con registro semanal — últimos 6 meses.",
-      noTrend: "Sin datos suficientes para la tendencia.",
+      noTrend: "Aún no hay registros suficientes para mostrar la tendencia.",
       teamsTitle: "Equipos del club",
       teamsSubtitle: "Resumen agregado por equipo.",
       noTeams: "No hay equipos asignados a este club.",
@@ -440,10 +465,10 @@ export const translations = {
     },
 
     initialAssessment: {
-      title: "Valoración inicial del deportista",
+      title: "Tu punto de partida",
       subtitle:
-        "Completa esta valoración una sola vez. Tus respuestas crean tu perfil de referencia personal y solo las verá el/la psicólogo/a.",
-      progress: "Progreso de la valoración inicial",
+        "Completa esta preparación inicial una sola vez. Tus respuestas crean tu perfil de referencia personal y solo las verá el/la psicólogo/a.",
+      progress: "Progreso de la preparación inicial",
       stepLabel: "Paso {current} de {total}",
       personal: "Información personal",
       context: "Contexto personal",
@@ -459,7 +484,7 @@ export const translations = {
       teamAssigned: "Equipo asignado por invitación",
       back: "Atrás",
       next: "Siguiente",
-      submit: "Enviar valoración inicial",
+      submit: "Enviar preparación inicial",
       saving: "Guardando...",
       options: {
         never: "Nunca",
@@ -548,16 +573,16 @@ export const translations = {
     },
 
     baseline: {
-      title: "Valoración inicial",
-      summaryTitle: "Resumen de línea base",
+      title: "Preparación inicial",
+      summaryTitle: "Resumen de referencia",
       summaryNote: "Solo visible para el/la psicólogo/a.",
       comparisonTitle: "Comparación con la temporada actual",
-      comparisonHint: "Comparación personal respecto a la valoración inicial — no entre deportistas.",
+      comparisonHint: "Comparación personal respecto a la preparación inicial — no entre deportistas.",
       metric: "Indicador",
-      baselineValue: "Línea base",
+      baselineValue: "Referencia",
       currentValue: "Actual",
       delta: "Cambio",
-      edit: "Editar valoración",
+      edit: "Editar preparación inicial",
       save: "Guardar cambios",
       editSummaryHint: "Puedes ajustar el resumen manualmente o dejarlo vacío para regenerarlo al guardar.",
       metrics: {
@@ -570,10 +595,10 @@ export const translations = {
     },
 
     athlete: {
-      loading: "Cargando tu panel...",
+      loading: "Preparando tu panel de rendimiento...",
       greeting: "Encantado/a de verte",
       subtitle:
-        "Responde tu autoevaluación mental. Recomendamos 1-2 registros por semana (unos 2 min cada uno).",
+        "Comparte tu reflexión semanal. Recomendamos 1-2 registros por semana (unos 2 min cada uno).",
       homeGreeting: "Buenos días, {name} 👋",
       homeTagline: "Una revisión semanal de unos 5 minutos. Sin gráficas ni resultados visibles para ti.",
       homeAvailable: "Esta semana",
@@ -589,7 +614,7 @@ export const translations = {
       todayTitle: "Estado de hoy",
       todaySubtitle: "Un vistazo rápido a tu registro diario.",
       todayDone: "Registro de hoy completado. Gracias por responder.",
-      todayPending: "Aún no has registrado tu autoevaluación de hoy.",
+      todayPending: "Aún no has registrado tu reflexión de hoy.",
       weeklyPending: "Has registrado el pulso de hoy. Falta completar la revisión semanal EOR.",
       updateResponses: "Actualizar respuestas de hoy",
       weeklyEorTitle: "Tu última revisión EOR",
@@ -635,10 +660,10 @@ export const translations = {
     },
 
     checkIn: {
-      titleDaily: "Autoevaluación mental",
+      titleDaily: "Reflexión diaria",
       subtitleDaily:
         "Recomendamos 1-2 registros por semana (unos 2 minutos). Puedes actualizar el de hoy si ya lo hiciste.",
-      titleWeekly: "Autoevaluación + reflexión semanal",
+      titleWeekly: "Reflexión semanal + revisión EOR",
       subtitleWeekly:
         "Primero tu pulso actual; después, preguntas sobre la semana (solo el/la psicólogo/a las ve).",
       titleWeeklyOnly: "Revisión semanal EOR",
@@ -744,8 +769,8 @@ export const translations = {
       saved: "Registro guardado. Buen trabajo.",
       saving: "Guardando...",
       updateBtn: "Actualizar registro",
-      submitDailyBtn: "Guardar autoevaluación",
-      submitWeeklyBtn: "Guardar autoevaluación + reflexión",
+      submitDailyBtn: "Guardar reflexión",
+      submitWeeklyBtn: "Guardar reflexión + revisión",
       ratingLow: "0",
       ratingHigh: "10",
       low: "Muy bajo",
@@ -777,7 +802,7 @@ export const translations = {
       orgTitle: "Panorama de la categoría",
       evolutionTitle: "Evolución reciente",
       evolutionSubtitle: "Lectura de las últimas semanas — tendencias EOR y cumplimiento.",
-      evolutionCardTitle: "Análisis inteligente",
+      evolutionCardTitle: "Interpretación IA",
       evolution: {
         noData:
           "Aún no hay suficientes revisiones semanales para analizar la evolución del equipo.",
@@ -860,11 +885,11 @@ export const translations = {
       },
       athlete: {
         noData:
-          "{name} aún no tiene autoevaluaciones recientes. Cuando complete el primer registro, aquí aparecerá una lectura individual.",
+          "{name} aún no tiene reflexiones recientes. Cuando complete el primer registro, aquí aparecerá una interpretación individual.",
         highRisk:
           "{name} requiere atención prioritaria: ánimo {mood}/10, estrés {stress}/10, sueño {sleep}/10 y energía {energy}/10. Áreas más sensibles: {areas}.",
         inactive:
-          "{name} lleva {days} días sin autoevaluación. El semáforo no refleja el estado actual; contacta para reactivar el seguimiento.",
+          "{name} lleva {days} días sin registro. El semáforo no refleja el estado actual; contacta para reactivar el seguimiento.",
         watch:
           "{name} en vigilancia: ánimo {mood}/10 y estrés {stress}/10. Factores a observar: {areas}. {notes}",
         hasNotes: "Ha dejado notas personales en el último registro.",
@@ -881,8 +906,8 @@ export const translations = {
 
     chart: {
       trends: "Tendencias",
-      trendsEmpty: "Completa autoevaluaciones para ver tu curva de rendimiento.",
-      noData: "Sin datos aún.",
+      trendsEmpty: "Completa reflexiones para ver tu curva de rendimiento.",
+      noData: "Aún no hay registros suficientes para mostrar la evolución.",
       title7d: "Tendencias de rendimiento (7 días)",
       subtitle7d: "Sigue tu ánimo, energía y estrés a lo largo del tiempo.",
       eorTitle: "Progresión EOR",
@@ -900,10 +925,10 @@ export const translations = {
     },
 
     coach: {
-      loading: "Cargando inteligencia del equipo...",
+      loading: "Preparando la inteligencia de equipo...",
       team: "Tu categoría",
       subtitle:
-        "Solo ves resúmenes agregados del equipo. El seguimiento individual lo realiza el/la psicólogo/a.",
+        "Participación, cohesión y tendencias generales del equipo. El seguimiento individual lo realiza el/la psicólogo/a.",
       athletes: "Deportistas",
       checkedInThisWeek: "Con registro esta semana",
       weeklyCompliance: "Objetivo: 1-2 registros/semana",
@@ -992,28 +1017,28 @@ export const translations = {
       backToDashboard: "Prioridades del día",
       tabsLabel: "Secciones del equipo",
       summaryEorHint: "Índices agregados de la última revisión semanal.",
-      reportsTitle: "Informes",
+      reportsTitle: "Informes de Rendimiento Psicológico",
       reportsSubtitle: "Exporta informes de rendimiento psicológico del equipo.",
       notesTitle: "Observaciones del equipo",
       notesSubtitle: "Observaciones profesionales recientes de todos los deportistas.",
-      noTeamNotes: "Aún no hay notas registradas en este equipo.",
+      noTeamNotes: "Aún no hay observaciones registradas en este equipo.",
       tab: {
-        summary: "Resumen",
-        athletes: "Deportistas",
+        summary: "Panorama",
+        athletes: "Seguimiento de Deportistas",
         alerts: "Alertas",
         participation: "Participación",
-        eor: "Evolución EOR",
-        reports: "Informes",
+        eor: "Evolución del Rendimiento Mental",
+        reports: "Informes de Rendimiento Psicológico",
         notes: "Observaciones",
       },
     },
 
     psychologist: {
-      loading: "Cargando centro de rendimiento mental...",
+      loading: "Preparando tu Centro de Rendimiento Mental...",
       title: "Centro de Rendimiento Mental",
       subtitle:
         "Prioridades del día y acceso directo al seguimiento de cada equipo.",
-      tabOverview: "Resumen",
+      tabOverview: "Centro de Rendimiento Mental",
       tabsLabel: "Navegación por equipos",
       overviewInsightTitle: "Panorama general",
       teamCardsTitle: "Equipos",
@@ -1028,12 +1053,12 @@ export const translations = {
       orgAvgMental: "Índice mental global (EOR)",
       highEmotionalRisk: "Seguimiento prioritario",
       entriesWithNotes: "Entradas con observaciones",
-      allAthletes: "Todos los deportistas",
+      allAthletes: "Seguimiento de Deportistas",
       allAthletesSubtitle: "Selecciona un deportista para ver su historial de seguimiento.",
-      historySubtitle: "Historial completo de autoevaluaciones y observaciones profesionales.",
+      historySubtitle: "Historial completo de reflexiones y observaciones profesionales.",
       emotionalRisk: "Indicadores de seguimiento",
       emotionalRiskSubtitle: "Señales que requieren atención profesional o observaciones relevantes.",
-      checkInLog: "Registro de autoevaluaciones",
+      checkInLog: "Registro de reflexiones",
       checkInLogSubtitleSimple: "Fechas en las que el deportista ha respondido.",
       weeklyEorTitle: "Revisión semanal EOR",
       weeklyEorSubtitle: "Índices automáticos y señales del entorno deportivo.",
@@ -1053,7 +1078,7 @@ export const translations = {
       teamEorChartTitle: "Evolución EOR del equipo",
       teamEorChartSubtitle: "Progresión semanal de los cuatro índices agregados.",
       checkInResponded: "Registrado",
-      noCheckIns: "Sin autoevaluaciones para este deportista.",
+      noCheckIns: "Aún no hay reflexiones registradas para este deportista.",
       noNotes: "Sin notas personales.",
       noAthletes: "Sin deportistas",
       noAthletesText: "Registra deportistas para empezar el seguimiento.",
@@ -1066,10 +1091,10 @@ export const translations = {
       filterLabel: "Categoría",
       filterAll: "Todas las categorías",
       noAthletesInCategory: "No hay deportistas en esta categoría.",
-      initialAssessment: "Valoración inicial",
-      initialAssessmentSubtitle: "Perfil de referencia personal — visible solo para psicología.",
-      noInitialAssessment: "Este deportista aún no ha completado la valoración inicial.",
-      assessmentMissing: "Evaluación pendiente",
+      initialAssessment: "Preparación inicial",
+      initialAssessmentSubtitle: "Punto de partida personal — visible solo para psicología.",
+      noInitialAssessment: "Este deportista aún no ha completado su preparación inicial.",
+      assessmentMissing: "Preparación pendiente",
       guardianConsents: "Consentimientos",
       pendingConsents: "{count} pendientes",
       consentTitle: "Consentimiento y edad",
@@ -1137,20 +1162,20 @@ export const translations = {
     athleteFile: {
       subtitle: "Historial de seguimiento del deportista",
       tabsLabel: "Secciones del seguimiento",
-      loading: "Cargando historial de seguimiento...",
+      loading: "Preparando el historial de seguimiento...",
       profileTeam: "Equipo / categoría",
       profileRisk: "Estado actual",
       profileRegistered: "Registro en plataforma",
       tab: {
         profile: "Perfil",
-        baseline: "Valoración inicial",
+        baseline: "Preparación inicial",
         reviews: "Revisiones",
-        charts: "Gráficos",
+        charts: "Evolución del Rendimiento Mental",
         notes: "Observaciones",
         sessions: "Sesiones",
         documents: "Documentos",
-        plan: "Plan de acción",
-        appointments: "Consultas",
+        plan: "Planes de Acción",
+        appointments: "Citas",
         messages: "Mensajes",
         alerts: "Alertas",
       },
@@ -1326,14 +1351,39 @@ export const translations = {
     brand: {
       platformDescription: "Plataforma de Seguiment Psicològic Esportiu",
       performanceCenter: "Centre de Rendiment Mental",
+      coreConcept: "Rendiment mental",
+      tagline:
+        "Ajudem els clubs a millorar el rendiment mental mitjançant seguiment psicològic continu.",
+      nav: {
+        home: "Centre de Rendiment Mental",
+        athletes: "Seguiment d'Esportistes",
+        teams: "Equips",
+        evolution: "Evolució del Rendiment Mental",
+        ai: "Interpretació IA",
+        actionPlans: "Plans d'Acció",
+        reports: "Informes de Rendiment Psicològic",
+        appointments: "Cites",
+        messages: "Missatges",
+        settings: "Configuració",
+      },
+      microcopy: {
+        loadingCenter: "Preparant el teu Centre de Rendiment Mental...",
+        insufficientData: "Encara no hi ha prou informació per generar una interpretació.",
+        somethingWrong: "Alguna cosa no ha anat com esperàvem.",
+        loadingSession: "Preparant el teu accés...",
+        appError: "Alguna cosa no ha anat com esperàvem",
+        appErrorHint:
+          "Prova de recarregar la pàgina. Si persisteix, revisa la configuració a supabase/ (vegeu SETUP.md).",
+        reload: "Recarregar",
+      },
     },
     signOut: "Tancar sessió",
     retry: "Reintentar",
-    loadingSession: "Carregant sessió...",
+    loadingSession: "Preparant el teu accés...",
     noProfile: "No s'ha trobat el teu perfil.",
     noProfileHint:
       "A Supabase SQL Editor, executa el fitxer complet supabase/fix-profiles.sql i després prem Reintentar.",
-    errorLabel: "Error",
+    errorLabel: "Alguna cosa no ha anat com esperàvem.",
     user: "Usuari",
 
     common: {
@@ -1345,7 +1395,7 @@ export const translations = {
     privacy: {
       title: "Privacitat i ús de dades",
       athleteData:
-        "Les teves autoavaluacions i notes personals són privades: només tu i el/la psicòleg/òloga autoritzat/da en veuen el detall.",
+        "Les teves reflexions i notes personals són privades: només tu i el/la psicòleg/òloga autoritzat/da en veuen el detall.",
       coachView:
         "L'entrenador/a només veu resums agregats de l'equip, sense respostes individuals ni notes privades.",
       psychologistView:
@@ -1353,7 +1403,7 @@ export const translations = {
       minors:
         "Si ets menor a Espanya, cal consentiment signat per un tutor legal abans de l'ús complet.",
       cadence:
-        "Rutina recomanada: 1-2 autoavaluacions per setmana (uns 2 minuts cadascuna).",
+        "Rutina recomanada: 1-2 reflexions per setmana (uns 2 minuts cadascuna).",
     },
 
     roles: {
@@ -1367,7 +1417,7 @@ export const translations = {
       low: "Estable",
       medium: "Vigilar",
       high: "Seguiment prioritari",
-      noData: "Sense dades",
+      noData: "Pendent de seguiment",
     },
 
     consent: {
@@ -1380,7 +1430,7 @@ export const translations = {
     login: {
       tagline: "Mesura. Entén. Potencia.",
       heroText:
-        "Autoavaluacions mentals, intel·ligència d'equip per a entrenadors i centre de rendiment mental per a psicòlegs.",
+        "Reflexions de rendiment, intel·ligència d'equip per a entrenadors i centre de rendiment mental per a psicòlegs.",
       welcome: "Benvingut/da de nou",
       register: "Crear compte",
       hintLogin: "Inicia sessió al teu panell de rendiment.",
@@ -1388,7 +1438,7 @@ export const translations = {
         "Els esportistes només poden activar el compte amb l'enllaç d'invitació del psicòleg. Els entrenadors es poden registrar i quedaran pendents d'aprovació.",
       roleTitle: "Tipus de compte",
       athleteOnly: "Registre obert per a esportistes i entrenadors.",
-      athleteRoleHint: "Autoavaluacions i seguiment personal.",
+      athleteRoleHint: "Reflexió i seguiment personal.",
       coachRoleHint: "Panell d'equip després de l'aprovació.",
       coachApprovalHint:
         "El teu compte d'entrenador/a quedarà pendent fins que el psicòleg aprovi l'accés.",
@@ -1451,7 +1501,7 @@ export const translations = {
       why3Title: "Connexió",
       why3Text: "Esportistes, entrenadors i psicòlegs treballant junts.",
       howTitle: "Com funciona",
-      step1: "Valoració inicial",
+      step1: "Preparació inicial",
       step2: "Revisió setmanal",
       step3: "Seguiment del psicòleg",
       step4: "Millora contínua",
@@ -1663,9 +1713,9 @@ export const translations = {
     },
 
     director: {
-      title: "Panell del club",
-      subtitle: "Visió agregada per a la direcció — sense dades confidencials individuals.",
-      loading: "Carregant panell del club...",
+      title: "Rendiment mental del club",
+      subtitle: "Participació, tendències de benestar i evolució d'equips — sense dades confidencials individuals.",
+      loading: "Preparant el panell de direcció...",
       noClubTitle: "Club pendent",
       noClubSubtitle: "El teu compte de director/a encara no té un club assignat.",
       noClubText: "El psicòleg t'ha d'assignar un club per activar aquest panell.",
@@ -1685,7 +1735,7 @@ export const translations = {
       checkInsThisMonth: "Registres aquest mes",
       complianceTrendTitle: "Evolució del compliment",
       complianceTrendSubtitle: "Percentatge d'esportistes amb registre setmanal — darrers 6 mesos.",
-      noTrend: "Sense dades suficients per a la tendència.",
+      noTrend: "Encara no hi ha prou registres per mostrar la tendència.",
       teamsTitle: "Equips del club",
       teamsSubtitle: "Resum agregat per equip.",
       noTeams: "No hi ha equips assignats a aquest club.",
@@ -1760,10 +1810,10 @@ export const translations = {
     },
 
     initialAssessment: {
-      title: "Valoració inicial de l'esportista",
+      title: "El teu punt de partida",
       subtitle:
-        "Completa aquesta valoració una sola vegada. Les teves respostes creen el teu perfil de referència personal i només les veurà el/la psicòleg/a.",
-      progress: "Progrés de la valoració inicial",
+        "Completa aquesta preparació inicial una sola vegada. Les teves respostes creen el teu perfil de referència personal i només les veurà el/la psicòleg/a.",
+      progress: "Progrés de la preparació inicial",
       stepLabel: "Pas {current} de {total}",
       personal: "Informació personal",
       context: "Context personal",
@@ -1779,7 +1829,7 @@ export const translations = {
       teamAssigned: "Equip assignat per invitació",
       back: "Enrere",
       next: "Següent",
-      submit: "Enviar valoració inicial",
+      submit: "Enviar preparació inicial",
       saving: "Desant...",
       options: {
         never: "Mai",
@@ -1866,16 +1916,16 @@ export const translations = {
     },
 
     baseline: {
-      title: "Valoració inicial",
-      summaryTitle: "Resum de línia base",
+      title: "Preparació inicial",
+      summaryTitle: "Resum de referència",
       summaryNote: "Només visible per al/la psicòleg/a.",
       comparisonTitle: "Comparació amb la temporada actual",
-      comparisonHint: "Comparació personal respecte la valoració inicial — no entre esportistes.",
+      comparisonHint: "Comparació personal respecte la preparació inicial — no entre esportistes.",
       metric: "Indicador",
-      baselineValue: "Línia base",
+      baselineValue: "Referència",
       currentValue: "Actual",
       delta: "Canvi",
-      edit: "Editar valoració",
+      edit: "Editar preparació inicial",
       save: "Desar canvis",
       editSummaryHint: "Pots ajustar el resum manualment o deixar-lo buit per regenerar-lo en desar.",
       metrics: {
@@ -1888,10 +1938,10 @@ export const translations = {
     },
 
     athlete: {
-      loading: "Carregant el teu panell...",
+      loading: "Preparant el teu panell de rendiment...",
       greeting: "Content/a de veure't",
       subtitle:
-        "Respon la teva autoavaluació mental. Recomanem 1-2 registres per setmana (uns 2 min cadascun).",
+        "Comparteix la teva reflexió setmanal. Recomanem 1-2 registres per setmana (uns 2 min cadascun).",
       homeGreeting: "Bon dia, {name} 👋",
       homeTagline: "Una revisió setmanal d'uns 5 minuts. Sense gràfiques ni resultats visibles per a tu.",
       homeAvailable: "Aquesta setmana",
@@ -1907,7 +1957,7 @@ export const translations = {
       todayTitle: "Estat d'avui",
       todaySubtitle: "Una ullada ràpida al teu registre diari.",
       todayDone: "Registre d'avui completat. Gràcies per respondre.",
-      todayPending: "Encara no has registrat la teva autoavaluació d'avui.",
+      todayPending: "Encara no has registrat la teva reflexió d'avui.",
       weeklyPending: "Has registrat el pols d'avui. Falta completar la revisió setmanal EOR.",
       updateResponses: "Actualitzar respostes d'avui",
       weeklyEorTitle: "La teva darrera revisió EOR",
@@ -1953,10 +2003,10 @@ export const translations = {
     },
 
     checkIn: {
-      titleDaily: "Autoavaluació mental",
+      titleDaily: "Reflexió diària",
       subtitleDaily:
         "Recomanem 1-2 registres per setmana (uns 2 minuts). Pots actualitzar el d'avui si ja el vas fer.",
-      titleWeekly: "Autoavaluació + reflexió setmanal",
+      titleWeekly: "Reflexió setmanal + revisió EOR",
       subtitleWeekly:
         "Primer el teu pols actual; després, preguntes sobre la setmana (només ho veu el/la psicòleg/òloga).",
       titleWeeklyOnly: "Revisió setmanal EOR",
@@ -2062,8 +2112,8 @@ export const translations = {
       saved: "Registre desat. Bon treball.",
       saving: "Desant...",
       updateBtn: "Actualitzar registre",
-      submitDailyBtn: "Desar autoavaluació",
-      submitWeeklyBtn: "Desar autoavaluació + reflexió",
+      submitDailyBtn: "Desar reflexió",
+      submitWeeklyBtn: "Desar reflexió + revisió",
       ratingLow: "0",
       ratingHigh: "10",
       low: "Molt baix",
@@ -2095,7 +2145,7 @@ export const translations = {
       orgTitle: "Panorama de la categoria",
       evolutionTitle: "Evolució recent",
       evolutionSubtitle: "Lectura de les darreres setmanes — tendències EOR i compliment.",
-      evolutionCardTitle: "Anàlisi intel·ligent",
+      evolutionCardTitle: "Interpretació IA",
       evolution: {
         noData:
           "Encara no hi ha prou revisions setmanals per analitzar l'evolució de l'equip.",
@@ -2179,11 +2229,11 @@ export const translations = {
       },
       athlete: {
         noData:
-          "{name} encara no té autoavaluacions recents. Quan completi el primer registre, aquí apareixerà una lectura individual.",
+          "{name} encara no té reflexions recents. Quan completi el primer registre, aquí apareixerà una interpretació individual.",
         highRisk:
           "{name} requereix atenció prioritària: ànim {mood}/10, estrès {stress}/10, son {sleep}/10 i energia {energy}/10. Àrees més sensibles: {areas}.",
         inactive:
-          "{name} fa {days} dies sense autoavaluació. El semàfor no reflecteix l'estat actual; contacta per reactivar el seguiment.",
+          "{name} fa {days} dies sense registre. El semàfor no reflecteix l'estat actual; contacta per reactivar el seguiment.",
         watch:
           "{name} en vigilància: ànim {mood}/10 i estrès {stress}/10. Factors a observar: {areas}. {notes}",
         hasNotes: "Ha deixat notes personals a l'últim registre.",
@@ -2200,8 +2250,8 @@ export const translations = {
 
     chart: {
       trends: "Tendències",
-      trendsEmpty: "Completa autoavaluacions per veure la teva corba de rendiment.",
-      noData: "Sense dades encara.",
+      trendsEmpty: "Completa reflexions per veure la teva corba de rendiment.",
+      noData: "Encara no hi ha registres suficients per mostrar l'evolució.",
       title7d: "Tendències de rendiment (7 dies)",
       subtitle7d: "Segueix el teu ànim, energia i estrès al llarg del temps.",
       eorTitle: "Progressió EOR",
@@ -2219,10 +2269,10 @@ export const translations = {
     },
 
     coach: {
-      loading: "Carregant intel·ligència de l'equip...",
+      loading: "Preparant la intel·ligència d'equip...",
       team: "La teva categoria",
       subtitle:
-        "Només veus resums agregats de l'equip. El seguiment individual el fa el/la psicòleg/òloga.",
+        "Participació, cohesió i tendències generals de l'equip. El seguiment individual el fa el/la psicòleg/òloga.",
       athletes: "Esportistes",
       checkedInThisWeek: "Amb registre aquesta setmana",
       weeklyCompliance: "Objectiu: 1-2 registres/setmana",
@@ -2311,28 +2361,28 @@ export const translations = {
       backToDashboard: "Prioritats del dia",
       tabsLabel: "Seccions de l'equip",
       summaryEorHint: "Índexs agregats de l'última revisió setmanal.",
-      reportsTitle: "Informes",
+      reportsTitle: "Informes de Rendiment Psicològic",
       reportsSubtitle: "Exporta informes de rendiment psicològic de l'equip.",
       notesTitle: "Observacions de l'equip",
       notesSubtitle: "Observacions professionals recents de tots els esportistes.",
-      noTeamNotes: "Encara no hi ha notes registrades en aquest equip.",
+      noTeamNotes: "Encara no hi ha observacions registrades en aquest equip.",
       tab: {
-        summary: "Resum",
-        athletes: "Esportistes",
+        summary: "Panorama",
+        athletes: "Seguiment d'Esportistes",
         alerts: "Alertes",
         participation: "Participació",
-        eor: "Evolució EOR",
-        reports: "Informes",
+        eor: "Evolució del Rendiment Mental",
+        reports: "Informes de Rendiment Psicològic",
         notes: "Observacions",
       },
     },
 
     psychologist: {
-      loading: "Carregant centre de rendiment mental...",
+      loading: "Preparant el teu Centre de Rendiment Mental...",
       title: "Centre de Rendiment Mental",
       subtitle:
         "Prioritats del dia i accés directe al seguiment de cada equip.",
-      tabOverview: "Resum",
+      tabOverview: "Centre de Rendiment Mental",
       tabsLabel: "Navegació per equips",
       overviewInsightTitle: "Panorama general",
       teamCardsTitle: "Equips",
@@ -2347,13 +2397,13 @@ export const translations = {
       orgAvgMental: "Índex mental global (EOR)",
       highEmotionalRisk: "Seguiment prioritari",
       entriesWithNotes: "Entrades amb observacions",
-      allAthletes: "Tots els esportistes",
+      allAthletes: "Seguiment d'Esportistes",
       allAthletesSubtitle: "Selecciona un esportista per veure el seu historial de seguiment.",
-      historySubtitle: "Historial complet d'autoavaluacions i observacions professionals.",
+      historySubtitle: "Historial complet de reflexions i observacions professionals.",
       emotionalRisk: "Indicadors de seguiment",
       emotionalRiskSubtitle:
         "Senyals que requereixen atenció professional o observacions rellevants.",
-      checkInLog: "Registre d'autoavaluacions",
+      checkInLog: "Registre de reflexions",
       checkInLogSubtitleSimple: "Dates en què l'esportista ha respost.",
       weeklyEorTitle: "Revisió setmanal EOR",
       weeklyEorSubtitle: "Índexs automàtics i senyals de l'entorn esportiu.",
@@ -2373,7 +2423,7 @@ export const translations = {
       teamEorChartTitle: "Evolució EOR de l'equip",
       teamEorChartSubtitle: "Progressió setmanal dels quatre índexs agregats.",
       checkInResponded: "Registrat",
-      noCheckIns: "Sense autoavaluacions per a aquest esportista.",
+      noCheckIns: "Encara no hi ha reflexions registrades per a aquest esportista.",
       noNotes: "Sense notes personals.",
       noAthletes: "Sense esportistes",
       noAthletesText: "Registra esportistes per començar el seguiment.",
@@ -2386,10 +2436,10 @@ export const translations = {
       filterLabel: "Categoria",
       filterAll: "Totes les categories",
       noAthletesInCategory: "No hi ha esportistes en aquesta categoria.",
-      initialAssessment: "Valoració inicial",
-      initialAssessmentSubtitle: "Perfil de referència personal — visible només per a psicologia.",
-      noInitialAssessment: "Aquest esportista encara no ha completat la valoració inicial.",
-      assessmentMissing: "Avaluació pendent",
+      initialAssessment: "Preparació inicial",
+      initialAssessmentSubtitle: "Punt de partida personal — visible només per a psicologia.",
+      noInitialAssessment: "Aquest esportista encara no ha completat la seva preparació inicial.",
+      assessmentMissing: "Preparació pendent",
       guardianConsents: "Consentiments",
       pendingConsents: "{count} pendents",
       consentTitle: "Consentiment i edat",
@@ -2457,20 +2507,20 @@ export const translations = {
     athleteFile: {
       subtitle: "Historial de seguiment de l'esportista",
       tabsLabel: "Seccions del seguiment",
-      loading: "Carregant historial de seguiment...",
+      loading: "Preparant l'historial de seguiment...",
       profileTeam: "Equip / categoria",
       profileRisk: "Estat actual",
       profileRegistered: "Registre a la plataforma",
       tab: {
         profile: "Perfil",
-        baseline: "Valoración inicial",
+        baseline: "Preparació inicial",
         reviews: "Revisions",
-        charts: "Gràfics",
+        charts: "Evolució del Rendiment Mental",
         notes: "Observacions",
         sessions: "Sessions",
         documents: "Documents",
-        plan: "Pla d'acció",
-        appointments: "Consultes",
+        plan: "Plans d'Acció",
+        appointments: "Cites",
         messages: "Missatges",
         alerts: "Alertes",
       },
@@ -2483,7 +2533,7 @@ export const translations = {
       notesTopic: "Tema",
       notesTopicPlaceholder: "Motiu de la sessió o seguiment",
       notesActions: "Accions",
-      notesActionsPlaceholder: "Intervencions realitzades",
+      notesActionsPlaceholder: "Accions del pla d'acció",
       notesNextSession: "Propera sessió",
       notesNextSessionPlaceholder: "Objectius o punts a revisar",
       notesTopicRequired: "El tema és obligatori.",

@@ -185,9 +185,8 @@ function App() {
       {!profile && profileError && (
         <div className="empty-state setup-hint">
           <p>{t("noProfile")}</p>
-          <p className="form-error">
-            {t("errorLabel")}: {profileError}
-          </p>
+          <p className="form-error">{t("errorLabel")}</p>
+          <p>{profileError}</p>
           <p>{t("noProfileHint")}</p>
           {profileError?.includes("column") && (
             <p className="form-error">

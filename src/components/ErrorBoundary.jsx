@@ -1,4 +1,18 @@
 import { Component } from "react"
+import { translations, interpolate } from "../i18n/translations"
+
+const STORAGE_KEY = "elite-mind-lang"
+
+function t(key, vars) {
+  const lang = localStorage.getItem(STORAGE_KEY) === "ca" ? "ca" : "es"
+  const keys = key.split(".")
+  let value = translations[lang]
+  for (const k of keys) {
+    value = value?.[k]
+  }
+  if (typeof value !== "string") return key
+  return vars ? interpolate(value, vars) : value
+}
 
 export class ErrorBoundary extends Component {
   constructor(props) {
@@ -15,18 +29,15 @@ export class ErrorBoundary extends Component {
       return (
         <div className="auth-page">
           <div className="card setup-hint" style={{ maxWidth: 520 }}>
-            <h2>Error a l&apos;aplicació</h2>
+            <h2>{t("brand.microcopy.appError")}</h2>
             <p className="form-error">{this.state.error.message}</p>
-            <p className="empty-state">
-              Prova de recarregar la pàgina. Si persisteix, executa els fitxers SQL de la
-              carpeta <code>supabase/</code> (vegeu SETUP.md).
-            </p>
+            <p className="empty-state">{t("brand.microcopy.appErrorHint")}</p>
             <button
               type="button"
               className="btn btn--primary"
               onClick={() => window.location.reload()}
             >
-              Recarregar
+              {t("brand.microcopy.reload")}
             </button>
           </div>
         </div>

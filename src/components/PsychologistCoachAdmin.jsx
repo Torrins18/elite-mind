@@ -191,6 +191,9 @@ export function PsychologistCoachAdmin({
 
   return (
     <div className="admin-grid admin-grid--config">
+      <header className="admin-grid__header">
+        <h2 className="clinical-command__section-title">{t("brand.nav.settings")}</h2>
+      </header>
       <Card title={t("teams.previewTitle")} subtitle={t("teams.previewSubtitle")}>
         <div className="coach-preview-controls">
           <label className="team-selector__label">

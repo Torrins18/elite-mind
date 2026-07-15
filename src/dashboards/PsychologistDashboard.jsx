@@ -294,7 +294,7 @@ export function PsychologistDashboard({ profile }) {
     const suffix =
       activeTab === OVERVIEW_TAB
         ? "todos"
-        : teamMap[activeTab] || t("psychologist.tabOverview")
+        : teamMap[activeTab] || t("brand.nav.home")
     downloadCsv(`zona-mental-checkins-${suffix}.csv`, rows)
   }
 
@@ -334,7 +334,7 @@ export function PsychologistDashboard({ profile }) {
             setSelectedId(null)
           }}
         >
-          {t("psychologist.tabOverview")}
+          {t("brand.nav.home")}
           {inboxCount > 0 && activeTab !== OVERVIEW_TAB && (
             <span className="psych-tabs__badge">{inboxCount}</span>
           )}
