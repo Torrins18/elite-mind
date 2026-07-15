@@ -155,7 +155,7 @@ function App() {
   if (booting) {
     return (
       <div className="auth-page">
-        <LoadingSpinner label={t("loadingSession")} />
+        <LoadingSpinner variant="minimal" />
       </div>
     )
   }

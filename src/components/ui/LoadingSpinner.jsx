@@ -1,8 +1,9 @@
-export function LoadingSpinner({ label = "Loading..." }) {
-  return (
-    <div className="loading" role="status">
-      <div className="loading__ring" />
-      <span>{label}</span>
-    </div>
-  )
+import { PageSkeleton } from "./PageSkeleton"
+
+/** @deprecated Import PageSkeleton directly */
+export function LoadingSpinner({ label, variant = "dashboard" }) {
+  void label
+  return <PageSkeleton variant={variant} />
 }
+
+export { PageSkeleton } from "./PageSkeleton"

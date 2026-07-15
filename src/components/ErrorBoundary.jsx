@@ -30,8 +30,7 @@ export class ErrorBoundary extends Component {
         <div className="auth-page">
           <div className="card setup-hint" style={{ maxWidth: 520 }}>
             <h2>{t("brand.microcopy.appError")}</h2>
-            <p className="form-error">{this.state.error.message}</p>
-            <p className="empty-state">{t("brand.microcopy.appErrorHint")}</p>
+            <p className="type-body">{t("brand.microcopy.appErrorHint")}</p>
             <button
               type="button"
               className="btn btn--primary"

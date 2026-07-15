@@ -1,6 +1,6 @@
-export function Card({ title, subtitle, action, children, className = "" }) {
+export function Card({ title, subtitle, action, children, className = "", interactive = false }) {
   return (
-    <section className={`card ${className}`.trim()}>
+    <section className={`card${interactive ? " card--interactive" : ""} ${className}`.trim()}>
       {(title || action) && (
         <header className="card__header">
           <div>

@@ -117,7 +117,7 @@ export function CoachDashboard({ profile, teamName }) {
     [weeklyMetrics, indicators, t]
   )
 
-  if (loading) return <LoadingSpinner label={t("coach.loading")} />
+  if (loading) return <LoadingSpinner variant="dashboard" />
 
   return (
     <div className="dashboard-grid dashboard-grid--coach">

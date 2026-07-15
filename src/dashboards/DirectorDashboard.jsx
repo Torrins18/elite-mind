@@ -59,7 +59,7 @@ export function DirectorDashboard({ profile }) {
     )
   }
 
-  if (loading) return <LoadingSpinner label={t("director.loading")} />
+  if (loading) return <LoadingSpinner variant="dashboard" />
 
   if (error) {
     return (

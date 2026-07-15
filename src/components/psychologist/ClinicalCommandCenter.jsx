@@ -13,7 +13,9 @@ import {
   sortTeamsByClinicalPriority,
 } from "../../lib/teamClinicalOverview"
 import { buildPriorityHistory, splitPriorities } from "../../lib/priorityStates"
+import { EmptyState } from "../ui/EmptyState"
 import { Button } from "../ui/Button"
+import { useToast } from "../../context/ToastContext"
 import { Modal } from "../ui/Modal"
 import { TeamClinicalCard } from "./TeamClinicalCard"
 import { PsychologistInbox } from "./PsychologistInbox"
@@ -174,6 +176,7 @@ export function ClinicalCommandCenter({
   onNotify,
 }) {
   const { t } = useTranslation()
+  const { showToast } = useToast()
   const [createOpen, setCreateOpen] = useState(false)
   const [renameTeamId, setRenameTeamId] = useState(null)
   const [newTeamName, setNewTeamName] = useState("")
@@ -321,6 +324,7 @@ export function ClinicalCommandCenter({
     if (!team.join_token) return
     await navigator.clipboard.writeText(buildAthleteJoinLink(team.join_token))
     setCopiedTeamId(team.id)
+    showToast(t("ux.linkCopied"))
     onNotify?.(t("teams.invitationCopied"))
   }
 
@@ -357,7 +361,16 @@ export function ClinicalCommandCenter({
         </header>
 
         {teamOverviews.length === 0 ? (
-          <p className="empty-state">{t("teams.emptyTeams")}</p>
+          <EmptyState
+            icon="users"
+            title={t("ux.emptyTeamsTitle")}
+            description={t("ux.emptyTeamsBody")}
+            action={
+              <Button variant="primary" onClick={() => setCreateOpen(true)}>
+                {t("teams.newTeamShort")}
+              </Button>
+            }
+          />
         ) : (
           <div className="clinical-command__team-grid">
             {teamOverviews.map((overview) => (

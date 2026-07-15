@@ -1,4 +1,5 @@
 import { Card } from "../ui/Card"
+import { EmptyState } from "../ui/EmptyState"
 
 export function CoachRecommendationsPanel({ recommendations, t }) {
   return (
@@ -8,7 +9,11 @@ export function CoachRecommendationsPanel({ recommendations, t }) {
       className="coach-recommendations"
     >
       {!recommendations.length ? (
-        <p className="empty-state">{t("coach.recommendationsEmpty")}</p>
+        <EmptyState
+          icon="clipboard"
+          title={t("ux.emptyCoachRecommendationsTitle")}
+          description={t("ux.emptyCoachRecommendationsBody")}
+        />
       ) : (
         <ul className="coach-recommendations__list">
           {recommendations.map((row) => (

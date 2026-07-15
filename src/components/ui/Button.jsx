@@ -6,10 +6,12 @@ export function Button({
   onClick,
   className = "",
 }) {
+  const resolvedVariant = ["primary", "secondary", "ghost"].includes(variant) ? variant : "ghost"
+
   return (
     <button
       type={type}
-      className={`btn btn--${variant} ${className}`.trim()}
+      className={`btn btn--${resolvedVariant} ${className}`.trim()}
       disabled={disabled}
       onClick={onClick}
     >

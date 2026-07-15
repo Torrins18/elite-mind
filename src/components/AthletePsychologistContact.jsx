@@ -1,11 +1,13 @@
 import { useCallback, useEffect, useState } from "react"
 import { supabase } from "../supabase"
 import { useTranslation } from "../i18n/LanguageContext"
+import { useToast } from "../context/ToastContext"
 import { Card } from "./ui/Card"
 import { Button } from "./ui/Button"
 
 export function AthletePsychologistContact({ userId, onClose, standalone = false, defaultForm = null }) {
   const { t } = useTranslation()
+  const { showToast } = useToast()
   const [activeForm, setActiveForm] = useState(defaultForm)
   const [message, setMessage] = useState("")
   const [saving, setSaving] = useState(false)
@@ -77,11 +79,13 @@ export function AthletePsychologistContact({ userId, onClose, standalone = false
     setSaving(false)
 
     if (error) {
-      setFeedback(error.message)
+      setFeedback(t("ux.actionFailed"))
+      showToast(t("ux.actionFailed"), "error")
       return
     }
 
-    setFeedback(t("athleteContact.appointmentSent"))
+    showToast(t("ux.appointmentSent"))
+    setFeedback("")
     setMessage("")
     setActiveForm(null)
     loadThread()
@@ -106,11 +110,13 @@ export function AthletePsychologistContact({ userId, onClose, standalone = false
     setSaving(false)
 
     if (error) {
-      setFeedback(error.message)
+      setFeedback(t("ux.actionFailed"))
+      showToast(t("ux.actionFailed"), "error")
       return
     }
 
-    setFeedback(t("athleteContact.messageSent"))
+    showToast(t("ux.messageSent"))
+    setFeedback("")
     setMessage("")
     setActiveForm(null)
     loadThread()
@@ -212,7 +218,10 @@ export function AthletePsychologistContact({ userId, onClose, standalone = false
       <section className="athlete-contact__history">
         <h3>{t("athleteContact.messagesTitle")}</h3>
         {loadingThread ? (
-          <p className="empty-state">{t("athleteContact.loadingThread")}</p>
+          <div className="page-skeleton" aria-busy="true">
+            <div className="skeleton skeleton--text" style={{ width: "100%", marginBottom: 10 }} />
+            <div className="skeleton skeleton--text" style={{ width: "88%" }} />
+          </div>
         ) : thread.length === 0 ? (
           <p className="empty-state">{t("athleteContact.noMessagesYet")}</p>
         ) : (

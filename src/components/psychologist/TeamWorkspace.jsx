@@ -11,6 +11,7 @@ import { ComplianceTrendChart } from "../ComplianceTrendChart"
 import { AthleteClinicalFile } from "./AthleteClinicalFile"
 import { CoachShareRecommendation } from "./CoachShareRecommendation"
 import { TeamEntrenamentMentalPanel } from "../EntrenamentMentalCard"
+import { EmptyState } from "../ui/EmptyState"
 import { getTeamMentalTrainingStatus } from "../../lib/entrenamentMental"
 import { todayISO } from "../../lib/dates"
 import { calculateRiskLevel } from "../../lib/risk"
@@ -220,7 +221,11 @@ export function TeamWorkspace({
                 <EorIndexSummary indexes={teamWeeklySnapshot} variant="psychologist" t={t} />
               </Card>
             ) : (
-              <p className="empty-state">{t("coach.weeklyChartNoData")}</p>
+              <EmptyState
+                icon="chart"
+                title={t("ux.emptyTeamReviewsTitle")}
+                description={t("ux.emptyTeamReviewsBody")}
+              />
             )}
             <CoachShareRecommendation
               teamId={teamId}

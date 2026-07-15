@@ -121,7 +121,7 @@ export function AthleteDashboard({ profile, team }) {
     setScreen(weeklyDoneThisWeek ? "completion" : "home")
   }
 
-  if (loading) return <LoadingSpinner label={t("athlete.loading")} />
+  if (loading) return <LoadingSpinner variant="athlete" />
 
   if (screen === "reflection") {
     return (

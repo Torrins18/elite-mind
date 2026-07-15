@@ -441,7 +441,7 @@ export function PsychologistDashboard({ profile }) {
     })
   }
 
-  if (loading) return <LoadingSpinner label={t("psychologist.loading")} />
+  if (loading) return <LoadingSpinner variant="dashboard" />
 
   const inboxCount =
     appointmentRequests.length + psychologistMessages.length + activeAlertCount

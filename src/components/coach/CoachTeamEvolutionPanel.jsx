@@ -8,6 +8,7 @@ import {
   CartesianGrid,
 } from "recharts"
 import { Card } from "../ui/Card"
+import { EmptyState } from "../ui/EmptyState"
 import { useTranslation } from "../../i18n/LanguageContext"
 import { formatDate } from "../../lib/dates"
 import {
@@ -40,7 +41,11 @@ export function CoachTeamEvolutionPanel({ weeklyMetrics }) {
   if (!data.length) {
     return (
       <Card title={t("coach.evolutionTitle")} subtitle={t("coach.evolutionSubtitle")}>
-        <p className="empty-state">{t("coach.evolutionEmpty")}</p>
+        <EmptyState
+          icon="chart"
+          title={t("ux.emptyTeamReviewsTitle")}
+          description={t("ux.emptyTeamReviewsBody")}
+        />
       </Card>
     )
   }

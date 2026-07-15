@@ -69,7 +69,7 @@ export const translations = {
         loadingSession: "Preparando tu acceso...",
         appError: "Algo no ha ido como esperábamos",
         appErrorHint:
-          "Prueba de recargar la página. Si persiste, revisa la configuración en supabase/ (véase SETUP.md).",
+          "No hemos podido completar esta acción. Vuelve a intentarlo en unos instantes.",
         reload: "Recargar",
       },
     },
@@ -86,6 +86,23 @@ export const translations = {
       close: "Cerrar",
       back: "Volver",
       cancel: "Cancelar",
+    },
+
+    ux: {
+      linkCopied: "El enlace se ha copiado.",
+      saved: "Guardado correctamente.",
+      messageSent: "Mensaje enviado.",
+      appointmentSent: "Solicitud enviada.",
+      reviewSaved: "La revisión se ha guardado correctamente.",
+      actionFailed: "No hemos podido completar esta acción. Vuelve a intentarlo en unos instantes.",
+      emptyTeamReviewsTitle: "Aún no hay revisiones semanales",
+      emptyTeamReviewsBody:
+        "Cuando los deportistas completen su revisión semanal, el resumen del equipo aparecerá aquí.",
+      emptyCoachRecommendationsTitle: "Sin recomendaciones compartidas",
+      emptyCoachRecommendationsBody:
+        "Cuando compartas orientación con el entrenador/a, aparecerá aquí de forma agregada.",
+      emptyTeamsTitle: "Aún no hay equipos",
+      emptyTeamsBody: "Crea tu primer equipo para empezar el seguimiento de la temporada.",
     },
 
     privacy: {
@@ -1557,7 +1574,7 @@ export const translations = {
         loadingSession: "Preparant el teu accés...",
         appError: "Alguna cosa no ha anat com esperàvem",
         appErrorHint:
-          "Prova de recarregar la pàgina. Si persisteix, revisa la configuració a supabase/ (vegeu SETUP.md).",
+          "No hem pogut completar aquesta acció. Torna-ho a provar d'aquí uns instants.",
         reload: "Recarregar",
       },
     },
@@ -1574,6 +1591,23 @@ export const translations = {
       close: "Tancar",
       back: "Tornar",
       cancel: "Cancel·lar",
+    },
+
+    ux: {
+      linkCopied: "L'enllaç s'ha copiat.",
+      saved: "Desat correctament.",
+      messageSent: "Missatge enviat.",
+      appointmentSent: "Sol·licitud enviada.",
+      reviewSaved: "La revisió s'ha desat correctament.",
+      actionFailed: "No hem pogut completar aquesta acció. Torna-ho a provar d'aquí uns instants.",
+      emptyTeamReviewsTitle: "Encara no hi ha revisions setmanals",
+      emptyTeamReviewsBody:
+        "Quan els esportistes completin la revisió setmanal, el resum de l'equip apareixerà aquí.",
+      emptyCoachRecommendationsTitle: "Sense recomanacions compartides",
+      emptyCoachRecommendationsBody:
+        "Quan comparteixis orientació amb l'entrenador/a, apareixerà aquí de forma agregada.",
+      emptyTeamsTitle: "Encara no hi ha equips",
+      emptyTeamsBody: "Crea el teu primer equip per començar el seguiment de la temporada.",
     },
 
     privacy: {
