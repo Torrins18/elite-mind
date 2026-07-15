@@ -35,7 +35,7 @@ export function buildTeamInsight(input, t, { forCoach = false } = {}) {
 
   const eorBase = { mental, wellbeing, social, compliance: compliancePct }
 
-  if (highCount >= 1) {
+  if (highCount >= 1 && !forCoach) {
     const key = highCount >= 2 ? "multipleHighRisk" : "singleHighRisk"
     return {
       tone: highCount >= 2 ? "danger" : "warning",

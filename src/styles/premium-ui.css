@@ -1888,3 +1888,133 @@
 .team-workspace-notes__item p + p {
   margin-top: 6px;
 }
+
+.dashboard-grid--coach {
+  gap: 20px;
+}
+
+.hero-strip--coach .hero-strip__meta {
+  margin: 8px 0 0;
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+}
+
+.coach-team-status__badge {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.coach-team-status__title {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+.coach-team-status__body p {
+  margin: 0 0 8px;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  line-height: 1.55;
+}
+
+.coach-team-status__recommendation {
+  margin-top: 12px !important;
+  padding-top: 12px;
+  border-top: 1px solid var(--border-subtle);
+  font-size: 0.8125rem !important;
+  color: var(--text-muted) !important;
+}
+
+.coach-indicators__title,
+.coach-section-title {
+  margin: 0 0 4px;
+  font-size: 0.9375rem;
+  font-weight: 600;
+}
+
+.coach-indicators__subtitle,
+.coach-section-subtitle {
+  margin: 0 0 14px;
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+}
+
+.coach-indicators__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.coach-indicators__item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px 14px;
+  border-radius: var(--radius-md);
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-subtle);
+}
+
+.coach-indicators__item--good {
+  border-color: rgba(34, 197, 94, 0.2);
+}
+
+.coach-indicators__item--watch {
+  border-color: rgba(245, 158, 11, 0.25);
+}
+
+.coach-indicators__label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.coach-indicators__value {
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.coach-evolution-note,
+.coach-confidentiality-footer,
+.coach-recommendations__privacy {
+  margin: 12px 0 0;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.coach-recommendations__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.coach-recommendations__item blockquote {
+  margin: 0;
+  padding: 12px 14px;
+  border-left: 3px solid var(--accent);
+  background: var(--bg-subtle);
+  font-size: 0.875rem;
+}
+
+.coach-share-recommendation__form textarea {
+  width: 100%;
+  min-height: 88px;
+  margin-top: 6px;
+  padding: 10px 12px;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  font: inherit;
+}
+
+@media (max-width: 720px) {
+  .coach-indicators__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

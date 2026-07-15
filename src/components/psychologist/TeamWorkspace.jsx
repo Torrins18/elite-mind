@@ -9,6 +9,7 @@ import { EorIndexSummary } from "../EorIndexSummary"
 import { WeeklyEorChart } from "../WeeklyEorTeamChart"
 import { ComplianceTrendChart } from "../ComplianceTrendChart"
 import { AthleteClinicalFile } from "./AthleteClinicalFile"
+import { CoachShareRecommendation } from "./CoachShareRecommendation"
 import { calculateRiskLevel } from "../../lib/risk"
 import { getLatestWeeklyReflection } from "../../lib/weeklyEor"
 
@@ -211,6 +212,11 @@ export function TeamWorkspace({
             ) : (
               <p className="empty-state">{t("coach.weeklyChartNoData")}</p>
             )}
+            <CoachShareRecommendation
+              teamId={teamId}
+              psychologistId={psychologistId}
+              t={t}
+            />
           </>
         ) : null}
 

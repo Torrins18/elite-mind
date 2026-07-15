@@ -970,56 +970,82 @@ export const translations = {
       loading: "Preparando la inteligencia de equipo...",
       team: "Tu categoría",
       subtitle:
-        "Participación, cohesión y tendencias generales del equipo. El seguimiento individual lo realiza el/la psicólogo/a.",
+        "Gestión del equipo: solo información agregada. El psicólogo protege la confidencialidad individual.",
+      rosterSize: "{count} deportistas en plantilla",
+      confidentialityFooter:
+        "El entrenador impulsa el rendimiento. El psicólogo protege la confidencialidad. Esta plataforma refuerza esa frontera profesional.",
       athletes: "Deportistas",
-      checkedInThisWeek: "Con registro esta semana",
+      checkedInThisWeek: "Participación semanal",
       weeklyCompliance: "Objetivo: 1-2 registros/semana",
-      teamAvgMood: "Ánimo medio del equipo",
-      teamAvgStress: "Estrés medio del equipo",
-      aggregatedOnly: "Media del equipo (7 días)",
-      teamSummary: "Panorama del equipo",
-      teamSummarySubtitle: "Conteos agregados — sin identificar respuestas individuales.",
-      summaryCompliance: "Con registro (7 días)",
-      summaryStable: "Estables (último registro)",
-      summaryWatch: "En vigilancia",
-      summaryAtRisk: "En riesgo elevado",
-      summaryInactive: "Sin registro reciente",
-      privacyNote:
-        "No tienes acceso a notas privadas ni a las respuestas concretas de cada deportista. Para casos individuales, contacta con el/la psicólogo/a.",
-      historyChartTitle: "Evolución EOR del equipo (desde el inicio)",
-      historyChartSubtitle: "Medias agregadas: mental, bienestar y social.",
-      eorTeamTitle: "Índices EOR del equipo",
-      eorTeamSubtitle: "Resumen agregado de la última revisión semanal — sin datos individuales.",
-      weeklySectionTitle: "Revisión semanal EOR",
-      weeklySectionSubtitle:
-        "Índices agregados del entorno deportivo y del rendimiento — sin respuestas individuales.",
-      weeklyInsightTitle: "Resumen inteligente semanal",
-      weeklyInsightFooter:
-        "Generado a partir de las medias agregadas de la última revisión EOR del equipo.",
-      weeklyChartTitle: "Progresión semanal EOR",
-      weeklyChartSubtitle: "Evolución de los índices agregados en cada revisión semanal.",
-      weeklyChartEmpty: "Cuando el equipo complete revisiones EOR, verás la curva aquí.",
-      weeklyChartNoData: "Aún no hay revisiones semanales EOR.",
-      weeklyResultsTitle: "Última revisión semanal",
-      weeklyResultsSubtitle: "Medias del equipo en la revisión EOR más reciente.",
-      weeklyResultsEmpty: "Todavía no hay una revisión EOR completada por el equipo.",
-      weeklyResultsMeta: "Semana del {date} · {count} respuestas agregadas",
-      weeklyResultsPrivacy:
-        "Solo ves medias del grupo. Las respuestas abiertas y el contacto con psicología son privados.",
-      weeklyInsight: {
-        noData:
-          "Todavía no hay revisiones EOR recientes. Cuando el equipo las complete, aquí verás un resumen semanal accionable.",
-        mentalSocialGap:
-          "Hay una brecha: mental alto ({mental}/10) pero entorno social bajo ({social}/10). Benestar {wellbeing}/10. Valora dinámica de grupo e integración.",
-        socialDrop:
-          "El índice social del equipo ha bajado ({value}/10, −{delta} pts). Revisa integración y clima de grupo.",
-        mentalDrop:
-          "El índice mental del equipo ha bajado ({value}/10, −{delta} pts). Revisa carga, presión y motivación grupal.",
-        healthy:
-          "Buen equilibrio semanal: mental {mental}/10, bienestar {wellbeing}/10, social {social}/10 y {compliance}% de respuestas.",
-        mixed:
-          "Estado semanal mixto: mental {mental}/10, bienestar {wellbeing}/10, social {social}/10 ({compliance}% respuestas).",
+      teamStatus: {
+        stableTitle: "Equipo estable",
+        watchTitle: "Equipo en observación",
+        neutralTitle: "Equipo en seguimiento",
+        unknownTitle: "Seguimiento en curso",
+        stableLine1: "El equipo muestra un buen nivel de preparación colectiva.",
+        stableLine2: "La cohesión del grupo se mantiene sólida. No se detectan preocupaciones colectivas significativas.",
+        watchLine1: "El equipo muestra señales colectivas que conviene monitorizar esta semana.",
+        watchLine1Drop: "La energía general del equipo ha bajado ligeramente esta semana.",
+        watchLine2: "Revisa carga, recuperación y dinámica de grupo. Contacta con psicología si necesitas orientación.",
+        neutralLine1: "El rendimiento mental colectivo se mantiene en un rango intermedio.",
+        neutralLine2: "La participación y la comunicación del equipo son las palancas principales esta semana.",
+        unknownLine1: "Aún no hay suficientes revisiones semanales agregadas para evaluar al equipo.",
+        unknownLine2: "Anima al grupo a completar la revisión semanal para activar el seguimiento colectivo.",
+        noRecommendations: "No hay recomendaciones compartidas por psicología en este momento.",
+        oneRecommendation: "Hay 1 recomendación compartida por el/la psicólogo/a.",
+        multipleRecommendations: "Hay {count} recomendaciones compartidas por el/la psicólogo/a.",
+        recommendationShared: "Hay 1 recomendación compartida por el/la psicólogo/a.",
+        recommendationsShared: "Hay {recommendations} recomendaciones compartidas por el/la psicólogo/a.",
       },
+      indicatorsTitle: "Indicadores del equipo",
+      indicatorsSubtitle: "Medias agregadas del grupo — nunca datos individuales.",
+      indicators: {
+        confidence: "Confianza colectiva",
+        energy: "Energía general",
+        cohesion: "Cohesión",
+        communication: "Comunicación",
+        recovery: "Recuperación",
+        participation: "Participación",
+      },
+      dashboardInsightTitle: "Interpretación del equipo",
+      dashboardInsightSubtitle: "Resumen agregado generado solo a nivel de equipo.",
+      dashboardInsightCardTitle: "Coach IA",
+      dashboardInsight: {
+        noData:
+          "Todavía no hay suficientes revisiones semanales agregadas para generar una interpretación del equipo.",
+        energyDown:
+          "La energía general del equipo ha bajado ligeramente esta semana. La comunicación se mantiene en {communication}/10 y la participación en {participation}%. No se detectan preocupaciones colectivas que requieran acción inmediata.",
+        participationUp:
+          "La participación del equipo ha mejorado ({participation}%). La comunicación ({communication}/10) y la cohesión ({cohesion}/10) se mantienen estables.",
+        stableWeek:
+          "La comunicación del equipo se mantiene estable ({communication}/10). La participación es del {participation}% y la cohesión del {cohesion}/10.",
+        cohesionGap:
+          "La cohesión del equipo ({cohesion}/10) merece atención esta semana. Comunicación {communication}/10 y participación {participation}%.",
+        healthyTeam:
+          "Buen momento colectivo: participación {participation}%, comunicación {communication}/10 y energía {energy}/10.",
+        mixed:
+          "Semana mixta a nivel de equipo: participación {participation}%, comunicación {communication}/10, energía {energy}/10.",
+      },
+      evolutionTitle: "Evolución del rendimiento mental",
+      evolutionSubtitle: "Últimas 8 semanas — medias agregadas del equipo.",
+      evolutionEmpty: "Cuando el equipo complete revisiones semanales, verás la evolución aquí.",
+      evolutionNote: "Participación en % (eje derecho). Resto de indicadores en escala 0-10.",
+      evolution: {
+        mental: "Rendimiento mental",
+        participation: "Participación",
+        communication: "Comunicación",
+        cohesion: "Cohesión",
+        energy: "Energía",
+      },
+      recommendationsTitle: "Recomendaciones del psicólogo",
+      recommendationsSubtitle: "Solo aparece lo que el/la psicólogo/a decide compartir explícitamente.",
+      recommendationsEmpty: "No hay recomendaciones compartidas por psicología en este momento.",
+      recommendationsSharedAt: "Compartida el {date}",
+      recommendationsPrivacy:
+        "Esta es la única sección donde puede aparecer orientación individual, siempre compartida de forma intencionada por el/la psicólogo/a.",
+      privacyNote:
+        "No tienes acceso a notas privadas, respuestas individuales ni indicadores psicológicos personales.",
+      weeklyChartNoData: "Aún no hay revisiones semanales agregadas.",
       noTeamTitle: "Equipo pendiente",
       noTeamSubtitle: "Tu acceso como entrenador/a está aprobado.",
       noTeamText:
@@ -1204,6 +1230,17 @@ export const translations = {
       viewAthlete: "Ver deportista",
       unknownAthlete: "Deportista desconocido",
       dismissAlert: "Descartar",
+      coachRecommendationsTitle: "Recomendaciones para el entrenador",
+      coachRecommendationsSubtitle:
+        "Comparte orientación de forma explícita. Es la única vía para que el/la entrenador/a vea información individual.",
+      coachRecommendationLabel: "Recomendación para el/la entrenador/a",
+      coachRecommendationPlaceholder:
+        "Ej.: Valora reducir la carga de entrenamiento de un deportista esta semana.",
+      coachRecommendationHint:
+        "Nada se comparte automáticamente. Solo el texto que escribas aquí será visible para el/la entrenador/a.",
+      coachRecommendationShare: "Compartir con entrenador/a",
+      coachRecommendationShared: "Recomendación compartida con el/la entrenador/a.",
+      coachRecommendationArchive: "Retirar",
       alertReviewed: "Revisada",
       riskBadge: {
         low: "Estable",
@@ -2368,56 +2405,82 @@ export const translations = {
       loading: "Preparant la intel·ligència d'equip...",
       team: "La teva categoria",
       subtitle:
-        "Participació, cohesió i tendències generals de l'equip. El seguiment individual el fa el/la psicòleg/òloga.",
+        "Gestió de l'equip: només informació agregada. El psicòleg protegeix la confidencialitat individual.",
+      rosterSize: "{count} esportistes a la plantilla",
+      confidentialityFooter:
+        "L'entrenador impulsa el rendiment. El psicòleg protegeix la confidencialitat. Aquesta plataforma reforça aquesta frontera professional.",
       athletes: "Esportistes",
-      checkedInThisWeek: "Amb registre aquesta setmana",
+      checkedInThisWeek: "Participació setmanal",
       weeklyCompliance: "Objectiu: 1-2 registres/setmana",
-      teamAvgMood: "Ànim mitjà de l'equip",
-      teamAvgStress: "Estrès mitjà de l'equip",
-      aggregatedOnly: "Mitjana de l'equip (7 dies)",
-      teamSummary: "Panorama de l'equip",
-      teamSummarySubtitle: "Recomptes agregats — sense identificar respostes individuals.",
-      summaryCompliance: "Amb registre (7 dies)",
-      summaryStable: "Estables (últim registre)",
-      summaryWatch: "En vigilància",
-      summaryAtRisk: "En risc elevat",
-      summaryInactive: "Sense registre recent",
-      privacyNote:
-        "No tens accés a notes privades ni a les respostes concretes de cada esportista. Per a casos individuals, contacta amb el/la psicòleg/òloga.",
-      historyChartTitle: "Evolució EOR de l'equip (des de l'inici)",
-      historyChartSubtitle: "Mitjanes agregades: mental, benestar i social.",
-      eorTeamTitle: "Índexs EOR de l'equip",
-      eorTeamSubtitle: "Resum agregat de la darrera revisió setmanal — sense dades individuals.",
-      weeklySectionTitle: "Revisió setmanal EOR",
-      weeklySectionSubtitle:
-        "Índexs agregats de l'entorn esportiu i del rendiment — sense respostes individuals.",
-      weeklyInsightTitle: "Resum intel·ligent setmanal",
-      weeklyInsightFooter:
-        "Generat a partir de les mitjanes agregades de l'última revisió EOR de l'equip.",
-      weeklyChartTitle: "Progressió setmanal EOR",
-      weeklyChartSubtitle: "Evolució dels índexs agregats en cada revisió setmanal.",
-      weeklyChartEmpty: "Quan l'equip completi revisions EOR, veuràs la corba aquí.",
-      weeklyChartNoData: "Encara no hi ha revisions setmanals EOR.",
-      weeklyResultsTitle: "Darrera revisió setmanal",
-      weeklyResultsSubtitle: "Mitjanes de l'equip a la revisió EOR més recent.",
-      weeklyResultsEmpty: "Encara no hi ha una revisió EOR completada per l'equip.",
-      weeklyResultsMeta: "Setmana del {date} · {count} respostes agregades",
-      weeklyResultsPrivacy:
-        "Només veus mitjanes del grup. Les respostes obertes i el contacte amb psicologia són privats.",
-      weeklyInsight: {
-        noData:
-          "Encara no hi ha revisions EOR recents. Quan l'equip les completi, aquí veuràs un resum setmanal accionable.",
-        mentalSocialGap:
-          "Hi ha una bretxa: mental alt ({mental}/10) però entorn social baix ({social}/10). Benestar {wellbeing}/10. Valora dinàmica de grup i integració.",
-        socialDrop:
-          "L'índex social de l'equip ha baixat ({value}/10, −{delta} pts). Revisa integració i clima de grup.",
-        mentalDrop:
-          "L'índex mental de l'equip ha baixat ({value}/10, −{delta} pts). Revisa càrrega, pressió i motivació grupal.",
-        healthy:
-          "Bon equilibri setmanal: mental {mental}/10, benestar {wellbeing}/10, social {social}/10 i {compliance}% de respostes.",
-        mixed:
-          "Estat setmanal mixt: mental {mental}/10, benestar {wellbeing}/10, social {social}/10 ({compliance}% respostes).",
+      teamStatus: {
+        stableTitle: "Equip estable",
+        watchTitle: "Equip en observació",
+        neutralTitle: "Equip en seguiment",
+        unknownTitle: "Seguiment en curs",
+        stableLine1: "L'equip mostra un bon nivell de preparació col·lectiva.",
+        stableLine2: "La cohesió del grup es manté sòlida. No es detecten preocupacions col·lectives significatives.",
+        watchLine1: "L'equip mostra senyals col·lectives que convé monitoritzar aquesta setmana.",
+        watchLine1Drop: "L'energia general de l'equip ha baixat lleugerament aquesta setmana.",
+        watchLine2: "Revisa càrrega, recuperació i dinàmica de grup. Contacta amb psicologia si necessites orientació.",
+        neutralLine1: "El rendiment mental col·lectiu es manté en un rang intermedi.",
+        neutralLine2: "La participació i la comunicació de l'equip són les palanques principals aquesta setmana.",
+        unknownLine1: "Encara no hi ha prou revisions setmanals agregades per avaluar l'equip.",
+        unknownLine2: "Anima el grup a completar la revisió setmanal per activar el seguiment col·lectiu.",
+        noRecommendations: "No hi ha recomanacions compartides per psicologia en aquest moment.",
+        oneRecommendation: "Hi ha 1 recomanació compartida pel/la psicòleg/òloga.",
+        multipleRecommendations: "Hi ha {count} recomanacions compartides pel/la psicòleg/òloga.",
+        recommendationShared: "Hi ha 1 recomanació compartida pel/la psicòleg/òloga.",
+        recommendationsShared: "Hi ha {recommendations} recomanacions compartides pel/la psicòleg/òloga.",
       },
+      indicatorsTitle: "Indicadors de l'equip",
+      indicatorsSubtitle: "Mitjanes agregades del grup — mai dades individuals.",
+      indicators: {
+        confidence: "Confiança col·lectiva",
+        energy: "Energia general",
+        cohesion: "Cohesió",
+        communication: "Comunicació",
+        recovery: "Recuperació",
+        participation: "Participació",
+      },
+      dashboardInsightTitle: "Interpretació de l'equip",
+      dashboardInsightSubtitle: "Resum agregat generat només a nivell d'equip.",
+      dashboardInsightCardTitle: "Coach IA",
+      dashboardInsight: {
+        noData:
+          "Encara no hi ha prou revisions setmanals agregades per generar una interpretació de l'equip.",
+        energyDown:
+          "L'energia general de l'equip ha baixat lleugerament aquesta setmana. La comunicació es manté en {communication}/10 i la participació en {participation}%. No es detecten preocupacions col·lectives que requereixin acció immediata.",
+        participationUp:
+          "La participació de l'equip ha millorat ({participation}%). La comunicació ({communication}/10) i la cohesió ({cohesion}/10) es mantenen estables.",
+        stableWeek:
+          "La comunicació de l'equip es manté estable ({communication}/10). La participació és del {participation}% i la cohesió del {cohesion}/10.",
+        cohesionGap:
+          "La cohesió de l'equip ({cohesion}/10) mereix atenció aquesta setmana. Comunicació {communication}/10 i participació {participation}%.",
+        healthyTeam:
+          "Bon moment col·lectiu: participació {participation}%, comunicació {communication}/10 i energia {energy}/10.",
+        mixed:
+          "Setmana mixta a nivell d'equip: participació {participation}%, comunicació {communication}/10, energia {energy}/10.",
+      },
+      evolutionTitle: "Evolució del rendiment mental",
+      evolutionSubtitle: "Darreres 8 setmanes — mitjanes agregades de l'equip.",
+      evolutionEmpty: "Quan l'equip completi revisions setmanals, veuràs l'evolució aquí.",
+      evolutionNote: "Participació en % (eix dret). Resta d'indicadors en escala 0-10.",
+      evolution: {
+        mental: "Rendiment mental",
+        participation: "Participació",
+        communication: "Comunicació",
+        cohesion: "Cohesió",
+        energy: "Energia",
+      },
+      recommendationsTitle: "Recomanacions del psicòleg",
+      recommendationsSubtitle: "Només apareix el que el/la psicòleg/òloga decideix compartir explícitament.",
+      recommendationsEmpty: "No hi ha recomanacions compartides per psicologia en aquest moment.",
+      recommendationsSharedAt: "Compartida el {date}",
+      recommendationsPrivacy:
+        "Aquesta és l'única secció on pot aparèixer orientació individual, sempre compartida de forma intencionada pel/la psicòleg/òloga.",
+      privacyNote:
+        "No tens accés a notes privades, respostes individuals ni indicadors psicològics personals.",
+      weeklyChartNoData: "Encara no hi ha revisions setmanals agregades.",
       noTeamTitle: "Equip pendent",
       noTeamSubtitle: "El teu accés com a entrenador/a està aprovat.",
       noTeamText:
@@ -2603,6 +2666,17 @@ export const translations = {
       viewAthlete: "Veure esportista",
       unknownAthlete: "Esportista desconegut",
       dismissAlert: "Descartar",
+      coachRecommendationsTitle: "Recomanacions per a l'entrenador/a",
+      coachRecommendationsSubtitle:
+        "Comparteix orientació de forma explícita. És l'única via perquè l'entrenador/a vegi informació individual.",
+      coachRecommendationLabel: "Recomanació per a l'entrenador/a",
+      coachRecommendationPlaceholder:
+        "Ex.: Valora reduir la càrrega d'entrenament d'un esportista aquesta setmana.",
+      coachRecommendationHint:
+        "Res es comparteix automàticament. Només el text que escriguis aquí serà visible per a l'entrenador/a.",
+      coachRecommendationShare: "Compartir amb entrenador/a",
+      coachRecommendationShared: "Recomanació compartida amb l'entrenador/a.",
+      coachRecommendationArchive: "Retirar",
       alertReviewed: "Revisada",
       riskBadge: {
         low: "Estable",
