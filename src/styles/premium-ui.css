@@ -952,6 +952,127 @@
   box-shadow: var(--shadow-sm);
 }
 
+/* Sistema de Rendiment Mental — methodology strip */
+.methodology-strip {
+  padding: 20px 24px;
+  border-radius: var(--radius-lg);
+  background: linear-gradient(135deg, rgba(37, 99, 235, 0.06), rgba(37, 99, 235, 0.02));
+  border: 1px solid rgba(37, 99, 235, 0.12);
+}
+
+.methodology-strip__header {
+  margin-bottom: 16px;
+}
+
+.methodology-strip__system {
+  margin: 0 0 4px;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.methodology-strip__support {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+.methodology-strip__ux {
+  margin: 10px 0 0;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+.methodology-strip__pillars {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.methodology-strip__pillars--compact .methodology-strip__pillar-body p {
+  display: none;
+}
+
+.methodology-strip__pillar {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  padding: 10px 12px;
+  border-radius: var(--radius-md);
+  background: var(--bg-surface);
+  box-shadow: var(--shadow-xs);
+}
+
+.methodology-strip__num {
+  flex-shrink: 0;
+  width: 1.35rem;
+  height: 1.35rem;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 0.6875rem;
+  font-weight: 700;
+}
+
+.methodology-strip__pillar-body {
+  min-width: 0;
+}
+
+.methodology-strip__pillar-body strong {
+  display: block;
+  font-size: 0.75rem;
+  line-height: 1.3;
+  margin-bottom: 4px;
+}
+
+.methodology-strip__pillar-body p {
+  margin: 0;
+  font-size: 0.6875rem;
+  line-height: 1.4;
+  color: var(--text-muted);
+}
+
+.methodology-strip__philosophy {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px 24px;
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(37, 99, 235, 0.1);
+  font-size: 0.8125rem;
+  color: var(--text-secondary);
+}
+
+.methodology-strip__philosophy-label {
+  display: block;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 2px;
+}
+
+@media (max-width: 960px) {
+  .methodology-strip__pillars {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 520px) {
+  .methodology-strip__pillars {
+    grid-template-columns: 1fr;
+  }
+}
+
 .clinical-command__greeting {
   margin: 0 0 6px;
   font-size: clamp(1.35rem, 2.5vw, 1.65rem);
@@ -1522,6 +1643,15 @@
   font-weight: 600;
   letter-spacing: 0.02em;
   text-transform: uppercase;
+}
+
+.team-workspace__subtitle--muted {
+  margin-top: 2px;
+  font-weight: 500;
+  font-size: 0.75rem;
+  text-transform: none;
+  letter-spacing: normal;
+  color: var(--text-secondary);
 }
 
 .team-workspace-tabs {

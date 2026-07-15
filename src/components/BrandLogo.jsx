@@ -1,7 +1,6 @@
 import { useTranslation } from "../i18n/LanguageContext"
 
 const ICON_SRC = "/images/zona-mental-logo-v3-transparent.png"
-const LABEL = "Zona Mental+ — Psicología deportiva"
 
 function BrandIcon() {
   return (
@@ -34,6 +33,8 @@ function Wordmark({ showSubtitle = true }) {
 
 /** Crisp vector wordmark + raster icon (avoids blurry upscaled PNG text). */
 export function BrandLogo({ variant = "bar", className = "", tone = "default" }) {
+  const { t } = useTranslation()
+  const label = `${t("appName")} — ${t("brand.systemName")}`
   const onDark = tone === "light" || variant === "hero-dark"
   const surface = onDark ? "dark" : "light"
   const showSubtitle = variant !== "bar" && variant !== "icon"
@@ -50,14 +51,14 @@ export function BrandLogo({ variant = "bar", className = "", tone = "default" })
 
   if (variant === "icon") {
     return (
-      <div className={`brand-logo brand-logo--icon ${className}`.trim()} role="img" aria-label={LABEL}>
+      <div className={`brand-logo brand-logo--icon ${className}`.trim()} role="img" aria-label={label}>
         <BrandIcon />
       </div>
     )
   }
 
   return (
-    <div className={rootClass} role="img" aria-label={LABEL}>
+    <div className={rootClass} role="img" aria-label={label}>
       <BrandIcon />
       <Wordmark showSubtitle={showSubtitle} />
     </div>

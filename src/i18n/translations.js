@@ -1,14 +1,55 @@
 export const translations = {
   es: {
     appName: "Zona Mental+",
-    appEyebrow: "Psicología deportiva",
+    appEyebrow: "Sistema de Rendimiento Mental",
 
     brand: {
-      platformDescription: "Plataforma de Seguimiento Psicológico Deportivo",
+      platformDescription: "Sistema de Rendimiento Mental™ — plataforma digital",
       performanceCenter: "Centro de Rendimiento Mental",
+      systemName: "Sistema de Rendimiento Mental™",
+      decisionSupport: "Plataforma de apoyo a la decisión profesional",
       coreConcept: "Rendimiento mental",
       tagline:
-        "Ayudamos a los clubs a mejorar el rendimiento mental mediante seguimiento psicológico continuo.",
+        "Metodología estructurada para mejorar el rendimiento mental mediante seguimiento psicológico continuo.",
+      whatIsTitle: "¿Qué es el Sistema de Rendimiento Mental?",
+      whatIs:
+        "Metodología estructurada para psicólogos deportivos y clubs. Mejora el rendimiento mental mediante seguimiento continuo y apoyo a la decisión profesional.",
+      whatIsFootnote: "El software hace escalable esta metodología. Nunca sustituye el criterio profesional.",
+      commercialPitch:
+        "Implementamos el Sistema de Rendimiento Mental™ de Zona Mental+, una metodología estructurada que combina valoración inicial, seguimiento continuo, interpretación inteligente e intervención profesional para acompañar a los deportistas durante toda la temporada.",
+      uxMessage:
+        "El rendimiento mental se entrena. El seguimiento crea comprensión. La comprensión mejora decisiones. Mejores decisiones, mejor rendimiento.",
+      philosophy: {
+        technologyTitle: "La tecnología",
+        technology: "Recopila · Organiza · Detecta",
+        psychologistTitle: "El/la psicólogo/a",
+        psychologist: "Comprende · Decide · Interviene",
+      },
+      pillars: {
+        title: "Los cinco pilares",
+      },
+      pillar: {
+        assessment: {
+          title: "Valoración inicial",
+          desc: "Comprender al deportista, conocer su contexto y establecer su referencia.",
+        },
+        monitoring: {
+          title: "Seguimiento continuo",
+          desc: "Revisiones semanales, evolución, indicadores de rendimiento mental, participación y comunicación.",
+        },
+        interpretation: {
+          title: "Interpretación inteligente",
+          desc: "Interpretación asistida por IA, detección de tendencias y resúmenes profesionales. Apoya la decisión, nunca la sustituye.",
+        },
+        actionPlan: {
+          title: "Plan de acción",
+          desc: "Intervención profesional, objetivos, ejercicios, sesiones, recursos, citas y seguimiento.",
+        },
+        improvement: {
+          title: "Mejora continua",
+          desc: "Evolución de la temporada, informes, revisión del rendimiento y desarrollo continuo.",
+        },
+      },
       nav: {
         home: "Centro de Rendimiento Mental",
         athletes: "Seguimiento de Deportistas",
@@ -22,7 +63,7 @@ export const translations = {
         settings: "Configuración",
       },
       microcopy: {
-        loadingCenter: "Preparando tu Centro de Rendimiento Mental...",
+        loadingCenter: "Preparando tu Sistema de Rendimiento Mental...",
         insufficientData: "Aún no hay suficiente información para generar una interpretación.",
         somethingWrong: "Algo no ha ido como esperábamos.",
         loadingSession: "Preparando tu acceso...",
@@ -85,7 +126,7 @@ export const translations = {
     login: {
       tagline: "Mide. Entiende. Potencia.",
       heroText:
-        "Reflexiones de rendimiento, inteligencia de equipo para entrenadores y centro de rendimiento mental para psicólogos.",
+        "Sistema de Rendimiento Mental™: metodología estructurada con plataforma digital para psicólogos, entrenadores y deportistas.",
       welcome: "Bienvenido/a de nuevo",
       register: "Crear cuenta",
       hintLogin: "Inicia sesión en tu panel de rendimiento.",
@@ -135,31 +176,32 @@ export const translations = {
     },
 
     authLanding: {
-      eyebrow: "PLATAFORMA DE PSICOLOGÍA DEPORTIVA",
-      logoSubtitle: "PSICOLOGÍA DEPORTIVA",
+      eyebrow: "SISTEMA DE RENDIMIENTO MENTAL™",
+      logoSubtitle: "SISTEMA DE RENDIMIENTO MENTAL",
       welcomeTitle: "Bienvenido/a de nuevo",
-      welcomeSubtitle: "Accede a tu espacio de seguimiento.",
+      welcomeSubtitle: "Accede a tu espacio del Sistema de Rendimiento Mental.",
       headlineLine1: "Entrena la mente.",
       headlineLine2: "Compite mejor.",
       supporting:
-        "La plataforma profesional de seguimiento psicológico deportivo para clubs, psicólogos, entrenadores y deportistas.",
-      ctaDiscoverBrand: "Descubre Zona Mental+",
-      value1: "Seguimiento psicológico continuo",
-      value2: "Alertas inteligentes",
-      value3: "Pensado para clubs deportivos",
-      value4: "Diseñado por psicólogos deportivos",
-      whyTitle: "Por qué Zona Mental+",
-      why1Title: "Seguimiento psicológico",
-      why1Text: "Detecta cambios antes de que se conviertan en problemas.",
-      why2Title: "Seguimiento inteligente",
-      why2Text: "Historial, alertas y evolución durante toda la temporada.",
-      why3Title: "Conexión",
-      why3Text: "Deportistas, entrenadores y psicólogos trabajando juntos.",
-      howTitle: "Cómo funciona",
-      step1: "Preparación inicial",
-      step2: "Revisión semanal",
-      step3: "Seguimiento del psicólogo",
-      step4: "Mejora continua",
+        "Metodología estructurada para clubs y psicólogos deportivos. Seguimiento continuo, interpretación inteligente e intervención profesional — con tecnología que apoya, nunca sustituye, tu criterio.",
+      ctaDiscoverBrand: "Descubre el sistema",
+      value1: "Metodología estructurada de rendimiento mental",
+      value2: "Interpretación inteligente y detección temprana",
+      value3: "Seguimiento continuo durante toda la temporada",
+      value4: "Apoyo a la decisión profesional — no psicólogo automático",
+      whyTitle: "¿Qué es el Sistema de Rendimiento Mental?",
+      why1Title: "Metodología, no solo software",
+      why1Text: "Valoración inicial, seguimiento, interpretación, plan de acción y mejora continua en un flujo profesional.",
+      why2Title: "Tecnología al servicio del psicólogo",
+      why2Text: "La plataforma recopila, organiza y detecta. Tú comprendes, decides e intervienes.",
+      why3Title: "Rendimiento mental entrenable",
+      why3Text: "El seguimiento crea comprensión. Mejores decisiones, mejor rendimiento a lo largo de la temporada.",
+      howTitle: "Los cinco pilares",
+      step1: "Valoración inicial",
+      step2: "Seguimiento continuo",
+      step3: "Interpretación inteligente",
+      step4: "Plan de acción",
+      step5: "Mejora continua",
       designedTitle: "Diseñado para",
       audienceAthlete: "Deportistas",
       audienceCoach: "Entrenadores",
@@ -1034,10 +1076,10 @@ export const translations = {
     },
 
     psychologist: {
-      loading: "Preparando tu Centro de Rendimiento Mental...",
+      loading: "Preparando tu Sistema de Rendimiento Mental...",
       title: "Centro de Rendimiento Mental",
       subtitle:
-        "Prioridades del día y acceso directo al seguimiento de cada equipo.",
+        "Sistema de Rendimiento Mental™ — prioridades del día y seguimiento de cada equipo.",
       tabOverview: "Centro de Rendimiento Mental",
       tabsLabel: "Navegación por equipos",
       overviewInsightTitle: "Panorama general",
@@ -1346,14 +1388,55 @@ export const translations = {
 
   ca: {
     appName: "Zona Mental+",
-    appEyebrow: "Psicologia de l'esport",
+    appEyebrow: "Sistema de Rendiment Mental",
 
     brand: {
-      platformDescription: "Plataforma de Seguiment Psicològic Esportiu",
+      platformDescription: "Sistema de Rendiment Mental™ — plataforma digital",
       performanceCenter: "Centre de Rendiment Mental",
+      systemName: "Sistema de Rendiment Mental™",
+      decisionSupport: "Plataforma de suport a la decisió professional",
       coreConcept: "Rendiment mental",
       tagline:
-        "Ajudem els clubs a millorar el rendiment mental mitjançant seguiment psicològic continu.",
+        "Metodologia estructurada per millorar el rendiment mental mitjançant seguiment psicològic continu.",
+      whatIsTitle: "Què és el Sistema de Rendiment Mental?",
+      whatIs:
+        "Metodologia estructurada per a psicòlegs de l'esport i clubs. Millora el rendiment mental mitjançant seguiment continu i suport a la decisió professional.",
+      whatIsFootnote: "El software fa escalable aquesta metodologia. Mai substitueix el criteri professional.",
+      commercialPitch:
+        "Implementem el Sistema de Rendiment Mental™ de Zona Mental+, una metodologia estructurada que combina valoració inicial, seguiment continu, interpretació intel·ligent i intervenció professional per acompanyar els esportistes durant tota la temporada.",
+      uxMessage:
+        "El rendiment mental s'entrena. El seguiment crea comprensió. La comprensió millora decisions. Millors decisions, millor rendiment.",
+      philosophy: {
+        technologyTitle: "La tecnologia",
+        technology: "Recopila · Organitza · Detecta",
+        psychologistTitle: "El/la psicòleg/òloga",
+        psychologist: "Entén · Decideix · Intervé",
+      },
+      pillars: {
+        title: "Els cinc pilars",
+      },
+      pillar: {
+        assessment: {
+          title: "Valoració inicial",
+          desc: "Comprendre l'esportista, conèixer el seu context i establir la seva referència.",
+        },
+        monitoring: {
+          title: "Seguiment continu",
+          desc: "Revisions setmanals, evolució, indicadors de rendiment mental, participació i comunicació.",
+        },
+        interpretation: {
+          title: "Interpretació intel·ligent",
+          desc: "Interpretació assistida per IA, detecció de tendències i resums professionals. Dona suport a la decisió, mai la substitueix.",
+        },
+        actionPlan: {
+          title: "Pla d'acció",
+          desc: "Intervenció professional, objectius, exercicis, sessions, recursos, cites i seguiment.",
+        },
+        improvement: {
+          title: "Millora contínua",
+          desc: "Evolució de la temporada, informes, revisió del rendiment i desenvolupament continu.",
+        },
+      },
       nav: {
         home: "Centre de Rendiment Mental",
         athletes: "Seguiment d'Esportistes",
@@ -1367,7 +1450,7 @@ export const translations = {
         settings: "Configuració",
       },
       microcopy: {
-        loadingCenter: "Preparant el teu Centre de Rendiment Mental...",
+        loadingCenter: "Preparant el teu Sistema de Rendiment Mental...",
         insufficientData: "Encara no hi ha prou informació per generar una interpretació.",
         somethingWrong: "Alguna cosa no ha anat com esperàvem.",
         loadingSession: "Preparant el teu accés...",
@@ -1430,7 +1513,7 @@ export const translations = {
     login: {
       tagline: "Mesura. Entén. Potencia.",
       heroText:
-        "Reflexions de rendiment, intel·ligència d'equip per a entrenadors i centre de rendiment mental per a psicòlegs.",
+        "Sistema de Rendiment Mental™: metodologia estructurada amb plataforma digital per a psicòlegs, entrenadors i esportistes.",
       welcome: "Benvingut/da de nou",
       register: "Crear compte",
       hintLogin: "Inicia sessió al teu panell de rendiment.",
@@ -1480,31 +1563,32 @@ export const translations = {
     },
 
     authLanding: {
-      eyebrow: "PLATAFORMA DE PSICOLOGIA ESPORTIVA",
-      logoSubtitle: "PSICOLOGIA ESPORTIVA",
+      eyebrow: "SISTEMA DE RENDIMENT MENTAL™",
+      logoSubtitle: "SISTEMA DE RENDIMENT MENTAL",
       welcomeTitle: "Benvingut de nou",
-      welcomeSubtitle: "Accedeix al teu espai de seguiment.",
+      welcomeSubtitle: "Accedeix al teu espai del Sistema de Rendiment Mental.",
       headlineLine1: "Entrena la ment.",
       headlineLine2: "Competeix millor.",
       supporting:
-        "La plataforma professional de seguiment psicològic esportiu per a clubs, psicòlegs, entrenadors i esportistes.",
-      ctaDiscoverBrand: "Descobreix Zona Mental+",
-      value1: "Seguiment psicològic continu",
-      value2: "Alertes intel·ligents",
-      value3: "Pensat per clubs esportius",
-      value4: "Dissenyat per psicòlegs esportius",
-      whyTitle: "Per què Zona Mental+",
-      why1Title: "Seguiment psicològic",
-      why1Text: "Detecta canvis abans que es converteixin en problemes.",
-      why2Title: "Seguiment intel·ligent",
-      why2Text: "Historial, alertes i evolució durant tota la temporada.",
-      why3Title: "Connexió",
-      why3Text: "Esportistes, entrenadors i psicòlegs treballant junts.",
-      howTitle: "Com funciona",
-      step1: "Preparació inicial",
-      step2: "Revisió setmanal",
-      step3: "Seguiment del psicòleg",
-      step4: "Millora contínua",
+        "Metodologia estructurada per a clubs i psicòlegs de l'esport. Seguiment continu, interpretació intel·ligent i intervenció professional — amb tecnologia que dóna suport, mai substitueix, el teu criteri.",
+      ctaDiscoverBrand: "Descobreix el sistema",
+      value1: "Metodologia estructurada de rendiment mental",
+      value2: "Interpretació intel·ligent i detecció primerenca",
+      value3: "Seguiment continu durant tota la temporada",
+      value4: "Suport a la decisió professional — no psicòleg automàtic",
+      whyTitle: "Què és el Sistema de Rendiment Mental?",
+      why1Title: "Metodologia, no només software",
+      why1Text: "Valoració inicial, seguiment, interpretació, pla d'acció i millora contínua en un flux professional.",
+      why2Title: "Tecnologia al servei del psicòleg",
+      why2Text: "La plataforma recopila, organitza i detecta. Tu entens, decideixes i intervenes.",
+      why3Title: "Rendiment mental entrenable",
+      why3Text: "El seguiment crea comprensió. Millors decisions, millor rendiment al llarg de la temporada.",
+      howTitle: "Els cinc pilars",
+      step1: "Valoració inicial",
+      step2: "Seguiment continu",
+      step3: "Interpretació intel·ligent",
+      step4: "Pla d'acció",
+      step5: "Millora contínua",
       designedTitle: "Dissenyat per a",
       audienceAthlete: "Esportistes",
       audienceCoach: "Entrenadors",
@@ -2378,10 +2462,10 @@ export const translations = {
     },
 
     psychologist: {
-      loading: "Preparant el teu Centre de Rendiment Mental...",
+      loading: "Preparant el teu Sistema de Rendiment Mental...",
       title: "Centre de Rendiment Mental",
       subtitle:
-        "Prioritats del dia i accés directe al seguiment de cada equip.",
+        "Sistema de Rendiment Mental™ — prioritats del dia i seguiment de cada equip.",
       tabOverview: "Centre de Rendiment Mental",
       tabsLabel: "Navegació per equips",
       overviewInsightTitle: "Panorama general",

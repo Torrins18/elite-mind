@@ -15,6 +15,7 @@ import {
 import { Button } from "../ui/Button"
 import { Modal } from "../ui/Modal"
 import { TeamClinicalCard } from "./TeamClinicalCard"
+import { SystemMethodologyStrip } from "./SystemMethodologyStrip"
 
 function ExecutiveSummary({ summary, greetingKey, t }) {
   return (
@@ -233,6 +234,7 @@ export function ClinicalCommandCenter({
   return (
     <div className="clinical-command">
       <ExecutiveSummary summary={executiveSummary} greetingKey={greetingKey} t={t} />
+      <SystemMethodologyStrip compact />
       <TodayPriorities items={priorities} t={t} onAction={handlePriorityAction} />
 
       <section className="clinical-command__teams">

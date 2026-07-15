@@ -18,6 +18,7 @@ export function AuthLandingSections() {
     t("authLanding.step2"),
     t("authLanding.step3"),
     t("authLanding.step4"),
+    t("authLanding.step5"),
   ]
 
   const audiences = [
@@ -62,6 +63,7 @@ export function AuthLandingSections() {
               </li>
             ))}
           </ol>
+          <p className="auth-landing__methodology-note">{t("brand.whatIsFootnote")}</p>
         </div>
       </section>
 
@@ -114,6 +116,7 @@ export function AuthHeroContent() {
 
   return (
     <div className="auth-landing__hero-content">
+      <p className="auth-landing__eyebrow">{t("authLanding.eyebrow")}</p>
       <BrandLogo variant="hero-dark" className="auth-landing__hero-logo" />
       <h1 className="auth-landing__headline">
         <span>{t("authLanding.headlineLine1")}</span>
