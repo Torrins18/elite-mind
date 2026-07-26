@@ -1,22 +1,69 @@
+/**
+ * Sistema d'Avisos — regles de detecció
+ *
+ * PRINCIPI (producte):
+ * - Els esdeveniments normals es registren a les seves taules / historial.
+ * - NOMÉS les excepcions que requereixen una possible intervenció generen un Avís (notice).
+ *
+ * NO generen avís (ni s'han de generar mai des d'aquest mòdul):
+ * - Respondre correctament el qüestionari setmanal (sense senyals de risc)
+ * - Completar una Valoració Inicial
+ * - Registrar una sessió / document / pla d'acció / observació
+ *
+ * SÍ generen avís (notice):
+ * - Inactivitat sostinguda (≥14 dies sense revisió setmanal)
+ * - Descens sostingut (p. ex. motivació en 3 revisions)
+ * - Increment / caiguda important d'una variable de risc (llindars o vs baseline)
+ * - Petició explícita de parlar amb el psicòleg
+ *
+ * Recordatoris (reminder): seguiments pendents lleugers — NO es persisteixen com a avisos.
+ */
+
 import { sortByDateDesc } from "./insights/metrics"
 import { getLatestWeeklyReflection, hasWeeklyReflection } from "./weeklyEor"
 import { daysSinceLastWeeklyReflection, isWeeklyReflectionDue } from "./checkInSchedule"
 import { detectBaselineAlerts } from "./baseline"
+
+/** Tipus que poden aparèixer al panel d'avisos (requereixen revisió). */
+export const ACTIONABLE_NOTICE_TYPES = new Set([
+  "inactive",
+  "confidence_low",
+  "fatigue_high",
+  "coach_communication_low",
+  "baseline_confidence_drop",
+  "baseline_coach_comm_drop",
+  "baseline_motivation_drop",
+  "baseline_fatigue_rise",
+  "baseline_sleep_drop",
+  "motivation_declining",
+  "pressure_high",
+  "team_integration_low",
+  "wants_psychologist_talk",
+])
+
+/** Tipus que són només recordatoris de seguiment (mai avisos del dashboard). */
+export const REMINDER_ALERT_TYPES = new Set(["no_data", "weekly_overdue"])
+
+/** Dies sense revisió setmanal a partir dels quals la inactivitat és un avís. */
+export const INACTIVE_NOTICE_DAYS = 14
 
 /** Classify a detected signal as reminder (light) or notice (actionable). */
 export function classifyAlertKind(alert) {
   if (!alert?.id) return "notice"
   if (alert.kind === "reminder" || alert.kind === "notice") return alert.kind
 
-  if (alert.id === "no_data" || alert.id === "weekly_overdue") return "reminder"
+  if (REMINDER_ALERT_TYPES.has(alert.id)) return "reminder"
 
   if (alert.id === "inactive") {
     const days = alert.days ?? 0
-    if (alert.severity === "high" || days >= 14) return "notice"
-    return "reminder"
+    // Només avís amb inactivitat sostinguda (no per un retard curt esperable).
+    return days >= INACTIVE_NOTICE_DAYS ? "notice" : "reminder"
   }
 
-  return "notice"
+  if (ACTIONABLE_NOTICE_TYPES.has(alert.id)) return "notice"
+
+  // Qualsevol senyal desconegut: no elevar a avís per defecte.
+  return "reminder"
 }
 
 function withKind(alert) {
@@ -44,7 +91,7 @@ export function detectAthleteAlerts(athlete, checkIns, today, assessment = null)
     alerts.push(
       withKind({
         id: "inactive",
-        severity: daysSince >= 7 ? "high" : "medium",
+        severity: daysSince >= INACTIVE_NOTICE_DAYS ? "high" : "medium",
         athleteId: athlete.id,
         athleteName: athlete.name,
         days: daysSince,
@@ -55,6 +102,7 @@ export function detectAthleteAlerts(athlete, checkIns, today, assessment = null)
   const latestWeekly = getLatestWeeklyReflection(rows)
   const hasBaseline = Boolean(assessment)
 
+  // Llindars absoluts / baseline: només quan el valor indica risc, no pel fet de respondre.
   if (hasBaseline && latestWeekly) {
     alerts.push(...detectBaselineAlerts(athlete, assessment, latestWeekly).map(withKind))
   } else if (latestWeekly) {
@@ -135,9 +183,8 @@ export function detectAthleteAlerts(athlete, checkIns, today, assessment = null)
   }
 
   if (
-    (latestWeekly?.psychologist_contact === "yes" ||
-      latestWeekly?.psychologist_contact === "maybe") &&
-    latestWeekly
+    latestWeekly &&
+    (latestWeekly.psychologist_contact === "yes" || latestWeekly.psychologist_contact === "maybe")
   ) {
     alerts.push(
       withKind({
@@ -176,10 +223,10 @@ export function buildReminders(athletes, checkIns, today, assessmentByAthlete = 
   )
 }
 
-/** Actionable notices for persistence / dashboard. */
+/** Actionable notices for persistence / dashboard — mai esdeveniments normals. */
 export function buildNotices(athletes, checkIns, today, assessmentByAthlete = {}) {
   return buildOrgAlerts(athletes, checkIns, today, assessmentByAthlete).filter(
-    (alert) => alert.kind === "notice"
+    (alert) => alert.kind === "notice" && ACTIONABLE_NOTICE_TYPES.has(alert.id)
   )
 }
 

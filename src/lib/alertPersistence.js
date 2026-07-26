@@ -1,9 +1,17 @@
-import { buildNotices, buildReminders } from "./alerts"
+import { ACTIONABLE_NOTICE_TYPES, buildNotices, buildReminders } from "./alerts"
 
 const PANEL_STATUSES = ["active", "monitoring"]
 const BLOCK_REINSERT_STATUSES = ["dismissed"]
 
 const SEVERITY_RANK = { high: 0, medium: 1, low: 2 }
+
+/**
+ * Persistència d'avisos.
+ *
+ * Només es guarden notices derivats de regles clíniques (ACTIONABLE_NOTICE_TYPES).
+ * No hi ha inserts des de sessions, documents, plans, observacions ni valoració inicial:
+ * aquestes accions només escriuen a les seves taules.
+ */
 
 function alertKey(athleteId, alertType) {
   return `${athleteId}:${alertType}`
@@ -152,18 +160,20 @@ export async function syncAndLoadPsychologistAlerts(
     (assessments || []).map((item) => [item.athlete_id, item])
   )
 
-  const notices = buildNotices(athletes, checkIns, today, assessmentByAthlete).map((alert) => ({
-    athlete_id: alert.athleteId,
-    alert_type: alert.id,
-    severity: alert.severity,
-    kind: "notice",
-    context: {
-      value: alert.value ?? null,
-      days: alert.days ?? null,
-      baseline: alert.baseline ?? null,
-      delta: alert.delta ?? null,
-    },
-  }))
+  const notices = buildNotices(athletes, checkIns, today, assessmentByAthlete)
+    .filter((alert) => ACTIONABLE_NOTICE_TYPES.has(alert.id))
+    .map((alert) => ({
+      athlete_id: alert.athleteId,
+      alert_type: alert.id,
+      severity: alert.severity,
+      kind: "notice",
+      context: {
+        value: alert.value ?? null,
+        days: alert.days ?? null,
+        baseline: alert.baseline ?? null,
+        delta: alert.delta ?? null,
+      },
+    }))
 
   const computedKeys = new Set(
     notices.map((alert) => alertKey(alert.athlete_id, alert.alert_type))

@@ -1,5 +1,11 @@
 -- Notice system: kind (notice|reminder), living notice counters, postpone
 -- Run after alert-history-actions.sql
+--
+-- PRINCIPI: només les excepcions clíniques són `notice`.
+-- Recordatoris de seguiment (`no_data`, `weekly_overdue`, inactive curt) són `reminder`
+-- i no han d'aparèixer al panel d'avisos ni requerir revisió formal.
+-- Accions normals (sessió, document, pla, observació, valoració inicial, revisió OK)
+-- NO generen files aquí: només es registren a les seves taules.
 
 alter table public.psychologist_alerts
   add column if not exists kind text not null default 'notice',
@@ -27,8 +33,7 @@ update public.psychologist_alerts
 set kind = 'reminder'
 where alert_type = 'inactive'
   and kind = 'notice'
-  and coalesce((context->>'days')::int, 0) < 14
-  and severity <> 'high';
+  and coalesce((context->>'days')::int, 0) < 14;
 
 -- Resolve old open reminders so they leave the actionable panel
 update public.psychologist_alerts

@@ -151,6 +151,11 @@ export function compareWeeklyToBaseline(assessment, latestWeekly) {
   return rows
 }
 
+/**
+ * Baseline vs darrera revisió setmanal.
+ * Només emet avisos quan el canvi és significatiu (excepció clínica).
+ * Completar la Valoració Inicial per si sola NO genera cap avís.
+ */
 export function detectBaselineAlerts(athlete, assessment, latestWeekly) {
   if (!assessment || !latestWeekly) return []
 
