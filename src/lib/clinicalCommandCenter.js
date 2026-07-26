@@ -16,7 +16,9 @@ export function buildExecutiveSummary({
   athletes,
   teams,
 }) {
-  const activeAlerts = (alerts || []).filter((row) => row.status === "active")
+  const activeAlerts = (alerts || []).filter(
+    (row) => row.status === "active" || row.status === "monitoring"
+  )
   const priorityAlerts = activeAlerts.filter(
     (row) => row.severity === "high" || row.severity === "medium"
   )
@@ -137,7 +139,9 @@ export function buildTodayPriorities({
   }
 
   const highAlerts = (alerts || []).filter(
-    (row) => row.status === "active" && row.severity === "high"
+    (row) =>
+      (row.status === "active" || row.status === "monitoring") &&
+      row.severity === "high"
   )
   for (const alert of highAlerts.slice(0, 4)) {
     const alertKey = alert.dbId || alert.id
@@ -148,7 +152,12 @@ export function buildTodayPriorities({
       tone: "critical",
       key: "priorityAlertAthlete",
       params: { name: name || "?" },
-      action: { type: "athlete", id: alert.athleteId, tab: "alerts" },
+      action: {
+        type: "athlete",
+        id: alert.athleteId,
+        tab: "profile",
+        focusAlertId: alert.dbId || null,
+      },
     })
   }
 

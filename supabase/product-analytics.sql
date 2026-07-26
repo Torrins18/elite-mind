@@ -215,8 +215,8 @@ begin
   alerts as (
     select
       count(*) as generated,
-      count(*) filter (where status in ('reviewed', 'dismissed')) as resolved,
-      count(*) filter (where status = 'active') as active
+      count(*) filter (where status in ('reviewed', 'dismissed', 'resolved')) as resolved,
+      count(*) filter (where status in ('active', 'monitoring')) as active
     from public.psychologist_alerts
     where created_at >= v_since::timestamptz
   ),

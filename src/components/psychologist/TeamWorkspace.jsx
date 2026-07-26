@@ -28,7 +28,9 @@ const WORKSPACE_TABS = [
 ]
 
 function TeamAlertsPanel({ alerts, t, onDismissAlert, onOpenAthlete }) {
-  const active = alerts.filter((row) => row.status === "active")
+  const active = alerts.filter(
+    (row) => row.status === "active" || row.status === "monitoring"
+  )
 
   if (!active.length) {
     return <p className="empty-state">{t("psychologist.noActiveAlerts")}</p>
@@ -48,8 +50,15 @@ function TeamAlertsPanel({ alerts, t, onDismissAlert, onOpenAthlete }) {
                 {t("psychologist.dismissAlert")}
               </Button>
             ) : null}
-            <Button variant="ghost" onClick={() => onOpenAthlete(alert.athleteId)}>
-              {t("psychologist.viewAthlete")}
+            <Button
+              variant="ghost"
+              onClick={() =>
+                onOpenAthlete(alert.athleteId, {
+                  athleteTab: "profile",
+                  focusAlertId: alert.dbId || null,
+                })
+              }
+            >              {t("psychologist.viewAthlete")}
             </Button>
           </div>
         </li>
@@ -144,6 +153,8 @@ export function TeamWorkspace({
   onAssessmentUpdated,
   initialTeamTab,
   initialAthleteTab,
+  focusAlertId = null,
+  onFocusAlertHandled,
   lang,
   t,
 }) {
@@ -154,7 +165,10 @@ export function TeamWorkspace({
   }, [teamId, initialTeamTab])
 
   const alertCount = useMemo(
-    () => teamAlerts.filter((row) => row.status === "active").length,
+    () =>
+      teamAlerts.filter(
+        (row) => row.status === "active" || row.status === "monitoring"
+      ).length,
     [teamAlerts]
   )
 
@@ -292,6 +306,8 @@ export function TeamWorkspace({
                   onAlertsChange={onAlertsChange}
                   onAssessmentUpdated={onAssessmentUpdated}
                   initialTab={initialAthleteTab}
+                  focusAlertId={focusAlertId}
+                  onFocusAlertHandled={onFocusAlertHandled}
                   t={t}
                 />
               ) : (
@@ -309,8 +325,8 @@ export function TeamWorkspace({
               alerts={teamAlerts}
               t={t}
               onDismissAlert={onDismissAlert}
-              onOpenAthlete={(athleteId) => {
-                onOpenAthlete(athleteId)
+              onOpenAthlete={(athleteId, opts = {}) => {
+                onOpenAthlete(athleteId, opts)
                 setActiveTab("athletes")
               }}
             />

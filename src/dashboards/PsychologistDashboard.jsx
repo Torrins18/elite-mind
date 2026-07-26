@@ -23,7 +23,6 @@ import {
   countActiveAlerts,
   dismissPsychologistAlert,
   loadVisiblePsychologistAlerts,
-  markAlertsReviewedForAthlete,
   syncAndLoadPsychologistAlerts,
 } from "../lib/alertPersistence"
 import { filterActiveTeams } from "../lib/teams"
@@ -59,6 +58,7 @@ export function PsychologistDashboard({ profile }) {
   const [psychologistAlerts, setPsychologistAlerts] = useState([])
   const [priorityStates, setPriorityStates] = useState({})
   const [navFocus, setNavFocus] = useState(null)
+  const [focusAlertId, setFocusAlertId] = useState(null)
   const [loading, setLoading] = useState(true)
   const [adminMessage, setAdminMessage] = useState("")
 
@@ -319,14 +319,23 @@ export function PsychologistDashboard({ profile }) {
   const openTeam = (teamId, opts = {}) => {
     setActiveTab(teamId)
     setSelectedId(opts.athleteId ?? null)
-    if (opts.teamTab || opts.athleteTab) {
-      setNavFocus({ teamTab: opts.teamTab, athleteTab: opts.athleteTab })
+    if (opts.teamTab || opts.athleteTab || opts.focusAlertId) {
+      setNavFocus({
+        teamTab: opts.teamTab,
+        athleteTab: opts.athleteTab,
+        focusAlertId: opts.focusAlertId || null,
+      })
+    }
+    if (opts.focusAlertId !== undefined) {
+      setFocusAlertId(opts.focusAlertId || null)
     }
   }
 
   const backToOverview = () => {
     setActiveTab(OVERVIEW_TAB)
     setSelectedId(null)
+    setFocusAlertId(null)
+    setNavFocus(null)
   }
 
   const refreshAlerts = useCallback(async () => {
@@ -336,17 +345,18 @@ export function PsychologistDashboard({ profile }) {
 
   const openAthlete = async (athleteId, opts = {}) => {
     const athlete = athleteMap[athleteId]
+    const nextFocusAlertId = opts.focusAlertId || null
     if (athlete?.team_id) {
       openTeam(athlete.team_id, {
         athleteId,
         athleteTab: opts.athleteTab || opts.tab || "profile",
         teamTab: opts.teamTab || "athletes",
+        focusAlertId: nextFocusAlertId,
       })
     } else {
       setSelectedId(athleteId)
+      setFocusAlertId(nextFocusAlertId)
     }
-    await markAlertsReviewedForAthlete(supabase, athleteId, profile.id)
-    await refreshAlerts()
   }
 
   const markPriorityReviewed = async (item) => {
@@ -395,8 +405,7 @@ export function PsychologistDashboard({ profile }) {
 
   const selectAthlete = async (athleteId) => {
     setSelectedId(athleteId)
-    await markAlertsReviewedForAthlete(supabase, athleteId, profile.id)
-    await refreshAlerts()
+    setFocusAlertId(null)
   }
 
   const dismissAlert = async (alertId) => {
@@ -550,6 +559,8 @@ export function PsychologistDashboard({ profile }) {
             selectedAthlete={selected}
             initialTeamTab={navFocus?.teamTab}
             initialAthleteTab={navFocus?.athleteTab}
+            focusAlertId={focusAlertId}
+            onFocusAlertHandled={() => setFocusAlertId(null)}
             athleteCheckIns={athleteCheckIns}
             selectedAssessment={selectedAssessment}
             athleteInsight={athleteInsight}

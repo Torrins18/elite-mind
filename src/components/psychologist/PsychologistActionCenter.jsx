@@ -13,7 +13,9 @@ export function PsychologistActionCenter({
   onMarkMessageRead,
   onOpenTeam,
 }) {
-  const activeAlerts = alerts.filter((alert) => alert.status === "active")
+  const activeAlerts = alerts.filter(
+    (alert) => alert.status === "active" || alert.status === "monitoring"
+  )
   const reviewedAlerts = alerts.filter((alert) => alert.status === "reviewed")
   const highAlerts = activeAlerts.filter((alert) => alert.severity === "high")
   const mediumAlerts = activeAlerts.filter((alert) => alert.severity === "medium")
@@ -34,7 +36,15 @@ export function PsychologistActionCenter({
             {t("psychologist.dismissAlert")}
           </Button>
         )}
-        <Button variant="ghost" onClick={() => onOpenAthlete(alert.athleteId)}>
+        <Button
+          variant="ghost"
+          onClick={() =>
+            onOpenAthlete(alert.athleteId, {
+              athleteTab: "profile",
+              focusAlertId: alert.dbId || null,
+            })
+          }
+        >
           {t("psychologist.viewAthlete")}
         </Button>
       </div>

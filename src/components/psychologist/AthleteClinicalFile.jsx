@@ -15,7 +15,16 @@ import { aggregateWeeklyEorTrend } from "../../lib/coachTeamAnalytics"
 import { getLatestWeeklyReflection, hasWeeklyReflection } from "../../lib/weeklyEor"
 import { calculateRiskLevel } from "../../lib/risk"
 import { consentStatus } from "../../lib/age"
-import { dismissPsychologistAlert } from "../../lib/alertPersistence"
+import {
+  normalizeAlertRecord,
+  updatePsychologistAlertStatus,
+} from "../../lib/alertPersistence"
+import {
+  buildAthleteFollowUpSummary,
+  formatAlertCriterion,
+  formatMonthYear,
+  formatRelativeDaysAgo,
+} from "../../lib/athleteFollowUpSummary"
 import { useTranslation } from "../../i18n/LanguageContext"
 import { AthleteFileBaseline } from "./AthleteFileBaseline"
 import {
@@ -37,6 +46,8 @@ const TABS = [
   "alerts",
 ]
 
+const ALERT_FILTERS = ["all", "active", "monitoring", "resolved", "dismissed"]
+
 export function AthleteClinicalFile({
   athlete,
   teamName,
@@ -50,6 +61,8 @@ export function AthleteClinicalFile({
   onAlertsChange,
   onAssessmentUpdated,
   initialTab,
+  focusAlertId = null,
+  onFocusAlertHandled,
   t,
 }) {
   const { lang } = useTranslation()
@@ -64,6 +77,7 @@ export function AthleteClinicalFile({
   const [alertHistory, setAlertHistory] = useState([])
   const [expandedReviewId, setExpandedReviewId] = useState(null)
   const [recordLoading, setRecordLoading] = useState(true)
+  const [bannerAlertId, setBannerAlertId] = useState(focusAlertId)
 
   const weeklyReviews = useMemo(
     () => (checkIns || []).filter(hasWeeklyReflection),
@@ -120,7 +134,7 @@ export function AthleteClinicalFile({
         .from("psychologist_alerts")
         .select("*")
         .eq("athlete_id", athlete.id)
-        .order("updated_at", { ascending: false }),
+        .order("created_at", { ascending: false }),
     ])
 
     setNotes(notesRes.error ? [] : notesRes.data || [])
@@ -140,6 +154,38 @@ export function AthleteClinicalFile({
     loadRecord()
   }, [athlete?.id, initialTab, loadRecord])
 
+  useEffect(() => {
+    setBannerAlertId(focusAlertId)
+  }, [focusAlertId, athlete?.id])
+
+  const normalizedHistory = useMemo(
+    () => (alertHistory || []).map(normalizeAlertRecord).filter(Boolean),
+    [alertHistory]
+  )
+
+  const followUp = useMemo(
+    () =>
+      buildAthleteFollowUpSummary({
+        athlete,
+        checkIns,
+        sessions,
+        goals,
+        alerts: normalizedHistory,
+      }),
+    [athlete, checkIns, sessions, goals, normalizedHistory]
+  )
+
+  const focusedAlert = useMemo(() => {
+    if (!bannerAlertId) return null
+    const fromHistory = normalizedHistory.find((a) => a.dbId === bannerAlertId)
+    if (fromHistory) return fromHistory
+    return (
+      (athleteAlerts || [])
+        .map(normalizeAlertRecord)
+        .find((a) => a.dbId === bannerAlertId) || null
+    )
+  }, [bannerAlertId, normalizedHistory, athleteAlerts])
+
   const updateAppointmentStatus = async (id, status, extra = {}) => {
     const { error } = await supabase
       .from("appointment_requests")
@@ -148,17 +194,26 @@ export function AthleteClinicalFile({
     if (!error) await loadRecord()
   }
 
-  const dismissAlert = async (alertId) => {
+  const handleAlertUpdate = async (alertId, opts) => {
     try {
-      await dismissPsychologistAlert(supabase, alertId, psychologistId)
+      await updatePsychologistAlertStatus(supabase, alertId, {
+        ...opts,
+        psychologistId,
+      })
       await loadRecord()
       onAlertsChange?.()
+      if (bannerAlertId === alertId && opts.status !== "monitoring") {
+        setBannerAlertId(null)
+        onFocusAlertHandled?.()
+      }
     } catch (error) {
-      console.error("Dismiss alert failed:", error.message)
+      console.error("Alert update failed:", error.message)
     }
   }
 
-  const visibleAlerts = athleteAlerts.length ? athleteAlerts : alertHistory.filter((a) => a.status !== "dismissed")
+  const pendingAlertCount = normalizedHistory.filter(
+    (a) => a.status === "active" || a.status === "monitoring"
+  ).length
 
   const exportAthleteReport = () => {
     downloadPrintReport({
@@ -202,10 +257,8 @@ export function AthleteClinicalFile({
                 {goals.filter((g) => g.status === "active").length}
               </span>
             )}
-            {tab === "alerts" && visibleAlerts.filter((a) => a.status === "active").length > 0 && (
-              <span className="athlete-file-tabs__badge">
-                {visibleAlerts.filter((a) => a.status === "active").length}
-              </span>
+            {tab === "alerts" && pendingAlertCount > 0 && (
+              <span className="athlete-file-tabs__badge">{pendingAlertCount}</span>
             )}
           </button>
         ))}
@@ -217,8 +270,27 @@ export function AthleteClinicalFile({
             athlete={athlete}
             teamName={teamName}
             risk={risk}
+            followUp={followUp}
+            focusedAlert={focusedAlert}
+            lang={lang}
             t={t}
             onExportReport={exportAthleteReport}
+            onViewEvolution={() => setActiveTab("charts")}
+            onMarkReviewed={() =>
+              focusedAlert?.dbId &&
+              handleAlertUpdate(focusedAlert.dbId, { status: "reviewed" })
+            }
+            onDismiss={() =>
+              focusedAlert?.dbId &&
+              handleAlertUpdate(focusedAlert.dbId, { status: "dismissed" })
+            }
+            onSaveAction={(payload) =>
+              focusedAlert?.dbId && handleAlertUpdate(focusedAlert.dbId, payload)
+            }
+            onDismissBanner={() => {
+              setBannerAlertId(null)
+              onFocusAlertHandled?.()
+            }}
           />
         )}
 
@@ -335,10 +407,11 @@ export function AthleteClinicalFile({
 
         {activeTab === "alerts" && (
           <AlertsTab
-            alerts={alertHistory.length ? alertHistory : athleteAlerts}
+            alerts={normalizedHistory}
             loading={recordLoading}
-            onDismiss={dismissAlert}
+            onUpdate={handleAlertUpdate}
             t={t}
+            lang={lang}
           />
         )}
       </div>
@@ -346,49 +419,198 @@ export function AthleteClinicalFile({
   )
 }
 
-function ProfileTab({ athlete, teamName, risk, t, onExportReport }) {
+function ProfileTab({
+  athlete,
+  teamName,
+  risk,
+  followUp,
+  focusedAlert,
+  lang,
+  t,
+  onExportReport,
+  onViewEvolution,
+  onMarkReviewed,
+  onDismiss,
+  onSaveAction,
+  onDismissBanner,
+}) {
+  const [showActionForm, setShowActionForm] = useState(false)
+  const [actionTaken, setActionTaken] = useState("")
+  const [professionalNote, setProfessionalNote] = useState("")
+  const [actionStatus, setActionStatus] = useState("monitoring")
+
+  useEffect(() => {
+    setShowActionForm(false)
+    setActionTaken(focusedAlert?.actionTaken || "")
+    setProfessionalNote(focusedAlert?.professionalNote || "")
+    setActionStatus("monitoring")
+  }, [focusedAlert?.dbId])
+
+  const submitAction = (event) => {
+    event.preventDefault()
+    onSaveAction({
+      status: actionStatus,
+      actionTaken: actionTaken.trim(),
+      professionalNote: professionalNote.trim(),
+    })
+    setShowActionForm(false)
+  }
+
   return (
-    <>
+    <div className="athlete-file-summary">
+      {focusedAlert && (focusedAlert.status === "active" || focusedAlert.status === "monitoring") && (
+        <aside className="athlete-file-alert-banner" role="status">
+          <div className="athlete-file-alert-banner__body">
+            <p className="athlete-file-alert-banner__eyebrow">{t("athleteFile.banner.title")}</p>
+            <p className="athlete-file-alert-banner__reason">
+              {t(`psychologist.alert.${focusedAlert.alertType}`, {
+                value: focusedAlert.value,
+                days: focusedAlert.days,
+                baseline: focusedAlert.baseline,
+              })}
+            </p>
+            <p className="athlete-file-alert-banner__criterion">
+              {formatAlertCriterion(focusedAlert, t)}
+            </p>
+          </div>
+          <div className="athlete-file-alert-banner__actions">
+            <Button variant="ghost" onClick={onViewEvolution}>
+              {t("athleteFile.banner.viewEvolution")}
+            </Button>
+            <Button variant="ghost" onClick={onMarkReviewed}>
+              {t("athleteFile.banner.markReviewed")}
+            </Button>
+            <Button variant="ghost" onClick={() => setShowActionForm((v) => !v)}>
+              {t("athleteFile.banner.addAction")}
+            </Button>
+            <Button variant="ghost" className="btn--danger-text" onClick={onDismiss}>
+              {t("athleteFile.banner.dismiss")}
+            </Button>
+            <button
+              type="button"
+              className="athlete-file-alert-banner__close"
+              onClick={onDismissBanner}
+            >
+              {t("athleteFile.banner.dismissBanner")}
+            </button>
+          </div>
+          {showActionForm && (
+            <form className="athlete-file-alert-action-form" onSubmit={submitAction}>
+              <label>
+                <span>{t("athleteFile.history.actionTaken")}</span>
+                <input
+                  value={actionTaken}
+                  onChange={(e) => setActionTaken(e.target.value)}
+                  placeholder={t("athleteFile.history.actionPlaceholder")}
+                  required
+                />
+              </label>
+              <label>
+                <span>{t("athleteFile.history.professionalNote")}</span>
+                <textarea
+                  value={professionalNote}
+                  onChange={(e) => setProfessionalNote(e.target.value)}
+                  placeholder={t("athleteFile.history.notePlaceholder")}
+                  rows={3}
+                />
+              </label>
+              <label>
+                <span>{t("athleteFile.history.newStatus")}</span>
+                <select value={actionStatus} onChange={(e) => setActionStatus(e.target.value)}>
+                  <option value="monitoring">{t("athleteFile.alertStatus.monitoring")}</option>
+                  <option value="resolved">{t("athleteFile.alertStatus.resolved")}</option>
+                  <option value="reviewed">{t("athleteFile.alertStatus.reviewed")}</option>
+                </select>
+              </label>
+              <div className="athlete-file-alert-action-form__actions">
+                <Button type="submit">{t("athleteFile.history.saveAction")}</Button>
+                <Button type="button" variant="ghost" onClick={() => setShowActionForm(false)}>
+                  {t("athleteFile.cancel")}
+                </Button>
+              </div>
+            </form>
+          )}
+        </aside>
+      )}
+
       <div className="athlete-file-profile__actions">
         <Button variant="ghost" onClick={onExportReport}>
           {t("reports.exportPdf")}
         </Button>
       </div>
-      <dl className="athlete-file-profile">
-      <div>
-        <dt>{t("athleteFile.profileTeam")}</dt>
-        <dd>{teamName || t("risk.noData")}</dd>
-      </div>
-      <div>
-        <dt>{t("psychologist.birthDate")}</dt>
-        <dd>{athlete.date_of_birth || t("risk.noData")}</dd>
-      </div>
-      <div>
-        <dt>{t("psychologist.consentStatus")}</dt>
-        <dd>{t(`consent.${consentStatus(athlete)}`)}</dd>
-      </div>
-      <div>
-        <dt>{t("athleteFile.profileRisk")}</dt>
-        <dd>
-          <Badge variant={risk === "noData" ? "default" : risk}>
-            {t(`psychologist.riskBadge.${risk}`)}
-          </Badge>
-        </dd>
-      </div>
-      <div>
-        <dt>{t("baseline.title")}</dt>
-        <dd>
-          {athlete.initial_assessment_completed_at
-            ? new Date(athlete.initial_assessment_completed_at).toLocaleDateString()
-            : t("psychologist.assessmentMissing")}
-        </dd>
-      </div>
-      <div>
-        <dt>{t("athleteFile.profileRegistered")}</dt>
-        <dd>{new Date(athlete.created_at).toLocaleDateString()}</dd>
-      </div>
+
+      <dl className="athlete-file-profile athlete-file-profile--summary">
+        <div>
+          <dt>{t("athleteFile.profileTeam")}</dt>
+          <dd>{teamName || t("risk.noData")}</dd>
+        </div>
+        <div>
+          <dt>{t("psychologist.birthDate")}</dt>
+          <dd>
+            {athlete.date_of_birth
+              ? `${athlete.date_of_birth}${followUp.age != null ? ` (${followUp.age})` : ""}`
+              : t("risk.noData")}
+          </dd>
+        </div>
+        {followUp.isMinor && (
+          <div>
+            <dt>{t("psychologist.consentStatus")}</dt>
+            <dd>{t(`consent.${consentStatus(athlete)}`)}</dd>
+          </div>
+        )}
+        <div>
+          <dt>{t("athleteFile.profileRisk")}</dt>
+          <dd>
+            <Badge variant={risk === "noData" ? "default" : risk}>
+              {t(`psychologist.riskBadge.${risk}`)}
+            </Badge>
+          </dd>
+        </div>
       </dl>
-    </>
+
+      <section className="athlete-file-section athlete-file-follow-up">
+        <h3>{t("athleteFile.summary.title")}</h3>
+        <ul className="athlete-file-follow-up__list">
+          <li>
+            {followUp.followUpStart
+              ? t("athleteFile.summary.followUpStarted", {
+                  date: formatMonthYear(followUp.followUpStart, lang),
+                })
+              : t("athleteFile.summary.noFollowUpStart")}
+          </li>
+          <li>
+            {followUp.hasReviews
+              ? t("athleteFile.summary.lastReview", {
+                  when: formatRelativeDaysAgo(followUp.lastReviewDaysAgo, t),
+                })
+              : t("athleteFile.summary.noReviews")}
+          </li>
+          {followUp.hasReviews && (
+            <li>
+              {t("athleteFile.summary.completedReviews", { count: followUp.completedReviews })}
+            </li>
+          )}
+          {followUp.adherencePct != null && followUp.hasReviews && (
+            <li>{t("athleteFile.summary.adherence", { pct: followUp.adherencePct })}</li>
+          )}
+          <li>
+            {followUp.hasSessions
+              ? t("athleteFile.summary.sessions", { count: followUp.sessionCount })
+              : t("athleteFile.summary.noSessions")}
+          </li>
+          <li>
+            {followUp.hasActivePlans
+              ? t("athleteFile.summary.activePlans", { count: followUp.activePlans })
+              : t("athleteFile.summary.noActivePlans")}
+          </li>
+          <li>
+            {followUp.pendingAlerts > 0
+              ? t("athleteFile.summary.pendingAlerts", { count: followUp.pendingAlerts })
+              : t("athleteFile.summary.noPendingAlerts")}
+          </li>
+        </ul>
+      </section>
+    </div>
   )
 }
 
@@ -570,37 +792,215 @@ function AppointmentsTab({ appointments, loading, onUpdateStatus, t }) {
   )
 }
 
-function AlertsTab({ alerts, loading, onDismiss, t }) {
+function AlertsTab({ alerts, loading, onUpdate, t, lang }) {
+  const [filter, setFilter] = useState("all")
+  const [actionAlertId, setActionAlertId] = useState(null)
+  const [actionTaken, setActionTaken] = useState("")
+  const [professionalNote, setProfessionalNote] = useState("")
+  const [actionStatus, setActionStatus] = useState("monitoring")
+
+  const filtered = useMemo(() => {
+    const rows = [...(alerts || [])].sort((a, b) => {
+      const da = new Date(a.createdAt || a.updatedAt || 0).getTime()
+      const db = new Date(b.createdAt || b.updatedAt || 0).getTime()
+      return db - da
+    })
+    if (filter === "all") return rows
+    if (filter === "active") return rows.filter((a) => a.status === "active")
+    return rows.filter((a) => a.status === filter)
+  }, [alerts, filter])
+
   if (loading) return <p className="empty-state">{t("athleteFile.loading")}</p>
-  if (!alerts.length) return <p className="empty-state">{t("psychologist.noActiveAlerts")}</p>
 
   return (
-    <ul className="athlete-file-timeline">
-      {alerts.map((alert) => (
-        <li key={alert.id || alert.dbId} className="athlete-file-timeline__item">
-          <header>
-            <Badge variant={alert.severity === "high" ? "high" : alert.severity === "medium" ? "medium" : "low"}>
-              {t(`athleteFile.alertStatus.${alert.status}`)}
-            </Badge>
-            <time>
-              {alert.updated_at || alert.dismissedAt || alert.reviewedAt
-                ? new Date(alert.updated_at || alert.dismissedAt || alert.reviewedAt).toLocaleString()
-                : "—"}
-            </time>
-          </header>
-          <p>{t(`psychologist.alert.${alert.alert_type || alert.id}`, {
-            value: alert.context?.value ?? alert.value,
-            days: alert.context?.days ?? alert.days,
-            baseline: alert.context?.baseline ?? alert.baseline,
-          })}</p>
-          {alert.status === "active" && (alert.id || alert.dbId) && (
-            <Button variant="ghost" className="btn--danger-text" onClick={() => onDismiss(alert.id || alert.dbId)}>
-              {t("psychologist.dismissAlert")}
-            </Button>
-          )}
-        </li>
-      ))}
-    </ul>
+    <div className="athlete-file-alert-history">
+      <div
+        className="athlete-file-alert-filters"
+        role="group"
+        aria-label={t("athleteFile.history.filtersLabel")}
+      >
+        {ALERT_FILTERS.map((key) => (
+          <button
+            key={key}
+            type="button"
+            className={
+              filter === key
+                ? "athlete-file-alert-filters__btn active"
+                : "athlete-file-alert-filters__btn"
+            }
+            onClick={() => setFilter(key)}
+          >
+            {t(`athleteFile.history.filter.${key}`)}
+          </button>
+        ))}
+      </div>
+
+      {!filtered.length ? (
+        <p className="empty-state">{t("athleteFile.history.empty")}</p>
+      ) : (
+        <ul className="athlete-file-timeline athlete-file-timeline--alerts">
+          {filtered.map((alert) => {
+            const canAct = alert.status === "active" || alert.status === "monitoring"
+            const reviewedAt = alert.reviewedAt || alert.resolvedAt || alert.dismissedAt
+            return (
+              <li
+                key={alert.dbId || `${alert.alertType}-${alert.createdAt}`}
+                className="athlete-file-timeline__item"
+              >
+                <header>
+                  <Badge
+                    variant={
+                      alert.severity === "high"
+                        ? "high"
+                        : alert.severity === "medium"
+                          ? "medium"
+                          : "low"
+                    }
+                  >
+                    {t(`athleteFile.alertStatus.${alert.status}`)}
+                  </Badge>
+                  <time>
+                    {alert.createdAt
+                      ? new Date(alert.createdAt).toLocaleDateString(
+                          lang === "ca" ? "ca-ES" : "es-ES"
+                        )
+                      : "—"}
+                  </time>
+                </header>
+                <dl className="athlete-file-alert-detail">
+                  <div>
+                    <dt>{t("athleteFile.history.reason")}</dt>
+                    <dd>
+                      {t(`psychologist.alert.${alert.alertType}`, {
+                        value: alert.value,
+                        days: alert.days,
+                        baseline: alert.baseline,
+                      })}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt>{t("athleteFile.history.criterion")}</dt>
+                    <dd>{formatAlertCriterion(alert, t)}</dd>
+                  </div>
+                  {reviewedAt && (
+                    <div>
+                      <dt>{t("athleteFile.history.reviewedAt")}</dt>
+                      <dd>
+                        {new Date(reviewedAt).toLocaleDateString(
+                          lang === "ca" ? "ca-ES" : "es-ES"
+                        )}
+                      </dd>
+                    </div>
+                  )}
+                  <div>
+                    <dt>{t("athleteFile.history.actionTaken")}</dt>
+                    <dd>{alert.actionTaken || t("athleteFile.history.noAction")}</dd>
+                  </div>
+                  {alert.professionalNote && (
+                    <div>
+                      <dt>{t("athleteFile.history.professionalNote")}</dt>
+                      <dd>{alert.professionalNote}</dd>
+                    </div>
+                  )}
+                  <div>
+                    <dt>{t("athleteFile.history.reviewedBy")}</dt>
+                    <dd>
+                      {alert.reviewedBy ? t("athleteFile.history.reviewedByPsych") : "—"}
+                    </dd>
+                  </div>
+                </dl>
+
+                {canAct && alert.dbId && (
+                  <div className="athlete-file-timeline__actions">
+                    <Button
+                      variant="ghost"
+                      onClick={() => onUpdate(alert.dbId, { status: "reviewed" })}
+                    >
+                      {t("athleteFile.banner.markReviewed")}
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      onClick={() => {
+                        setActionAlertId(alert.dbId)
+                        setActionTaken(alert.actionTaken || "")
+                        setProfessionalNote(alert.professionalNote || "")
+                        setActionStatus("monitoring")
+                      }}
+                    >
+                      {t("athleteFile.banner.addAction")}
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      className="btn--danger-text"
+                      onClick={() => onUpdate(alert.dbId, { status: "dismissed" })}
+                    >
+                      {t("athleteFile.banner.dismiss")}
+                    </Button>
+                  </div>
+                )}
+
+                {actionAlertId === alert.dbId && (
+                  <form
+                    className="athlete-file-alert-action-form"
+                    onSubmit={(e) => {
+                      e.preventDefault()
+                      onUpdate(alert.dbId, {
+                        status: actionStatus,
+                        actionTaken: actionTaken.trim(),
+                        professionalNote: professionalNote.trim(),
+                      })
+                      setActionAlertId(null)
+                    }}
+                  >
+                    <label>
+                      <span>{t("athleteFile.history.actionTaken")}</span>
+                      <input
+                        value={actionTaken}
+                        onChange={(e) => setActionTaken(e.target.value)}
+                        placeholder={t("athleteFile.history.actionPlaceholder")}
+                        required
+                      />
+                    </label>
+                    <label>
+                      <span>{t("athleteFile.history.professionalNote")}</span>
+                      <textarea
+                        value={professionalNote}
+                        onChange={(e) => setProfessionalNote(e.target.value)}
+                        placeholder={t("athleteFile.history.notePlaceholder")}
+                        rows={3}
+                      />
+                    </label>
+                    <label>
+                      <span>{t("athleteFile.history.newStatus")}</span>
+                      <select
+                        value={actionStatus}
+                        onChange={(e) => setActionStatus(e.target.value)}
+                      >
+                        <option value="monitoring">
+                          {t("athleteFile.alertStatus.monitoring")}
+                        </option>
+                        <option value="resolved">{t("athleteFile.alertStatus.resolved")}</option>
+                        <option value="reviewed">{t("athleteFile.alertStatus.reviewed")}</option>
+                      </select>
+                    </label>
+                    <div className="athlete-file-alert-action-form__actions">
+                      <Button type="submit">{t("athleteFile.history.saveAction")}</Button>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        onClick={() => setActionAlertId(null)}
+                      >
+                        {t("athleteFile.cancel")}
+                      </Button>
+                    </div>
+                  </form>
+                )}
+              </li>
+            )
+          })}
+        </ul>
+      )}
+    </div>
   )
 }
 

@@ -25,6 +25,7 @@ Si la pàgina no carrega o falten funcions, executa **tot** això al **SQL Edito
 | 19 | `baseline-assessment-v2.sql` (perfil mental, objectius, resum línia base) |
 | 20 | `seed-demo.sql` (opcional) |
 | 21 | `product-analytics.sql` (Product Analytics — només admins de plataforma) |
+| 22 | `alert-history-actions.sql` (historial d'avisos: actuacions + estats ampliats) |
 
 Després de cada fitxer ha de sortir **Success**.
 

@@ -1715,6 +1715,166 @@ select:focus {
   font-weight: 600;
 }
 
+.athlete-file-profile__actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 12px;
+}
+
+.athlete-file-follow-up__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+}
+
+.athlete-file-follow-up__list li {
+  color: var(--text-secondary, #374151);
+  line-height: 1.45;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.athlete-file-follow-up__list li:last-child {
+  border-bottom: none;
+}
+
+.athlete-file-alert-banner {
+  margin-bottom: 20px;
+  padding: 16px 18px;
+  border: 1px solid var(--border);
+  border-left: 3px solid #2563eb;
+  background: #f8fafc;
+  border-radius: 0 10px 10px 0;
+}
+
+.athlete-file-alert-banner__eyebrow {
+  margin: 0 0 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.athlete-file-alert-banner__reason {
+  margin: 0 0 4px;
+  font-weight: 600;
+}
+
+.athlete-file-alert-banner__criterion {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.92rem;
+}
+
+.athlete-file-alert-banner__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+  align-items: center;
+}
+
+.athlete-file-alert-banner__close {
+  margin-left: auto;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 0.85rem;
+  text-decoration: underline;
+}
+
+.athlete-file-alert-action-form {
+  display: grid;
+  gap: 12px;
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+}
+
+.athlete-file-alert-action-form label {
+  display: grid;
+  gap: 6px;
+}
+
+.athlete-file-alert-action-form span {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+.athlete-file-alert-action-form input,
+.athlete-file-alert-action-form textarea,
+.athlete-file-alert-action-form select {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 10px;
+  font: inherit;
+}
+
+.athlete-file-alert-action-form__actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.athlete-file-alert-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.athlete-file-alert-filters__btn {
+  border: 1px solid var(--border);
+  background: #fff;
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  color: var(--text-muted);
+}
+
+.athlete-file-alert-filters__btn.active {
+  background: #111827;
+  border-color: #111827;
+  color: #fff;
+}
+
+.athlete-file-alert-detail {
+  display: grid;
+  gap: 8px;
+  margin: 10px 0 0;
+}
+
+.athlete-file-alert-detail div {
+  display: grid;
+  gap: 2px;
+}
+
+.athlete-file-alert-detail dt {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.athlete-file-alert-detail dd {
+  margin: 0;
+}
+
+@media (max-width: 900px) {
+  .athlete-file-alert-banner__actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .athlete-file-alert-banner__close {
+    margin-left: 0;
+  }
+}
+
 .athlete-file-section + .athlete-file-section {
   margin-top: 24px;
   padding-top: 24px;

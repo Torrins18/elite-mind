@@ -243,7 +243,12 @@ export function ClinicalCommandCenter({
       if (!action) return
 
       if (action.type === "team") onOpenTeam?.(action.id, { teamTab: action.tab })
-      if (action.type === "athlete") onOpenAthlete?.(action.id, { athleteTab: action.tab })
+      if (action.type === "athlete") {
+        onOpenAthlete?.(action.id, {
+          athleteTab: action.tab || "profile",
+          focusAlertId: action.focusAlertId || null,
+        })
+      }
       if (action.type === "message") onOpenMessage?.(action.id, action.athleteId)
       if (action.type === "appointment") onOpenAppointment?.(action.id, action.athleteId)
     },

@@ -1,7 +1,14 @@
 import { buildOrgAlerts } from "./alerts"
 
+const PANEL_STATUSES = ["active", "monitoring"]
+const BLOCK_REINSERT_STATUSES = ["dismissed", "reviewed"]
+
 function alertKey(athleteId, alertType) {
   return `${athleteId}:${alertType}`
+}
+
+export function isPanelAlertStatus(status) {
+  return PANEL_STATUSES.includes(status)
 }
 
 function mapDbRow(row, athleteMap) {
@@ -20,11 +27,65 @@ function mapDbRow(row, athleteMap) {
     delta: row.context?.delta,
     reviewedAt: row.reviewed_at,
     dismissedAt: row.dismissed_at,
+    resolvedAt: row.resolved_at,
+    reviewedBy: row.reviewed_by,
+    dismissedBy: row.dismissed_by,
+    actionTaken: row.action_taken,
+    professionalNote: row.professional_note,
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
+  }
+}
+
+/** Normalize a raw DB row or mapped alert for history UI. */
+export function normalizeAlertRecord(row) {
+  if (!row) return null
+  if (row.dbId || row.alert_type === undefined) {
+    return {
+      dbId: row.dbId || row.id,
+      alertType: row.id || row.alert_type,
+      athleteId: row.athleteId || row.athlete_id,
+      severity: row.severity,
+      status: row.status,
+      context: row.context || {},
+      value: row.value ?? row.context?.value,
+      days: row.days ?? row.context?.days,
+      baseline: row.baseline ?? row.context?.baseline,
+      delta: row.delta ?? row.context?.delta,
+      reviewedAt: row.reviewedAt || row.reviewed_at,
+      dismissedAt: row.dismissedAt || row.dismissed_at,
+      resolvedAt: row.resolvedAt || row.resolved_at,
+      reviewedBy: row.reviewedBy || row.reviewed_by,
+      actionTaken: row.actionTaken || row.action_taken,
+      professionalNote: row.professionalNote || row.professional_note,
+      createdAt: row.createdAt || row.created_at,
+      updatedAt: row.updatedAt || row.updated_at,
+    }
+  }
+  return {
+    dbId: row.id,
+    alertType: row.alert_type,
+    athleteId: row.athlete_id,
+    severity: row.severity,
+    status: row.status,
+    context: row.context || {},
+    value: row.context?.value,
+    days: row.context?.days,
+    baseline: row.context?.baseline,
+    delta: row.context?.delta,
+    reviewedAt: row.reviewed_at,
+    dismissedAt: row.dismissed_at,
+    resolvedAt: row.resolved_at,
+    reviewedBy: row.reviewed_by,
+    actionTaken: row.action_taken,
+    professionalNote: row.professional_note,
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
   }
 }
 
 export function countActiveAlerts(alerts) {
-  return (alerts || []).filter((alert) => alert.status === "active").length
+  return (alerts || []).filter((alert) => isPanelAlertStatus(alert.status)).length
 }
 
 export async function syncAndLoadPsychologistAlerts(
@@ -54,12 +115,12 @@ export async function syncAndLoadPsychologistAlerts(
     computed.map((alert) => alertKey(alert.athlete_id, alert.alert_type))
   )
 
-  const [{ data: openRows, error: openError }, { data: dismissedRows }] = await Promise.all([
-    supabase.from("psychologist_alerts").select("*").in("status", ["active", "reviewed"]),
+  const [{ data: openRows, error: openError }, { data: blockedRows }] = await Promise.all([
+    supabase.from("psychologist_alerts").select("*").in("status", PANEL_STATUSES),
     supabase
       .from("psychologist_alerts")
-      .select("athlete_id, alert_type")
-      .eq("status", "dismissed"),
+      .select("athlete_id, alert_type, status")
+      .in("status", BLOCK_REINSERT_STATUSES),
   ])
 
   if (openError) {
@@ -71,8 +132,8 @@ export async function syncAndLoadPsychologistAlerts(
     }))
   }
 
-  const dismissedKeys = new Set(
-    (dismissedRows || []).map((row) => alertKey(row.athlete_id, row.alert_type))
+  const blockedKeys = new Set(
+    (blockedRows || []).map((row) => alertKey(row.athlete_id, row.alert_type))
   )
 
   const openByKey = new Map(
@@ -86,7 +147,7 @@ export async function syncAndLoadPsychologistAlerts(
     const existing = openByKey.get(key)
 
     if (!existing) {
-      if (dismissedKeys.has(key)) continue
+      if (blockedKeys.has(key)) continue
 
       const { data: inserted } = await supabase
         .from("psychologist_alerts")
@@ -104,20 +165,6 @@ export async function syncAndLoadPsychologistAlerts(
         .single()
 
       if (inserted) openByKey.set(key, inserted)
-      continue
-    }
-
-    if (dismissedKeys.has(key)) {
-      await supabase
-        .from("psychologist_alerts")
-        .update({
-          status: "dismissed",
-          dismissed_at: now,
-          context: { ...(existing.context || {}), supersededByDismiss: true },
-          updated_at: now,
-        })
-        .eq("id", existing.id)
-      openByKey.delete(key)
       continue
     }
 
@@ -151,7 +198,7 @@ export async function syncAndLoadPsychologistAlerts(
   const { data: visibleRows } = await supabase
     .from("psychologist_alerts")
     .select("*")
-    .in("status", ["active", "reviewed"])
+    .in("status", PANEL_STATUSES)
     .order("updated_at", { ascending: false })
 
   return (visibleRows || []).map((row) => mapDbRow(row, athleteMap))
@@ -176,16 +223,45 @@ export async function markAlertsReviewedForAthlete(supabase, athleteId, psycholo
 }
 
 export async function dismissPsychologistAlert(supabase, alertId, psychologistId) {
+  return updatePsychologistAlertStatus(supabase, alertId, {
+    status: "dismissed",
+    psychologistId,
+  })
+}
+
+/**
+ * @param {import("@supabase/supabase-js").SupabaseClient} supabase
+ * @param {string} alertId
+ * @param {{ status: string, psychologistId: string, actionTaken?: string, professionalNote?: string }} opts
+ */
+export async function updatePsychologistAlertStatus(supabase, alertId, opts) {
+  const { status, psychologistId, actionTaken, professionalNote } = opts
   const now = new Date().toISOString()
+  const patch = {
+    status,
+    updated_at: now,
+  }
+
+  if (actionTaken !== undefined) patch.action_taken = actionTaken || null
+  if (professionalNote !== undefined) patch.professional_note = professionalNote || null
+
+  if (status === "reviewed" || status === "monitoring" || status === "resolved") {
+    patch.reviewed_at = now
+    patch.reviewed_by = psychologistId
+  }
+
+  if (status === "resolved") {
+    patch.resolved_at = now
+  }
+
+  if (status === "dismissed") {
+    patch.dismissed_at = now
+    patch.dismissed_by = psychologistId
+  }
 
   const { data, error } = await supabase
     .from("psychologist_alerts")
-    .update({
-      status: "dismissed",
-      dismissed_at: now,
-      dismissed_by: psychologistId,
-      updated_at: now,
-    })
+    .update(patch)
     .eq("id", alertId)
     .select("*")
     .single()
@@ -200,7 +276,7 @@ export async function loadVisiblePsychologistAlerts(supabase, athletes) {
   const { data, error } = await supabase
     .from("psychologist_alerts")
     .select("*")
-    .in("status", ["active", "reviewed"])
+    .in("status", PANEL_STATUSES)
     .order("updated_at", { ascending: false })
 
   if (error) return []
