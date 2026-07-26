@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useState, lazy, Suspense } from "react"
 import { supabase } from "../supabase"
 import { useTranslation } from "../i18n/LanguageContext"
 import {
@@ -18,6 +18,13 @@ import { RolePicker } from "../components/RolePicker"
 import { Button } from "../components/ui/Button"
 import { AuthHeroContent, AuthLandingSections, scrollToId } from "../components/auth/AuthLandingSections"
 import { AuthHeroMedia } from "../components/auth/AuthHeroMedia"
+
+// TEMPORARY DEV: el menú d'inici ràpid només es carrega en desenvolupament (no entra al bundle de producció).
+const DevQuickLogin = import.meta.env.DEV
+  ? lazy(() =>
+      import("../components/dev/DevQuickLogin").then((mod) => ({ default: mod.DevQuickLogin }))
+    )
+  : null
 
 export function LoginPage() {
   const { t } = useTranslation()
@@ -402,6 +409,13 @@ export function LoginPage() {
                     </button>
                   )}
                 </div>
+
+                {/* TEMPORARY DEV: eliminable abans del llançament — veure src/components/dev/ */}
+                {DevQuickLogin ? (
+                  <Suspense fallback={null}>
+                    <DevQuickLogin onError={setError} />
+                  </Suspense>
+                ) : null}
               </form>
             </div>
           </aside>

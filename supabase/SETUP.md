@@ -29,6 +29,7 @@ Si la pàgina no carrega o falten funcions, executa **tot** això al **SQL Edito
 | 23 | `notice-system.sql` (Sistema d'Avisos: kind notice/reminder, event_count, postpone) |
 | 24 | `coach-register-invite-required.sql` (entrenadors: invitació obligatòria al registre) |
 | 25 | `dev-test-athletes.sql` (**TEMPORAL** — esportistes de prova sense verificació d'email; veure `DEV_TEST_ATHLETES.md`) |
+| 26 | `dev-demo-roles.sql` (**TEMPORAL** — psicòleg/entrenador demo per a inici de sessió ràpid) |
 
 Després de cada fitxer ha de sortir **Success**.
 
