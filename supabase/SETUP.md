@@ -28,6 +28,7 @@ Si la pàgina no carrega o falten funcions, executa **tot** això al **SQL Edito
 | 22 | `alert-history-actions.sql` (historial d'avisos: actuacions + estats ampliats) |
 | 23 | `notice-system.sql` (Sistema d'Avisos: kind notice/reminder, event_count, postpone) |
 | 24 | `coach-register-invite-required.sql` (entrenadors: invitació obligatòria al registre) |
+| 25 | `dev-test-athletes.sql` (**TEMPORAL** — esportistes de prova sense verificació d'email; veure `DEV_TEST_ATHLETES.md`) |
 
 Després de cada fitxer ha de sortir **Success**.
 
