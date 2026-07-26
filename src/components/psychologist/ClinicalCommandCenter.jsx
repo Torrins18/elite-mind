@@ -159,6 +159,7 @@ export function ClinicalCommandCenter({
   athletes = [],
   checkIns = [],
   alerts = [],
+  reminders = [],
   appointmentRequests = [],
   psychologistMessages = [],
   athleteMap = {},
@@ -345,6 +346,29 @@ export function ClinicalCommandCenter({
         onMarkReviewed={onMarkPriorityReviewed}
         onDismiss={onDismissPriority}
       />
+
+      {reminders.length > 0 && (
+        <section className="clinical-command__reminders">
+          <h2 className="clinical-command__section-title">{t("reminders.title")}</h2>
+          <p className="clinical-command__reminders-hint">{t("reminders.subtitle")}</p>
+          <ul className="clinical-command__reminders-list">
+            {reminders.slice(0, 12).map((item) => (
+              <li key={`${item.athleteId}-${item.id}`}>
+                <button
+                  type="button"
+                  className="clinical-command__reminder-btn"
+                  onClick={() =>
+                    onOpenAthlete?.(item.athleteId, { athleteTab: "profile" })
+                  }
+                >
+                  <strong>{item.athleteName}</strong>
+                  <span>{t(`psychologist.alert.${item.id}`, item)}</span>
+                </button>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
 
       <PsychologistInbox
         appointmentRequests={appointmentRequests}

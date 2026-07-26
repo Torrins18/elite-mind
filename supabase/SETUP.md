@@ -26,6 +26,7 @@ Si la pàgina no carrega o falten funcions, executa **tot** això al **SQL Edito
 | 20 | `seed-demo.sql` (opcional) |
 | 21 | `product-analytics.sql` (Product Analytics — només admins de plataforma) |
 | 22 | `alert-history-actions.sql` (historial d'avisos: actuacions + estats ampliats) |
+| 23 | `notice-system.sql` (Sistema d'Avisos: kind notice/reminder, event_count, postpone) |
 
 Després de cada fitxer ha de sortir **Success**.
 

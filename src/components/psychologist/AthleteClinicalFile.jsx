@@ -16,7 +16,9 @@ import { getLatestWeeklyReflection, hasWeeklyReflection } from "../../lib/weekly
 import { calculateRiskLevel } from "../../lib/risk"
 import { consentStatus } from "../../lib/age"
 import {
+  closeNotice,
   normalizeAlertRecord,
+  postponeNotice,
   updatePsychologistAlertStatus,
 } from "../../lib/alertPersistence"
 import {
@@ -211,8 +213,40 @@ export function AthleteClinicalFile({
     }
   }
 
+  const handleCloseNotice = async (alertId) => {
+    try {
+      await closeNotice(supabase, alertId, psychologistId)
+      await loadRecord()
+      onAlertsChange?.()
+      if (bannerAlertId === alertId) {
+        setBannerAlertId(null)
+        onFocusAlertHandled?.()
+      }
+    } catch (error) {
+      console.error("Close notice failed:", error.message)
+    }
+  }
+
+  const handlePostponeNotice = async (alertId, days) => {
+    try {
+      const until = new Date()
+      until.setDate(until.getDate() + days)
+      await postponeNotice(supabase, alertId, until.toISOString())
+      await loadRecord()
+      onAlertsChange?.()
+      if (bannerAlertId === alertId) {
+        setBannerAlertId(null)
+        onFocusAlertHandled?.()
+      }
+    } catch (error) {
+      console.error("Postpone notice failed:", error.message)
+    }
+  }
+
   const pendingAlertCount = normalizedHistory.filter(
-    (a) => a.status === "active" || a.status === "monitoring"
+    (a) =>
+      (a.kind || "notice") !== "reminder" &&
+      (a.status === "active" || a.status === "monitoring")
   ).length
 
   const exportAthleteReport = () => {
@@ -276,9 +310,17 @@ export function AthleteClinicalFile({
             t={t}
             onExportReport={exportAthleteReport}
             onViewEvolution={() => setActiveTab("charts")}
+            onOpenSessions={() => setActiveTab("sessions")}
+            onOpenPlan={() => setActiveTab("plan")}
             onMarkReviewed={() =>
               focusedAlert?.dbId &&
               handleAlertUpdate(focusedAlert.dbId, { status: "reviewed" })
+            }
+            onCloseNotice={() =>
+              focusedAlert?.dbId && handleCloseNotice(focusedAlert.dbId)
+            }
+            onPostpone={(days) =>
+              focusedAlert?.dbId && handlePostponeNotice(focusedAlert.dbId, days)
             }
             onDismiss={() =>
               focusedAlert?.dbId &&
@@ -429,18 +471,24 @@ function ProfileTab({
   t,
   onExportReport,
   onViewEvolution,
+  onOpenSessions,
+  onOpenPlan,
   onMarkReviewed,
+  onCloseNotice,
+  onPostpone,
   onDismiss,
   onSaveAction,
   onDismissBanner,
 }) {
   const [showActionForm, setShowActionForm] = useState(false)
+  const [showPostpone, setShowPostpone] = useState(false)
   const [actionTaken, setActionTaken] = useState("")
   const [professionalNote, setProfessionalNote] = useState("")
   const [actionStatus, setActionStatus] = useState("monitoring")
 
   useEffect(() => {
     setShowActionForm(false)
+    setShowPostpone(false)
     setActionTaken(focusedAlert?.actionTaken || "")
     setProfessionalNote(focusedAlert?.professionalNote || "")
     setActionStatus("monitoring")
@@ -455,6 +503,13 @@ function ProfileTab({
     })
     setShowActionForm(false)
   }
+
+  const detectedDaysAgo = (() => {
+    if (!focusedAlert?.createdAt) return null
+    const created = new Date(focusedAlert.createdAt)
+    const now = new Date()
+    return Math.max(0, Math.round((now - created) / 86400000))
+  })()
 
   return (
     <div className="athlete-file-summary">
@@ -472,16 +527,40 @@ function ProfileTab({
             <p className="athlete-file-alert-banner__criterion">
               {formatAlertCriterion(focusedAlert, t)}
             </p>
+            {detectedDaysAgo != null && (
+              <p className="athlete-file-alert-banner__meta">
+                {t("athleteFile.banner.detectedDaysAgo", { count: detectedDaysAgo })}
+                {focusedAlert.eventCount > 1
+                  ? ` · ${t("athleteFile.banner.eventCount", { count: focusedAlert.eventCount })}`
+                  : ""}
+              </p>
+            )}
+            <p className="athlete-file-alert-banner__meta">
+              {t("athleteFile.history.priority")}:{" "}
+              {t(`athleteFile.priority.${focusedAlert.severity || "medium"}`)}
+            </p>
           </div>
           <div className="athlete-file-alert-banner__actions">
             <Button variant="ghost" onClick={onViewEvolution}>
               {t("athleteFile.banner.viewEvolution")}
             </Button>
+            <Button variant="ghost" onClick={() => setShowActionForm((v) => !v)}>
+              {t("athleteFile.banner.addAction")}
+            </Button>
             <Button variant="ghost" onClick={onMarkReviewed}>
               {t("athleteFile.banner.markReviewed")}
             </Button>
-            <Button variant="ghost" onClick={() => setShowActionForm((v) => !v)}>
-              {t("athleteFile.banner.addAction")}
+            <Button variant="ghost" onClick={onCloseNotice}>
+              {t("athleteFile.banner.closeNotice")}
+            </Button>
+            <Button variant="ghost" onClick={() => setShowPostpone((v) => !v)}>
+              {t("athleteFile.banner.postpone")}
+            </Button>
+            <Button variant="ghost" onClick={onOpenSessions}>
+              {t("athleteFile.banner.createSession")}
+            </Button>
+            <Button variant="ghost" onClick={onOpenPlan}>
+              {t("athleteFile.banner.openPlan")}
             </Button>
             <Button variant="ghost" className="btn--danger-text" onClick={onDismiss}>
               {t("athleteFile.banner.dismiss")}
@@ -494,6 +573,16 @@ function ProfileTab({
               {t("athleteFile.banner.dismissBanner")}
             </button>
           </div>
+          {showPostpone && (
+            <div className="athlete-file-alert-banner__postpone">
+              <Button variant="ghost" onClick={() => onPostpone(3)}>
+                {t("athleteFile.banner.postpone3")}
+              </Button>
+              <Button variant="ghost" onClick={() => onPostpone(7)}>
+                {t("athleteFile.banner.postpone7")}
+              </Button>
+            </div>
+          )}
           {showActionForm && (
             <form className="athlete-file-alert-action-form" onSubmit={submitAction}>
               <label>
@@ -800,11 +889,13 @@ function AlertsTab({ alerts, loading, onUpdate, t, lang }) {
   const [actionStatus, setActionStatus] = useState("monitoring")
 
   const filtered = useMemo(() => {
-    const rows = [...(alerts || [])].sort((a, b) => {
-      const da = new Date(a.createdAt || a.updatedAt || 0).getTime()
-      const db = new Date(b.createdAt || b.updatedAt || 0).getTime()
-      return db - da
-    })
+    const rows = [...(alerts || [])]
+      .filter((a) => (a.kind || "notice") !== "reminder")
+      .sort((a, b) => {
+        const da = new Date(a.updatedAt || a.lastEventAt || a.createdAt || 0).getTime()
+        const db = new Date(b.updatedAt || b.lastEventAt || b.createdAt || 0).getTime()
+        return db - da
+      })
     if (filter === "all") return rows
     if (filter === "active") return rows.filter((a) => a.status === "active")
     return rows.filter((a) => a.status === filter)
@@ -882,11 +973,41 @@ function AlertsTab({ alerts, loading, onUpdate, t, lang }) {
                     <dt>{t("athleteFile.history.criterion")}</dt>
                     <dd>{formatAlertCriterion(alert, t)}</dd>
                   </div>
+                  <div>
+                    <dt>{t("athleteFile.history.priority")}</dt>
+                    <dd>{t(`athleteFile.priority.${alert.severity || "medium"}`)}</dd>
+                  </div>
+                  {alert.updatedAt && (
+                    <div>
+                      <dt>{t("athleteFile.history.lastUpdate")}</dt>
+                      <dd>
+                        {new Date(alert.updatedAt).toLocaleDateString(
+                          lang === "ca" ? "ca-ES" : "es-ES"
+                        )}
+                      </dd>
+                    </div>
+                  )}
+                  {alert.eventCount > 1 && (
+                    <div>
+                      <dt>{t("athleteFile.history.eventCount")}</dt>
+                      <dd>{alert.eventCount}</dd>
+                    </div>
+                  )}
                   {reviewedAt && (
                     <div>
                       <dt>{t("athleteFile.history.reviewedAt")}</dt>
                       <dd>
                         {new Date(reviewedAt).toLocaleDateString(
+                          lang === "ca" ? "ca-ES" : "es-ES"
+                        )}
+                      </dd>
+                    </div>
+                  )}
+                  {alert.resolvedAt && (
+                    <div>
+                      <dt>{t("athleteFile.history.resolvedAt")}</dt>
+                      <dd>
+                        {new Date(alert.resolvedAt).toLocaleDateString(
                           lang === "ca" ? "ca-ES" : "es-ES"
                         )}
                       </dd>

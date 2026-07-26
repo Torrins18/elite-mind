@@ -70,7 +70,8 @@ export function buildAthleteFollowUpSummary({
 
   const activePlans = (goals || []).filter((goal) => goal.status === "active").length
   const pendingAlerts = (alerts || []).filter((alert) =>
-    alert.status === "active" || alert.status === "monitoring"
+    (alert.kind || "notice") === "notice" &&
+    (alert.status === "active" || alert.status === "monitoring")
   ).length
 
   const age = athlete?.date_of_birth ? calculateAge(athlete.date_of_birth, today) : null

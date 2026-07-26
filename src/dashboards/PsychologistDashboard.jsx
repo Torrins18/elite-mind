@@ -24,6 +24,7 @@ import {
   dismissPsychologistAlert,
   loadVisiblePsychologistAlerts,
   syncAndLoadPsychologistAlerts,
+  buildReminders,
 } from "../lib/alertPersistence"
 import { filterActiveTeams } from "../lib/teams"
 import { TeamWorkspace } from "../components/psychologist/TeamWorkspace"
@@ -229,6 +230,13 @@ export function PsychologistDashboard({ profile }) {
     () => countActiveAlerts(psychologistAlerts),
     [psychologistAlerts]
   )
+
+  const reminders = useMemo(() => {
+    const assessmentByAthlete = Object.fromEntries(
+      (assessments || []).map((item) => [item.athlete_id, item])
+    )
+    return buildReminders(athletes, checkIns, todayISO(), assessmentByAthlete)
+  }, [athletes, checkIns, assessments])
 
   const teamAlertCounts = useMemo(() => {
     const counts = {}
@@ -511,6 +519,7 @@ export function PsychologistDashboard({ profile }) {
             athletes={athletes}
             checkIns={checkIns}
             alerts={psychologistAlerts}
+            reminders={reminders}
             appointmentRequests={appointmentRequests}
             psychologistMessages={psychologistMessages}
             athleteMap={athleteMap}

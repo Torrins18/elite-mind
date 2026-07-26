@@ -1763,10 +1763,61 @@ select:focus {
   font-weight: 600;
 }
 
-.athlete-file-alert-banner__criterion {
-  margin: 0;
+.clinical-command__reminders {
+  margin: 24px 0;
+}
+
+.clinical-command__reminders-hint {
+  margin: 0 0 12px;
   color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.clinical-command__reminders-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.clinical-command__reminder-btn {
+  width: 100%;
+  text-align: left;
+  border: 1px solid var(--border);
+  background: #fff;
+  border-radius: 10px;
+  padding: 10px 14px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.clinical-command__reminder-btn:hover {
+  border-color: #94a3b8;
+}
+
+.clinical-command__reminder-btn strong {
   font-size: 0.92rem;
+}
+
+.clinical-command__reminder-btn span {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.athlete-file-alert-banner__meta {
+  margin: 6px 0 0;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.athlete-file-alert-banner__postpone {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
 }
 
 .athlete-file-alert-banner__actions {

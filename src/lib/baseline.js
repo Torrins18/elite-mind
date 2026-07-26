@@ -174,6 +174,7 @@ export function detectBaselineAlerts(athlete, assessment, latestWeekly) {
     alerts.push({
       id,
       severity: "high",
+      kind: "notice",
       athleteId: athlete.id,
       athleteName: athlete.name,
       value: row.current,

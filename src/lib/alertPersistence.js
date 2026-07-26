@@ -1,7 +1,9 @@
-import { buildOrgAlerts } from "./alerts"
+import { buildNotices, buildReminders } from "./alerts"
 
 const PANEL_STATUSES = ["active", "monitoring"]
-const BLOCK_REINSERT_STATUSES = ["dismissed", "reviewed"]
+const BLOCK_REINSERT_STATUSES = ["dismissed"]
+
+const SEVERITY_RANK = { high: 0, medium: 1, low: 2 }
 
 function alertKey(athleteId, alertType) {
   return `${athleteId}:${alertType}`
@@ -9,6 +11,22 @@ function alertKey(athleteId, alertType) {
 
 export function isPanelAlertStatus(status) {
   return PANEL_STATUSES.includes(status)
+}
+
+export function compareNotices(a, b) {
+  const rankA = SEVERITY_RANK[a.severity] ?? 9
+  const rankB = SEVERITY_RANK[b.severity] ?? 9
+  if (rankA !== rankB) return rankA - rankB
+  const timeA = new Date(a.updatedAt || a.lastEventAt || a.createdAt || 0).getTime()
+  const timeB = new Date(b.updatedAt || b.lastEventAt || b.createdAt || 0).getTime()
+  return timeB - timeA
+}
+
+function shouldBumpEventCount(lastEventAt, nowIso) {
+  if (!lastEventAt) return true
+  const last = new Date(lastEventAt).getTime()
+  const now = new Date(nowIso).getTime()
+  return now - last >= 24 * 60 * 60 * 1000
 }
 
 function mapDbRow(row, athleteMap) {
@@ -19,6 +37,7 @@ function mapDbRow(row, athleteMap) {
     athleteId: row.athlete_id,
     athleteName: athlete?.name || "",
     severity: row.severity,
+    kind: row.kind || "notice",
     status: row.status,
     context: row.context || {},
     value: row.context?.value,
@@ -34,6 +53,9 @@ function mapDbRow(row, athleteMap) {
     professionalNote: row.professional_note,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
+    lastEventAt: row.last_event_at,
+    eventCount: row.event_count ?? 1,
+    postponedUntil: row.postponed_until,
   }
 }
 
@@ -46,6 +68,7 @@ export function normalizeAlertRecord(row) {
       alertType: row.id || row.alert_type,
       athleteId: row.athleteId || row.athlete_id,
       severity: row.severity,
+      kind: row.kind || "notice",
       status: row.status,
       context: row.context || {},
       value: row.value ?? row.context?.value,
@@ -60,6 +83,9 @@ export function normalizeAlertRecord(row) {
       professionalNote: row.professionalNote || row.professional_note,
       createdAt: row.createdAt || row.created_at,
       updatedAt: row.updatedAt || row.updated_at,
+      lastEventAt: row.lastEventAt || row.last_event_at,
+      eventCount: row.eventCount ?? row.event_count ?? 1,
+      postponedUntil: row.postponedUntil || row.postponed_until,
     }
   }
   return {
@@ -67,6 +93,7 @@ export function normalizeAlertRecord(row) {
     alertType: row.alert_type,
     athleteId: row.athlete_id,
     severity: row.severity,
+    kind: row.kind || "notice",
     status: row.status,
     context: row.context || {},
     value: row.context?.value,
@@ -81,12 +108,37 @@ export function normalizeAlertRecord(row) {
     professionalNote: row.professional_note,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
+    lastEventAt: row.last_event_at,
+    eventCount: row.event_count ?? 1,
+    postponedUntil: row.postponed_until,
   }
 }
 
 export function countActiveAlerts(alerts) {
-  return (alerts || []).filter((alert) => isPanelAlertStatus(alert.status)).length
+  return (alerts || []).filter(
+    (alert) =>
+      (alert.kind || "notice") === "notice" &&
+      isPanelAlertStatus(alert.status) &&
+      !isPostponed(alert)
+  ).length
 }
+
+function isPostponed(alert, now = new Date()) {
+  if (!alert?.postponedUntil && !alert?.postponed_until) return false
+  const until = new Date(alert.postponedUntil || alert.postponed_until)
+  return until.getTime() > now.getTime()
+}
+
+function filterVisibleNotices(rows) {
+  const now = new Date()
+  return (rows || [])
+    .filter((row) => (row.kind || "notice") === "notice")
+    .filter((row) => PANEL_STATUSES.includes(row.status))
+    .filter((row) => !isPostponed(row, now))
+    .sort(compareNotices)
+}
+
+export { buildReminders }
 
 export async function syncAndLoadPsychologistAlerts(
   supabase,
@@ -99,10 +151,12 @@ export async function syncAndLoadPsychologistAlerts(
   const assessmentByAthlete = Object.fromEntries(
     (assessments || []).map((item) => [item.athlete_id, item])
   )
-  const computed = buildOrgAlerts(athletes, checkIns, today, assessmentByAthlete).map((alert) => ({
+
+  const notices = buildNotices(athletes, checkIns, today, assessmentByAthlete).map((alert) => ({
     athlete_id: alert.athleteId,
     alert_type: alert.id,
     severity: alert.severity,
+    kind: "notice",
     context: {
       value: alert.value ?? null,
       days: alert.days ?? null,
@@ -112,24 +166,43 @@ export async function syncAndLoadPsychologistAlerts(
   }))
 
   const computedKeys = new Set(
-    computed.map((alert) => alertKey(alert.athlete_id, alert.alert_type))
+    notices.map((alert) => alertKey(alert.athlete_id, alert.alert_type))
   )
 
   const [{ data: openRows, error: openError }, { data: blockedRows }] = await Promise.all([
-    supabase.from("psychologist_alerts").select("*").in("status", PANEL_STATUSES),
+    supabase
+      .from("psychologist_alerts")
+      .select("*")
+      .eq("kind", "notice")
+      .in("status", PANEL_STATUSES),
     supabase
       .from("psychologist_alerts")
       .select("athlete_id, alert_type, status")
+      .eq("kind", "notice")
       .in("status", BLOCK_REINSERT_STATUSES),
   ])
 
   if (openError) {
-    return buildOrgAlerts(athletes, checkIns, today, assessmentByAthlete).map((alert) => ({
-      ...alert,
-      dbId: null,
-      status: "active",
-      context: {},
-    }))
+    return notices
+      .map((alert) => ({
+        dbId: null,
+        id: alert.alert_type,
+        athleteId: alert.athlete_id,
+        athleteName: athleteMap[alert.athlete_id]?.name || "",
+        severity: alert.severity,
+        kind: "notice",
+        status: "active",
+        context: alert.context,
+        value: alert.context.value,
+        days: alert.context.days,
+        baseline: alert.context.baseline,
+        delta: alert.context.delta,
+        eventCount: 1,
+        lastEventAt: null,
+        updatedAt: null,
+        createdAt: null,
+      }))
+      .sort(compareNotices)
   }
 
   const blockedKeys = new Set(
@@ -142,7 +215,7 @@ export async function syncAndLoadPsychologistAlerts(
 
   const now = new Date().toISOString()
 
-  for (const alert of computed) {
+  for (const alert of notices) {
     const key = alertKey(alert.athlete_id, alert.alert_type)
     const existing = openByKey.get(key)
 
@@ -156,8 +229,11 @@ export async function syncAndLoadPsychologistAlerts(
             athlete_id: alert.athlete_id,
             alert_type: alert.alert_type,
             severity: alert.severity,
+            kind: "notice",
             status: "active",
             context: alert.context,
+            last_event_at: now,
+            event_count: 1,
             updated_at: now,
           },
         ])
@@ -168,16 +244,19 @@ export async function syncAndLoadPsychologistAlerts(
       continue
     }
 
-    if (existing.status === "active") {
-      await supabase
-        .from("psychologist_alerts")
-        .update({
-          severity: alert.severity,
-          context: alert.context,
-          updated_at: now,
-        })
-        .eq("id", existing.id)
+    const bump = shouldBumpEventCount(existing.last_event_at, now)
+    const patch = {
+      severity: alert.severity,
+      kind: "notice",
+      context: alert.context,
+      updated_at: now,
+      last_event_at: now,
     }
+    if (bump) {
+      patch.event_count = (existing.event_count || 1) + 1
+    }
+
+    await supabase.from("psychologist_alerts").update(patch).eq("id", existing.id)
   }
 
   for (const row of openRows || []) {
@@ -186,8 +265,8 @@ export async function syncAndLoadPsychologistAlerts(
       await supabase
         .from("psychologist_alerts")
         .update({
-          status: "dismissed",
-          dismissed_at: now,
+          status: "resolved",
+          resolved_at: now,
           context: { ...(row.context || {}), autoResolved: true },
           updated_at: now,
         })
@@ -195,13 +274,7 @@ export async function syncAndLoadPsychologistAlerts(
     }
   }
 
-  const { data: visibleRows } = await supabase
-    .from("psychologist_alerts")
-    .select("*")
-    .in("status", PANEL_STATUSES)
-    .order("updated_at", { ascending: false })
-
-  return (visibleRows || []).map((row) => mapDbRow(row, athleteMap))
+  return loadVisiblePsychologistAlerts(supabase, athletes)
 }
 
 export async function markAlertsReviewedForAthlete(supabase, athleteId, psychologistId) {
@@ -217,6 +290,7 @@ export async function markAlertsReviewedForAthlete(supabase, athleteId, psycholo
     })
     .eq("athlete_id", athleteId)
     .eq("status", "active")
+    .eq("kind", "notice")
     .select("*")
 
   return data || []
@@ -227,6 +301,30 @@ export async function dismissPsychologistAlert(supabase, alertId, psychologistId
     status: "dismissed",
     psychologistId,
   })
+}
+
+export async function closeNotice(supabase, alertId, psychologistId, extra = {}) {
+  return updatePsychologistAlertStatus(supabase, alertId, {
+    status: "resolved",
+    psychologistId,
+    ...extra,
+  })
+}
+
+export async function postponeNotice(supabase, alertId, untilIso) {
+  const now = new Date().toISOString()
+  const { data, error } = await supabase
+    .from("psychologist_alerts")
+    .update({
+      postponed_until: untilIso,
+      updated_at: now,
+    })
+    .eq("id", alertId)
+    .select("*")
+    .single()
+
+  if (error) throw error
+  return data
 }
 
 /**
@@ -252,11 +350,13 @@ export async function updatePsychologistAlertStatus(supabase, alertId, opts) {
 
   if (status === "resolved") {
     patch.resolved_at = now
+    patch.postponed_until = null
   }
 
   if (status === "dismissed") {
     patch.dismissed_at = now
     patch.dismissed_by = psychologistId
+    patch.postponed_until = null
   }
 
   const { data, error } = await supabase
@@ -276,9 +376,10 @@ export async function loadVisiblePsychologistAlerts(supabase, athletes) {
   const { data, error } = await supabase
     .from("psychologist_alerts")
     .select("*")
+    .eq("kind", "notice")
     .in("status", PANEL_STATUSES)
     .order("updated_at", { ascending: false })
 
   if (error) return []
-  return (data || []).map((row) => mapDbRow(row, athleteMap))
+  return filterVisibleNotices((data || []).map((row) => mapDbRow(row, athleteMap)))
 }

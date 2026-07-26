@@ -1,5 +1,6 @@
 import { todayISO } from "./dates"
 import { weekStartSundayISO } from "./checkInSchedule"
+import { compareNotices } from "./alertPersistence"
 
 export function getGreetingKey(hour = new Date().getHours()) {
   if (hour >= 5 && hour < 12) return "morning"
@@ -17,7 +18,9 @@ export function buildExecutiveSummary({
   teams,
 }) {
   const activeAlerts = (alerts || []).filter(
-    (row) => row.status === "active" || row.status === "monitoring"
+    (row) =>
+      (row.kind || "notice") === "notice" &&
+      (row.status === "active" || row.status === "monitoring")
   )
   const priorityAlerts = activeAlerts.filter(
     (row) => row.severity === "high" || row.severity === "medium"
@@ -138,19 +141,24 @@ export function buildTodayPriorities({
     })
   }
 
-  const highAlerts = (alerts || []).filter(
-    (row) =>
-      (row.status === "active" || row.status === "monitoring") &&
-      row.severity === "high"
-  )
-  for (const alert of highAlerts.slice(0, 4)) {
+  const actionableNotices = (alerts || [])
+    .filter(
+      (row) =>
+        (row.kind || "notice") === "notice" &&
+        (row.status === "active" || row.status === "monitoring") &&
+        (row.severity === "high" || row.severity === "medium")
+    )
+    .slice()
+    .sort(compareNotices)
+
+  for (const alert of actionableNotices.slice(0, 6)) {
     const alertKey = alert.dbId || alert.id
     const name = alert.athleteName || athleteName(athleteMap, alert.athleteId)
     push({
       id: `alert-${alertKey}`,
       priorityKey: `alert:${alertKey}:active`,
-      tone: "critical",
-      key: "priorityAlertAthlete",
+      tone: alert.severity === "high" ? "critical" : "watch",
+      key: "priorityNoticeAthlete",
       params: { name: name || "?" },
       action: {
         type: "athlete",
