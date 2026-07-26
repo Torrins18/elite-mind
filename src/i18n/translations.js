@@ -248,16 +248,18 @@ export const translations = {
       register: "Crear cuenta",
       hintLogin: "Inicia sesión en tu panel de rendimiento.",
       hintRegister:
-        "Los deportistas solo pueden activar su cuenta con el enlace de invitación del psicólogo. Los entrenadores pueden registrarse y quedarán pendientes de aprobación.",
-      roleTitle: "Tipo de cuenta",
+        "Elige cómo quieres acceder a la plataforma.",
+      roleTitle: "¿Cómo quieres acceder a la plataforma?",
       athleteOnly: "Registro abierto para deportistas y entrenadores.",
       athleteRoleHint: "Reflexión y seguimiento personal.",
-      coachRoleHint: "Panel de equipo tras aprobación.",
+      coachRoleHint: "Acceso al panel del equipo tras la aprobación del psicólogo.",
       coachApprovalHint:
         "Tu cuenta de entrenador/a quedará pendiente hasta que el psicólogo apruebe el acceso.",
       registerCoach: "Registro de entrenador/a",
       hintRegisterCoach:
-        "Has recibido un enlace válido. Tras registrarte, el psicólogo deberá aprobar tu acceso.",
+        "Tras registrarte, el psicólogo deberá aprobar tu acceso.",
+      hintChooseRole: "Elige el tipo de cuenta para continuar.",
+      signingUpWithInvite: "Te estás registrando mediante una invitación.",
       inviteValid: "Invitación válida — registro de entrenador/a",
       inviteInvalid:
         "La invitación no es válida o ha caducado. Puedes iniciar sesión si ya tienes cuenta.",
@@ -269,8 +271,10 @@ export const translations = {
         "Crea tu cuenta de deportista. Al activarla quedarás asignado al equipo del enlace.",
       athleteInviteRequired:
         "Los deportistas necesitan un enlace de invitación del psicólogo para registrarse.",
+      coachInviteRequired:
+        "Para crear una cuenta de entrenador/a necesitas un enlace de invitación del psicólogo.",
       hintRegisterCoachOpen:
-        "Registro de entrenador/a. Tu acceso quedará pendiente hasta la aprobación del psicólogo.",
+        "Para registrarte como entrenador/a necesitas un enlace de invitación del psicólogo.",
       activateAccount: "Activar cuenta",
       checkingInvite: "Comprobando invitación...",
       createCoachAccount: "Crear cuenta de entrenador/a",
@@ -1935,16 +1939,18 @@ export const translations = {
       register: "Crear compte",
       hintLogin: "Inicia sessió al teu panell de rendiment.",
       hintRegister:
-        "Els esportistes només poden activar el compte amb l'enllaç d'invitació del psicòleg. Els entrenadors es poden registrar i quedaran pendents d'aprovació.",
-      roleTitle: "Tipus de compte",
+        "Tria com vols accedir a la plataforma.",
+      roleTitle: "Com vols accedir a la plataforma?",
       athleteOnly: "Registre obert per a esportistes i entrenadors.",
       athleteRoleHint: "Reflexió i seguiment personal.",
-      coachRoleHint: "Panell d'equip després de l'aprovació.",
+      coachRoleHint: "Accés al panell de l'equip després de l'aprovació del psicòleg.",
       coachApprovalHint:
         "El teu compte d'entrenador/a quedarà pendent fins que el psicòleg aprovi l'accés.",
       registerCoach: "Registre d'entrenador/a",
       hintRegisterCoach:
-        "Has rebut un enllaç vàlid. Després de registrar-te, el psicòleg haurà d'aprovar el teu accés.",
+        "Després de registrar-te, el psicòleg haurà d'aprovar el teu accés.",
+      hintChooseRole: "Tria el tipus de compte per continuar.",
+      signingUpWithInvite: "T'estàs registrant mitjançant una invitació.",
       inviteValid: "Invitació vàlida — registre d'entrenador/a",
       inviteInvalid:
         "La invitació no és vàlida o ha caducat. Pots iniciar sessió si ja tens compte.",
@@ -1956,8 +1962,10 @@ export const translations = {
         "Crea el teu compte d'esportista. En activar-lo quedaràs assignat a l'equip de l'enllaç.",
       athleteInviteRequired:
         "Els esportistes necessiten un enllaç d'invitació del psicòleg per registrar-se.",
+      coachInviteRequired:
+        "Per crear un compte d'entrenador/a necessites un enllaç d'invitació del psicòleg.",
       hintRegisterCoachOpen:
-        "Registre d'entrenador/a. El teu accés quedarà pendent fins a l'aprovació del psicòleg.",
+        "Per registrar-te com a entrenador/a necessites un enllaç d'invitació del psicòleg.",
       activateAccount: "Activar compte",
       checkingInvite: "Comprovant invitació...",
       createCoachAccount: "Crear compte d'entrenador/a",

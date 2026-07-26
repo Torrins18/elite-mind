@@ -24,7 +24,7 @@ export function LoginPage() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [mode, setMode] = useState("login")
-  const [signupRole, setSignupRole] = useState("coach")
+  const [signupRole, setSignupRole] = useState("athlete")
   const [error, setError] = useState("")
   const [message, setMessage] = useState("")
   const [coachInviteValid, setCoachInviteValid] = useState(false)
@@ -102,7 +102,7 @@ export function LoginPage() {
   }
 
   const finishAthleteActivation = async () => {
-    if (!athleteJoinValid || !joinToken) return
+    if (!athleteJoinValid || !joinToken) return true
 
     const { error: inviteError } = await supabase.rpc("consume_athlete_invite", {
       invite_token: joinToken,
@@ -122,29 +122,34 @@ export function LoginPage() {
     setError("")
     setMessage("")
 
-    const isCoachSignup = Boolean(coachInviteValid && inviteToken) || signupRole === "coach"
-    const isAthleteSignup = Boolean(athleteJoinValid && joinToken)
+    const wantsCoach = signupRole === "coach" || coachInviteValid
+    const hasCoachInvite = Boolean(coachInviteValid && inviteToken)
+    const hasAthleteJoin = Boolean(athleteJoinValid && joinToken)
 
-    if (!isCoachSignup && !isAthleteSignup) {
-      setError(t("login.athleteInviteRequired"))
+    if (wantsCoach && !hasCoachInvite) {
+      setError(t("login.coachInviteRequired"))
       return
     }
 
+    const isCoachSignup = hasCoachInvite
     const displayName =
-      isAthleteSignup && athleteJoinInfo?.full_name
+      hasAthleteJoin && athleteJoinInfo?.full_name
         ? athleteJoinInfo.full_name
         : email.split("@")[0]
     const role = isCoachSignup ? "coach" : "athlete"
 
+    const meta = {
+      role,
+      name: displayName,
+    }
+    if (isCoachSignup && inviteToken) {
+      meta.coach_invite_token = inviteToken
+    }
+
     const { data, error: err } = await supabase.auth.signUp({
       email,
       password,
-      options: {
-        data: {
-          role,
-          name: displayName,
-        },
-      },
+      options: { data: meta },
     })
 
     if (err) {
@@ -167,7 +172,7 @@ export function LoginPage() {
     }
 
     const finishCoachRegistration = async (userId) => {
-      if (!isCoachSignup) return
+      if (!isCoachSignup || !inviteToken) return
 
       await supabase.from("profiles").upsert({
         id: userId,
@@ -176,31 +181,29 @@ export function LoginPage() {
         approved: false,
       })
 
-      if (inviteToken) {
-        await supabase.rpc("consume_coach_invite", { invite_token: inviteToken })
-        clearPendingCoachInvite()
-      }
+      await supabase.rpc("consume_coach_invite", { invite_token: inviteToken })
+      clearPendingCoachInvite()
     }
 
     if (data.session && data.user) {
       if (isCoachSignup) {
         await finishCoachRegistration(data.user.id)
         await notifyPsychologist()
-      } else if (isAthleteSignup) {
-        const { error: profileError } = await supabase.from("profiles").insert([
-          {
-            id: data.user.id,
-            name: displayName,
-            role: "athlete",
-            approved: true,
-          },
-        ])
+      } else {
+        const { error: profileError } = await supabase.from("profiles").upsert({
+          id: data.user.id,
+          name: displayName,
+          role: "athlete",
+          approved: true,
+        })
         if (profileError) {
           setError(profileError.message)
           return
         }
-        const ok = await finishAthleteActivation()
-        if (!ok) return
+        if (hasAthleteJoin) {
+          const ok = await finishAthleteActivation()
+          if (!ok) return
+        }
       }
       return
     }
@@ -241,6 +244,7 @@ export function LoginPage() {
   const isSignupMode = mode === "signup"
   const hasValidInvite = coachInviteValid || athleteJoinValid
   const isMinimalLogin = mode === "login" && !checkingInvite
+  const coachNeedsInvite = isSignupMode && signupRole === "coach" && !coachInviteValid
 
   const formTitle = isForgotMode
     ? t("passwordReset.title")
@@ -250,9 +254,15 @@ export function LoginPage() {
         ? t("login.activateAthlete")
         : coachInviteValid
           ? t("login.registerCoach")
-          : signupRole === "coach"
-            ? t("login.registerCoach")
-            : t("login.register")
+          : t("login.register")
+
+  const signupHint = (() => {
+    if (isForgotMode) return t("passwordReset.subtitle")
+    if (mode === "login") return t("login.hintLogin")
+    if (athleteJoinValid) return t("login.hintActivateAthlete")
+    if (coachInviteValid) return t("login.hintRegisterCoach")
+    return null
+  })()
 
   return (
     <div className="auth-landing">
@@ -282,119 +292,119 @@ export function LoginPage() {
 
                 {!isMinimalLogin && <h2 className="auth-landing__form-title">{formTitle}</h2>}
 
-              {!isMinimalLogin && (
-                <p className="auth-landing__form-hint">
-                  {isForgotMode
-                    ? t("passwordReset.subtitle")
-                    : mode === "login"
-                      ? t("login.hintLogin")
-                      : athleteJoinValid
-                        ? t("login.hintActivateAthlete")
-                        : t("login.hintRegisterCoach")}
-                </p>
-              )}
+                {!isMinimalLogin && signupHint && (
+                  <p className="auth-landing__form-hint">{signupHint}</p>
+                )}
 
-              {checkingInvite && <p className="auth-landing__form-hint">{t("login.checkingInvite")}</p>}
+                {checkingInvite && (
+                  <p className="auth-landing__form-hint">{t("login.checkingInvite")}</p>
+                )}
 
-              {isSignupMode && athleteJoinValid && athleteJoinInfo && (
-                <p className="auth-landing__notice">
-                  {t("login.athleteJoinValid", { team: athleteJoinInfo.team_name })}
-                </p>
-              )}
+                {isSignupMode && athleteJoinValid && (
+                  <p className="auth-landing__notice">{t("login.signingUpWithInvite")}</p>
+                )}
 
-              {isSignupMode && coachInviteValid && (
-                <p className="auth-landing__notice">{t("login.inviteValid")}</p>
-              )}
-
-              {isSignupMode && !hasValidInvite && (
-                <div className="auth-landing__signup-extra">
-                  <RolePicker value={signupRole} onChange={setSignupRole} showCoachHint />
-                  <p className="auth-landing__form-hint">
-                    {signupRole === "coach"
-                      ? t("login.hintRegisterCoachOpen")
-                      : t("login.athleteInviteRequired")}
+                {isSignupMode && athleteJoinValid && athleteJoinInfo && (
+                  <p className="auth-landing__notice">
+                    {t("login.athleteJoinValid", { team: athleteJoinInfo.team_name })}
                   </p>
-                </div>
-              )}
+                )}
 
-              <label className="auth-landing__field">
-                <span className="auth-landing__label">{t("login.email")}</span>
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  autoComplete="email"
-                />
-              </label>
+                {isSignupMode && coachInviteValid && (
+                  <p className="auth-landing__notice">{t("login.coachApprovalHint")}</p>
+                )}
 
-              {!isForgotMode && (
+                {isSignupMode && !hasValidInvite && (
+                  <div className="auth-landing__signup-extra">
+                    <RolePicker
+                      value={signupRole}
+                      onChange={setSignupRole}
+                      showCoachHint={false}
+                    />
+                    {coachNeedsInvite && (
+                      <p className="auth-landing__form-hint">{t("login.coachInviteRequired")}</p>
+                    )}
+                  </div>
+                )}
+
                 <label className="auth-landing__field">
-                  <span className="auth-landing__label">{t("login.password")}</span>
+                  <span className="auth-landing__label">{t("login.email")}</span>
                   <input
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                     required
-                    minLength={6}
-                    autoComplete={mode === "login" ? "current-password" : "new-password"}
+                    autoComplete="email"
                   />
                 </label>
-              )}
 
-              {error && <p className="auth-landing__error">{error}</p>}
-              {message && <p className="auth-landing__message">{message}</p>}
+                {!isForgotMode && (
+                  <label className="auth-landing__field">
+                    <span className="auth-landing__label">{t("login.password")}</span>
+                    <input
+                      type="password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      required
+                      minLength={6}
+                      autoComplete={mode === "login" ? "current-password" : "new-password"}
+                    />
+                  </label>
+                )}
 
-              <Button
-                type="submit"
-                className="auth-landing__submit"
-                disabled={checkingInvite || (isSignupMode && !hasValidInvite && signupRole === "athlete")}
-              >
-                {isForgotMode
-                  ? t("passwordReset.send")
-                  : mode === "login"
-                    ? t("login.signIn")
-                    : athleteJoinValid
-                      ? t("login.activateAccount")
-                      : coachInviteValid || signupRole === "coach"
-                        ? t("login.createCoachAccount")
-                        : t("login.createAccount")}
-              </Button>
+                {error && <p className="auth-landing__error">{error}</p>}
+                {message && <p className="auth-landing__message">{message}</p>}
 
-              <div className="auth-landing__links">
-                <button
-                  type="button"
-                  className="auth-landing__link"
-                  onClick={() => {
-                    setMode(isForgotMode || mode === "signup" ? "login" : "signup")
-                    setSignupRole("coach")
-                    setError("")
-                    setMessage("")
-                  }}
+                <Button
+                  type="submit"
+                  className="auth-landing__submit"
+                  disabled={checkingInvite || coachNeedsInvite}
                 >
                   {isForgotMode
-                    ? t("passwordReset.backToLogin")
+                    ? t("passwordReset.send")
                     : mode === "login"
-                      ? t("login.toggleSignup")
-                      : t("login.toggleLogin")}
-                </button>
-                {!isForgotMode && (
+                      ? t("login.signIn")
+                      : athleteJoinValid
+                        ? t("login.activateAccount")
+                        : coachInviteValid || signupRole === "coach"
+                          ? t("login.createCoachAccount")
+                          : t("login.createAccount")}
+                </Button>
+
+                <div className="auth-landing__links">
                   <button
                     type="button"
                     className="auth-landing__link"
                     onClick={() => {
-                      setMode("forgot")
+                      setMode(isForgotMode || mode === "signup" ? "login" : "signup")
+                      setSignupRole("athlete")
                       setError("")
                       setMessage("")
                     }}
                   >
-                    {t("passwordReset.forgotLink")}
+                    {isForgotMode
+                      ? t("passwordReset.backToLogin")
+                      : mode === "login"
+                        ? t("login.toggleSignup")
+                        : t("login.toggleLogin")}
                   </button>
-                )}
-              </div>
-            </form>
-          </div>
-        </aside>
+                  {!isForgotMode && (
+                    <button
+                      type="button"
+                      className="auth-landing__link"
+                      onClick={() => {
+                        setMode("forgot")
+                        setError("")
+                        setMessage("")
+                      }}
+                    >
+                      {t("passwordReset.forgotLink")}
+                    </button>
+                  )}
+                </div>
+              </form>
+            </div>
+          </aside>
         </div>
       </section>
 

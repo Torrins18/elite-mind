@@ -1,7 +1,12 @@
-import { useState } from "react"
+import { useMemo, useState } from "react"
 import { supabase } from "../supabase"
 import { useTranslation } from "../i18n/LanguageContext"
 import { notifyCoachRegistration } from "../lib/coachNotifications"
+import {
+  getPendingCoachInvite,
+  clearPendingCoachInvite,
+  validateCoachInvite,
+} from "../lib/invites"
 import { RolePicker } from "./RolePicker"
 import { Button } from "./ui/Button"
 import { Card } from "./ui/Card"
@@ -13,6 +18,8 @@ export function ProfileRoleSetup({ session, onComplete }) {
   )
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState("")
+  const pendingInvite = useMemo(() => getPendingCoachInvite(), [])
+  const coachBlocked = role === "coach" && !pendingInvite
 
   const save = async (event) => {
     event.preventDefault()
@@ -22,6 +29,15 @@ export function ProfileRoleSetup({ session, onComplete }) {
     const displayName =
       session.user.user_metadata?.name || session.user.email?.split("@")[0] || "User"
     const isCoach = role === "coach"
+
+    if (isCoach) {
+      const valid = pendingInvite ? await validateCoachInvite(pendingInvite) : false
+      if (!valid) {
+        setSaving(false)
+        setError(t("login.coachInviteRequired"))
+        return
+      }
+    }
 
     const { error: metaError } = await supabase.auth.updateUser({
       data: { role, name: displayName },
@@ -40,14 +56,25 @@ export function ProfileRoleSetup({ session, onComplete }) {
       approved: !isCoach,
     })
 
-    setSaving(false)
-
     if (profileError) {
+      setSaving(false)
       setError(profileError.message)
       return
     }
 
     if (isCoach) {
+      if (pendingInvite) {
+        const { error: inviteError } = await supabase.rpc("consume_coach_invite", {
+          invite_token: pendingInvite,
+        })
+        if (inviteError) {
+          setSaving(false)
+          setError(inviteError.message)
+          return
+        }
+        clearPendingCoachInvite()
+      }
+
       await notifyCoachRegistration({
         coachEmail: session.user.email,
         coachName: displayName,
@@ -55,15 +82,17 @@ export function ProfileRoleSetup({ session, onComplete }) {
       })
     }
 
+    setSaving(false)
     onComplete?.()
   }
 
   return (
-    <Card title={t("login.roleTitle")} subtitle={t("login.hintRegister")}>
+    <Card title={t("login.roleTitle")} subtitle={t("login.hintChooseRole")}>
       <form className="onboarding-form" onSubmit={save}>
-        <RolePicker value={role} onChange={setRole} />
+        <RolePicker value={role} onChange={setRole} showCoachHint={role === "coach"} />
+        {coachBlocked && <p className="form-error">{t("login.coachInviteRequired")}</p>}
         {error && <p className="form-error">{error}</p>}
-        <Button type="submit" disabled={saving}>
+        <Button type="submit" disabled={saving || coachBlocked}>
           {saving
             ? t("onboarding.saving")
             : role === "coach"
